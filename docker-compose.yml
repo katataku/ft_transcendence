@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  frontend:
+    container_name: front
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: ./frontend
+        target: /app
+
+  backend:
+    container_name: back
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    volumes:
+    - type: bind
+      source: ./backend
+      target: /app
+    networks:
+      - trans
+
+networks:
+  trans:
+    driver: bridge
