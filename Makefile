@@ -18,7 +18,7 @@ down:
 	docker compose -f ./docker-compose.yml down
 
 .PHONY:re
-re:down remove_dummy_volume build up
+re:down build up
 
 .PHONY:prune
 prune:
