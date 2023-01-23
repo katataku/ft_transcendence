@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
-import { Match} from "./Match";
+import { Matches } from "./Matches";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 
 const root = ReactDOM.createRoot(
@@ -12,7 +12,7 @@ root.render(
       <BrowserRouter>
           <div><Routes>
               <Route path="/" element={<App />} />
-              <Route path="/match" element={<Match />} />
+              <Route path="/matches" element={<Matches />} />
           </Routes></div>
       </BrowserRouter>
   </React.StrictMode>

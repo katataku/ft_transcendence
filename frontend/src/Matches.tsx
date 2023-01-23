@@ -1,15 +1,14 @@
 import React from 'react';
 import axios from 'axios';
-export function Match() {
+export function Matches() {
     return (
-        <div className="Match">
+        <div className="Matches">
             <button onClick={req}>MATCH</button>
-            React
         </div>
     );
 }
 
 async function req() {
-    const res = await axios.get('http://localhost:3001/match')
+    const res = await axios.get('http://localhost:3001/matches')
     console.log(res.data)
 }
