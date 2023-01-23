@@ -1,10 +1,9 @@
 import React from 'react';
 import axios from 'axios';
-
-export function Matches() {
+export function Login() {
     return (
-        <div className="Matches">
-            <button onClick={req}>MATCH</button>
+        <div className="Login">
+            <button onClick={req}>Log in</button>
         </div>
     );
 }
