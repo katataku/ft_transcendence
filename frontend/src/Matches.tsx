@@ -1,10 +1,16 @@
 import React from 'react';
+import './css/Matches.css'
 import axios from 'axios';
 
 export function Matches() {
     return (
-        <div className="Matches">
-            <button onClick={req}>MATCH</button>
+        <div id="page">
+            <div id="header">
+                <button onClick={req}>click</button>
+            </div>
+            <div id="game">
+                {/*<div id="ball"></div>*/}
+            </div>
         </div>
     );
 }
