@@ -19,7 +19,7 @@ export class EventsGateway {
   @SubscribeMessage('message')
   handleMessage(
     @MessageBody() data: string,
-    @ConnectedSocket() client: Socket,
+    @ConnectedSocket() _client: Socket,
   ): string {
     this.logger.log(`message`);
     this.server.emit('message', data);
@@ -43,12 +43,12 @@ export class EventsGateway {
     return data;
   }
 
-  afterInit(server: Server) {
+  afterInit(_server: Server) {
     //初期化
     this.logger.log('初期化しました。');
   }
 
-  handleConnection(client: Socket, ...args: any[]) {
+  handleConnection(client: Socket, ..._args: any[]) {
     //クライアント接続時
     this.logger.log(`Client connected: ${client.id}`);
     return { event: 'message', data: 'hello' };
