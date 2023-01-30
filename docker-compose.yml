@@ -27,6 +27,22 @@ services:
     networks:
       - trans
 
+  db:
+    image: postgres:14
+    container_name: postgres
+    ports:
+      - 5432:5432
+    volumes:
+    - type: bind
+      source: ${DB_STORAGE_DIR}
+      target: /var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_DB=${POSTGRES_DB}
+    networks:
+      - trans
+
 networks:
   trans:
     driver: bridge
