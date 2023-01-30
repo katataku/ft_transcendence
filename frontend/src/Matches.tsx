@@ -17,47 +17,22 @@ interface paddle {
     dir: number,
 }
 
-const wid = 800;
-const hght = 500;
-
-const GameLoop = (updateGame: Function) => {
-    const requestID = useRef<number>();
-    const previousTime = useRef<number>();
-
-
-    // called after browser renders
-    // time = the time when our callback function (updateGame) is called by the browser
-    const loop = (time: DOMHighResTimeStamp) => {
+const wid: number = 800;
+const hght: number = 500;
+const ballSz: number = 20;
+const initBall: ball = {
+    pos: {x: wid/2, y: hght/2},
+    vel: {x: -233.021462477158, y: 235}
+};
 
 
-        if (previousTime.current !== undefined) {
-            const deltaTime = (time - previousTime.current) / 1000;
-            updateGame(time, deltaTime);
-        }
-        previousTime.current = time;
-        requestID.current = requestAnimationFrame(loop);
 
-    }
-
-    // called after react renders (after react updates the DOM)
-    useEffect(()=>{
-        console.log('use effect')
-        requestID.current = requestAnimationFrame(loop);
-
-        /*const num: number = requestID.current;
-        if (num !== undefined) {
-            return()=> cancelAnimationFrame(num);
-        }*/
-    }, [])
-
-}
 function Ball(props: {pBall: ball}) {
-
     return (
         <div
             style={{
-                width: "20px",
-                height: "20px",
+                width: `${ballSz}px`,
+                height: `${ballSz}px`,
                 top: `${props.pBall.pos.y}px`,
                 left: `${props.pBall.pos.x}px`,
                 position: "absolute",
@@ -68,37 +43,51 @@ function Ball(props: {pBall: ball}) {
    );
 }
 
+function updateBall(pBall: ball, deltaTime: number) {
+    pBall.pos.x += pBall.vel.x * deltaTime;
+    pBall.pos.y += pBall.vel.y * deltaTime;
+    if (pBall.pos.y <= 0 && pBall.vel.y < 0) {
+        pBall.vel.y *= -1;
+    }
+    if (pBall.pos.y >= hght - ballSz && pBall.vel.y > 0) {
+        pBall.vel.y *= -1;
+    }
+    if (pBall.pos.x <= 0 && pBall.vel.x < 0) {
+        pBall.vel.x *= -1;
+    }
+    if (pBall.pos.x >= wid - ballSz && pBall.vel.x > 0) {
+        pBall.vel.x *= -1;
+    }
+    return pBall;
+}
 function Game() {
-    const [time, setTime] = useState<number>(0);
     const [deltaTime, setDeltaTime] = useState<number>(0);
-    const [pBall, setPBall] = useState<ball>({pos: {x: wid/2, y: hght/2}, vel: {x: -233.021462477158, y: 235}})
+    const [pBall, setPBall] = useState<ball>(initBall);
+    const prevTime = useRef<number>(performance.now());
+    const reqID = useRef<number>(0);
 
+    // called before the browser performs the next repaint
+    const gameLoop = (time: DOMHighResTimeStamp) => {
+        if (time !== prevTime.current) {
+            updateGame((time - prevTime.current) / 1000);
+            prevTime.current = time;
+            reqID.current = requestAnimationFrame(gameLoop);
+        }
+    };
 
-    GameLoop((time: number, deltaTime: number)=>{
+    // called after react renders (after react updates the DOM)
+    useEffect(()=>{
+        reqID.current = requestAnimationFrame(gameLoop);
+    }, []);
 
-        setTime(time);
-        setDeltaTime(deltaTime);
-        const tBall: ball = pBall;
-        tBall.pos.x += tBall.vel.x * deltaTime;
-        tBall.pos.y += tBall.vel.y * deltaTime;
-        if (tBall.pos.y <= 0 && tBall.vel.y < 0) {
-            tBall.vel.y *= -1;
-        }
-        if (tBall.pos.y >= hght - 20 && tBall.vel.y > 0) {
-            tBall.vel.y *= -1;
-        }
-        if (tBall.pos.x <= 0 && tBall.vel.x < 0) {
-            tBall.vel.x *= -1;
-        }
-        if (tBall.pos.x >= wid - 20 && tBall.vel.x > 0) {
-            tBall.vel.x *= -1;
-        }
-        setPBall(tBall);
-    });
+    const updateGame = (dt: number)=>{
+        setDeltaTime(dt)
+        setPBall(updateBall(pBall, dt));
+    };
 
     return (
         <div id="game">
-            <Ball pBall={pBall}/>
+            <Ball pBall={pBall} />
         </div>
     );
 }
