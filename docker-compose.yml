@@ -36,10 +36,8 @@ services:
     - type: bind
       source: ${DB_STORAGE_DIR}
       target: /var/lib/postgresql/data
-    environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_DB=${POSTGRES_DB}
+    env_file:
+      -  ./config/.env_db
     networks:
       - trans
 
