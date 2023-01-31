@@ -12,6 +12,8 @@ services:
       - type: bind
         source: ./frontend
         target: /app
+    env_file:
+      -  ./config/.env_frontend
 
   backend:
     container_name: back
@@ -24,6 +26,8 @@ services:
     - type: bind
       source: ./backend
       target: /app
+    env_file:
+      -  ./config/.env_backend
     networks:
       - trans
 
