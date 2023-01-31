@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import './css/Matches.css'
+import './css/Match.css'
 import axios from 'axios';
 
 type Vector2 = {
@@ -43,9 +43,9 @@ function Ball(props: {pBall: ball}) {
    );
 }
 
-function updateBall(pBall: ball, deltaTime: number) {
-    pBall.pos.x += pBall.vel.x * deltaTime;
-    pBall.pos.y += pBall.vel.y * deltaTime;
+function updateBall(pBall: ball, deltaTime: number, speed: number) {
+    pBall.pos.x += pBall.vel.x * deltaTime * speed;
+    pBall.pos.y += pBall.vel.y * deltaTime * speed;
     if (pBall.pos.y <= 0 && pBall.vel.y < 0) {
         pBall.vel.y *= -1;
     }
@@ -60,30 +60,34 @@ function updateBall(pBall: ball, deltaTime: number) {
     }
     return pBall;
 }
-function Game() {
-    const [deltaTime, setDeltaTime] = useState<number>(0);
-    const [pBall, setPBall] = useState<ball>(initBall);
-    const prevTime = useRef<number>(performance.now());
-    const reqID = useRef<number>(0);
+const useAnimationFrame = (callback: Function) => {
+    const requestRef = useRef<number>(0);
+    const previousTimeRef = useRef<number>(performance.now());
 
-    // called before the browser performs the next repaint
-    const gameLoop = (time: DOMHighResTimeStamp) => {
-        if (time !== prevTime.current) {
-            updateGame((time - prevTime.current) / 1000);
-            prevTime.current = time;
-            reqID.current = requestAnimationFrame(gameLoop);
+    const animate = (time: number) => {
+        if (time !== previousTimeRef.current) {
+            const deltaTime = (time - previousTimeRef.current) / 1000;
+            callback(time, deltaTime)
         }
-    };
+        previousTimeRef.current = time;
+        requestRef.current = requestAnimationFrame(animate);
+    }
 
-    // called after react renders (after react updates the DOM)
-    useEffect(()=>{
-        reqID.current = requestAnimationFrame(gameLoop);
+    useEffect(() => {
+        requestRef.current = requestAnimationFrame(animate);
+        return () => cancelAnimationFrame(requestRef.current);
     }, []);
+}
 
-    const updateGame = (dt: number)=>{
-        setDeltaTime(dt)
-        setPBall(updateBall(pBall, dt));
-    };
+function Game() {
+    const [ticks, setTicks] = useState<number>(0);
+    const [pBall, setPBall] = useState<ball>(initBall);
+    const [speed, setSpeed] = useState<number>(2);
+
+    useAnimationFrame((time: number, deltaTime: number) => {
+        setPBall(updateBall(pBall, deltaTime, speed));
+        setTicks(time)
+    })
 
     return (
         <div id="game">
@@ -92,7 +96,7 @@ function Game() {
     );
 }
 
-export function Matches() {
+export function Match() {
     return (
         <div id="page">
             <div id="header">

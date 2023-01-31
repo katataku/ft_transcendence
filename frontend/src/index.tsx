@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
-import { Matches } from "./Matches";
+import { Match } from "./Match";
 import { Login } from "./Login";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 
@@ -14,7 +14,7 @@ root.render(
           <div><Routes>
               <Route path="/" element={<App />} />
               <Route path="/login" element={<Login />} />
-              <Route path="/matches" element={<Matches />} />
+              <Route path="/match" element={<Match />} />
           </Routes></div>
       </BrowserRouter>
   </React.StrictMode>
