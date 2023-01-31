@@ -2,20 +2,19 @@ name: lint and format
 run-name: lint and format by ${{ github.actor }}
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  Lint-and-Format:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: setup
-        run: |
-          make init
+        run: make init
       - name: Backend lint
-        run: |
-          cd backend && npm run lint
+        working-directory: ./backend
+        run: npm run lint
       - name: Backend format
-        run: |
-          cd backend && npm run format
+        working-directory: ./backend
+        run: npm run format
       - name: 差分を push
         run: |
           git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
