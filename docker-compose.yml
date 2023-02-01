@@ -20,10 +20,11 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3001:3001"
+      - "3002:3002"
     volumes:
-    - type: bind
-      source: ./backend
-      target: /app
+      - type: bind
+        source: ./backend
+        target: /app
     networks:
       - trans
 
