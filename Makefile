@@ -1,3 +1,9 @@
+ENV_FILE=./config/.env_docker
+DC_CMD=docker compose
+DC_OPTIONS=--env-file ${ENV_FILE} -f ./docker-compose.yml
+
+include ${ENV_FILE}
+
 ALL:up
 
 .PHONY:init
@@ -7,15 +13,16 @@ init:
 
 .PHONY:build
 build:
-	docker compose -f ./docker-compose.yml build
+	${DC_CMD} ${DC_OPTIONS} build
 
 .PHONY:up
 up:
-	docker compose -f ./docker-compose.yml up
+	mkdir -p ${DB_STORAGE_DIR}
+	${DC_CMD} ${DC_OPTIONS} up
 
 .PHONY:down
 down:
-	docker compose -f ./docker-compose.yml down
+	${DC_CMD} ${DC_OPTIONS} down
 
 .PHONY:re
 re:down build up
