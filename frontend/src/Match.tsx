@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
+import { useAnimationFrame } from "./utils";
 import './css/Match.css'
 import axios from 'axios';
 
@@ -19,20 +20,18 @@ interface paddle {
 
 const wid: number = 800;
 const hght: number = 500;
-const ballSz: number = 20;
+const ballPx: number = 20;
 const initBall: ball = {
     pos: {x: wid/2, y: hght/2},
-    vel: {x: -233.021462477158, y: 235}
+    vel: {x: -233, y: 235}
 };
-
-
 
 function Ball(props: {pBall: ball}) {
     return (
         <div
             style={{
-                width: `${ballSz}px`,
-                height: `${ballSz}px`,
+                width: `${ballPx}px`,
+                height: `${ballPx}px`,
                 top: `${props.pBall.pos.y}px`,
                 left: `${props.pBall.pos.x}px`,
                 position: "absolute",
@@ -49,43 +48,27 @@ function updateBall(pBall: ball, deltaTime: number, speed: number) {
     if (pBall.pos.y <= 0 && pBall.vel.y < 0) {
         pBall.vel.y *= -1;
     }
-    if (pBall.pos.y >= hght - ballSz && pBall.vel.y > 0) {
+    if (pBall.pos.y >= hght - ballPx && pBall.vel.y > 0) {
         pBall.vel.y *= -1;
     }
     if (pBall.pos.x <= 0 && pBall.vel.x < 0) {
         pBall.vel.x *= -1;
     }
-    if (pBall.pos.x >= wid - ballSz && pBall.vel.x > 0) {
+    if (pBall.pos.x >= wid - ballPx && pBall.vel.x > 0) {
         pBall.vel.x *= -1;
     }
     return pBall;
-}
-const useAnimationFrame = (callback: Function) => {
-    const requestRef = useRef<number>(0);
-    const previousTimeRef = useRef<number>(performance.now());
-
-    const animate = (time: number) => {
-        if (time !== previousTimeRef.current) {
-            const deltaTime = (time - previousTimeRef.current) / 1000;
-            callback(time, deltaTime)
-        }
-        previousTimeRef.current = time;
-        requestRef.current = requestAnimationFrame(animate);
-    }
-
-    useEffect(() => {
-        requestRef.current = requestAnimationFrame(animate);
-        return () => cancelAnimationFrame(requestRef.current);
-    }, []);
 }
 
 function Game() {
     const [ticks, setTicks] = useState<number>(0);
     const [pBall, setPBall] = useState<ball>(initBall);
-    const [speed, setSpeed] = useState<number>(2);
+    const [speed, setSpeed] = useState<number>(1);
 
+    // そのcallbackはupdateGame()のような関数です
     useAnimationFrame((time: number, deltaTime: number) => {
-        setPBall(updateBall(pBall, deltaTime, speed));
+        const newBall = updateBall(pBall, deltaTime, speed);
+        setPBall(newBall);
         setTicks(time)
     })
 
