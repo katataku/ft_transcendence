@@ -27,8 +27,6 @@ services:
       - type: bind
         source: ./backend
         target: /app
-    env_file:
-      -  ./backend/.env
     networks:
       - trans
     depends_on:
@@ -43,6 +41,8 @@ services:
       - ./db-data:/var/lib/postgresql/data
     networks:
       - trans
+    env_file:
+      -  ./backend/.env
 
 networks:
   trans:
