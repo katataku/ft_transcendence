@@ -1,0 +1,27 @@
+name: lint and format
+run-name: lint and format by ${{ github.actor }}
+on: [push]
+jobs:
+  Lint-and-Format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: setup
+        run: make init
+      - name: Backend lint
+        working-directory: ./backend
+        run: npm run lint
+      - name: Backend format
+        working-directory: ./backend
+        run: npm run format
+      - name: 差分を push
+        run: |
+          git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+          if (git diff --shortstat | grep '[0-9]'); then \
+            git add .; \
+            git commit -m "GitHub Actions から差分を Push"; \
+            git push origin HEAD:${GITHUB_REF}; \
+          fi
