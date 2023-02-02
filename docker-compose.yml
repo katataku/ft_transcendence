@@ -24,9 +24,9 @@ services:
       - "3001:3001"
       - "3002:3002"
     volumes:
-    - type: bind
-      source: ./backend
-      target: /app
+      - type: bind
+        source: ./backend
+        target: /app
     env_file:
       -  ./config/.env_backend
     networks:
@@ -36,7 +36,7 @@ services:
     image: postgres:14
     container_name: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
     - type: bind
       source: ${DB_STORAGE_DIR}
