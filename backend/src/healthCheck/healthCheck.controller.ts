@@ -20,6 +20,6 @@ export class HealthCheckController {
 
 	@Delete() 
 	delete() {
-		this.delete()
+		this.service.deleteLatest()
 	}
 }
