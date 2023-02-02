@@ -1,5 +1,5 @@
 import React, { type ReactElement } from 'react'
-import axios from 'axios'
+// import axios from 'axios'
 import { Link } from 'react-router-dom'
 
 export function App (): ReactElement {
