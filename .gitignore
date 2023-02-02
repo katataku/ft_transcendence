@@ -1,3 +1,5 @@
 # IDE MISC
 .idea
 .idea/*
+
+/db-data
