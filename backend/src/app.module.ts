@@ -4,8 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthCheck } from './healthCheck/healthCheck.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { EventsGateway } from './events/events.gateway';
+import * as dotenv from 'dotenv';
 
-require('dotenv').config()
+dotenv.config();
 
 const options: PostgresConnectionOptions = {
   type: 'postgres',
@@ -15,14 +16,11 @@ const options: PostgresConnectionOptions = {
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   entities: [HealthCheck],
-  synchronize: true
-}
+  synchronize: true,
+};
 
 @Module({
-  imports: [
-    TypeOrmModule.forRoot(options),
-    HealthCheckModulle
-  ],
+  imports: [TypeOrmModule.forRoot(options), HealthCheckModulle],
   providers: [EventsGateway],
 })
 export class AppModule {}
