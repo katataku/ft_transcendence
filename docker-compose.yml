@@ -27,7 +27,7 @@ services:
       source: ./backend
       target: /app
     env_file:
-      -  ./config/.env_backend
+      -  ./backend/.env
     networks:
       - trans
     depends_on:
