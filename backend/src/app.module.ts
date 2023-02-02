@@ -3,6 +3,7 @@ import { HealthCheckModulle } from './healthCheck/healthCheck.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthCheck } from './healthCheck/healthCheck.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
+import { EventsGateway } from './events/events.gateway';
 
 require('dotenv').config()
 
@@ -21,6 +22,7 @@ const options: PostgresConnectionOptions = {
   imports: [
     TypeOrmModule.forRoot(options),
     HealthCheckModulle
-  ]
+  ],
+  providers: [EventsGateway],
 })
 export class AppModule {}
