@@ -27,10 +27,10 @@ services:
       - type: bind
         source: ./backend
         target: /app
-    env_file:
-      -  ./config/.env_backend
     networks:
       - trans
+    depends_on:
+      - db
 
   db:
     image: postgres:14
@@ -38,13 +38,11 @@ services:
     ports:
       - "5432:5432"
     volumes:
-    - type: bind
-      source: ${DB_STORAGE_DIR}
-      target: /var/lib/postgresql/data
-    env_file:
-      -  ./config/.env_db
+      - ./db-data:/var/lib/postgresql/data
     networks:
       - trans
+    env_file:
+      -  ./backend/.env
 
 networks:
   trans:
