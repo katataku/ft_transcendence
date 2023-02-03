@@ -1,9 +1,10 @@
-import * as React from 'react';
-import './styles.css';
-import { Link } from 'react-router-dom';
+import * as React from 'react'
+import './styles.css'
+import { Link } from 'react-router-dom'
+import { type ReactElement } from 'react'
 
-export function ChatList() {
-  const [name, setName] = React.useState<string>('');
+export function ChatList (): ReactElement {
+  const [name, setName] = React.useState<string>('')
   return (
     <>
       <div className="Chat">
@@ -15,7 +16,7 @@ export function ChatList() {
               name="name"
               type="text"
               onChange={(e) => {
-                setName(e.target.value);
+                setName(e.target.value)
               }}
             />
           </label>
@@ -34,5 +35,5 @@ export function ChatList() {
         </ul>
       </div>
     </>
-  );
+  )
 }
