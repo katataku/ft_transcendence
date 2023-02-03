@@ -1,37 +1,37 @@
-import * as React from 'react';
-import './styles.css';
-import io from 'socket.io-client';
-import { useLocation } from 'react-router-dom';
-import { type ReactElement } from 'react';
+import * as React from 'react'
+import './styles.css'
+import io from 'socket.io-client'
+import { useLocation } from 'react-router-dom'
+import { type ReactElement } from 'react'
 
 interface messageEventType {
-  key: number;
-  name: string;
-  room: string;
-  msg: string;
+  key: number
+  name: string
+  room: string
+  msg: string
 }
 
 interface State {
-  name: string;
-  room: string;
+  name: string
+  room: string
 }
 // const ServerURL: string = "wss://ws.postman-echo.com/raw";
-const ServerURL: string = 'ws://localhost:3002';
+const ServerURL: string = 'ws://localhost:3002'
 export function Chat(): ReactElement {
   // const [room, setRoom] = React.useState<string>("");
   // const [name, setName] = React.useState<string>("");
-  const [message, setMessage] = React.useState<string>('');
-  const [itemList, setItemList] = React.useState<JSX.Element[]>([]);
-  const [socket, _setSocket] = React.useState(io(ServerURL));
+  const [message, setMessage] = React.useState<string>('')
+  const [itemList, setItemList] = React.useState<JSX.Element[]>([])
+  const [socket, _setSocket] = React.useState(io(ServerURL))
 
-  const location = useLocation();
-  const { room, name }: State = location.state;
+  const location = useLocation()
+  const { room, name }: State = location.state
 
   const makeItem = (item: messageEventType): JSX.Element => {
     const outerClassName: string =
-      name === item.name ? 'line__right' : 'line__left';
+      name === item.name ? 'line__right' : 'line__left'
     const innerClassName: string =
-      name === item.name ? 'line__right-text' : 'line__left-text';
+      name === item.name ? 'line__right-text' : 'line__left-text'
 
     return (
       <div className={outerClassName} key={item.key}>
@@ -40,39 +40,39 @@ export function Chat(): ReactElement {
           <div className="text">{item.msg}</div>
         </div>
       </div>
-    );
-  };
+    )
+  }
 
   socket.on('connect', () => {
-    console.log('socket connected.');
-  });
+    console.log('socket connected.')
+  })
 
   socket.on('message', (data: string) => {
-    console.log('message received:' + data);
+    console.log('message received:' + data)
     try {
-      const item: messageEventType = JSON.parse(data);
+      const item: messageEventType = JSON.parse(data)
       if (item.room === room) {
-        setItemList([...itemList, makeItem(item)]);
+        setItemList([...itemList, makeItem(item)])
       }
     } catch (error) {
-      console.log('message parse error.');
+      console.log('message parse error.')
     }
-  });
+  })
 
   const clickSendMessage = (msg: string): void => {
-    console.log('clicked');
+    console.log('clicked')
 
     const obj: messageEventType = {
       key: Date.now(),
       name,
       room,
-      msg,
-    };
-    const sendMsg: string = JSON.stringify(obj);
-    socket.emit('message', sendMsg);
-    console.log('message sent:' + sendMsg);
-    setMessage('');
-  };
+      msg
+    }
+    const sendMsg: string = JSON.stringify(obj)
+    socket.emit('message', sendMsg)
+    console.log('message sent:' + sendMsg)
+    setMessage('')
+  }
 
   return (
     <>
@@ -90,18 +90,18 @@ export function Chat(): ReactElement {
             value={message}
             type="text"
             onChange={(e) => {
-              setMessage(e.target.value);
+              setMessage(e.target.value)
             }}
           />
         </label>
         <button
           onClick={() => {
-            if (message !== null) clickSendMessage(message);
+            if (message !== null) clickSendMessage(message)
           }}
         >
           send
         </button>
       </div>
     </>
-  );
+  )
 }
