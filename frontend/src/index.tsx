@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { App } from './App';
-import { Matches } from './Matches';
+import { Match } from './Game/Match';
 import { Login } from './Login';
 import { ChatList } from './Chat/ChatList';
 import { Chat } from './Chat/Chat';
@@ -17,7 +17,7 @@ root.render(
         <Routes>
           <Route path="/" element={<App />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/matches" element={<Matches />} />
+          <Route path="/match" element={<Match />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/chatlist" element={<ChatList />} />
         </Routes>

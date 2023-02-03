@@ -36,7 +36,7 @@ services:
     image: postgres:14
     container_name: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     volumes:
       - ./db-data:/var/lib/postgresql/data
     networks:
