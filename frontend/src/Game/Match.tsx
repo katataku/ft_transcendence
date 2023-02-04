@@ -67,7 +67,6 @@ function Game(): ReactElement {
   const [p1Score, _setP1Score] = useState<number>(0)
   const [p2Score, _setP2Score] = useState<number>(0)
 
-
   // そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
     const newBall = updateBall(pBall, deltaTime, speed)
