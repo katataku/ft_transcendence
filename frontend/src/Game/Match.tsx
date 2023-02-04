@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { type ReactElement, useState, useEffect } from 'react';
 import { useAnimationFrame } from '../utils';
 import './Match.css';
@@ -30,20 +29,23 @@ const initBall: IBall = {
   pos: { x: wid / 2, y: hght / 2 },
   vel: { x: -233, y: 235 },
 };
-const initPaddle: IPaddle = {
+const initLeftPaddle: IPaddle = {
   pos: { x: wid / 20, y: hght / 2 - paddleSize.y / 2 },
 };
-const deepCpInitBall = () => {
-  return JSON.parse(JSON.stringify(initBall)); // deep copy
+const initRightPaddle: IPaddle = {
+  pos: { x: wid - (wid / 20 + paddleSize.x), y: hght / 2 - paddleSize.y / 2 },
+};
+const deepCpInitBall = (): IBall => {
+  return JSON.parse(JSON.stringify(initBall)); // deep copy of Object
 };
 
 let keydown = '';
 
-function Paddle(props: { paddle: IPaddle }) {
+function Paddle(props: { paddle: IPaddle }): ReactElement {
   return (
     <div
       style={{
-        backgroundColor: 'red',
+        backgroundColor: 'white',
         width: `${paddleSize.x}px`,
         height: `${paddleSize.y}px`,
         position: 'absolute',
@@ -64,7 +66,7 @@ function Ball(props: { pBall: IBall }): ReactElement {
         top: `${props.pBall.pos.y}px`,
         left: `${props.pBall.pos.x}px`,
         position: 'absolute',
-        backgroundColor: 'blue',
+        backgroundColor: 'white',
       }}
       id="ball"
     />
@@ -75,8 +77,9 @@ function updateBall(
   pBall: IBall,
   deltaTime: number,
   speed: number,
-  paddle: IPaddle,
-  handleScoreChange: Function,
+  leftPaddle: IPaddle,
+  rightPaddle: IPaddle,
+  handleScoreChange: () => void,
 ): IBall {
   pBall.pos.x += pBall.vel.x * deltaTime * speed;
   pBall.pos.y += pBall.vel.y * deltaTime * speed;
@@ -94,23 +97,28 @@ function updateBall(
     handleScoreChange();
   } else if (
     // paddle hit
-    paddle.pos.x <= pBall.pos.x + ballPx &&
-    pBall.pos.x <= paddle.pos.x + paddleSize.x &&
-    paddle.pos.y <= pBall.pos.y + ballPx &&
-    pBall.pos.y <= paddle.pos.y + paddleSize.y
+    (leftPaddle.pos.x <= pBall.pos.x + ballPx &&
+      pBall.pos.x <= leftPaddle.pos.x + paddleSize.x &&
+      leftPaddle.pos.y <= pBall.pos.y + ballPx &&
+      pBall.pos.y <= leftPaddle.pos.y + paddleSize.y) ||
+    (rightPaddle.pos.x <= pBall.pos.x + ballPx &&
+      pBall.pos.x <= rightPaddle.pos.x + paddleSize.x &&
+      rightPaddle.pos.y <= pBall.pos.y + ballPx &&
+      pBall.pos.y <= rightPaddle.pos.y + paddleSize.y)
   ) {
     pBall.vel.x *= -1;
   }
   return pBall;
 }
-function updatePaddle(paddle: IPaddle) {
+function updatePaddle(paddle: IPaddle): IPaddle {
   switch (keydown) {
     case 'ArrowUp':
       if (paddle.pos.y >= paddleSpeed) paddle.pos.y += -paddleSpeed;
       break;
     case 'ArrowDown':
-      if (paddle.pos.y <= hght - paddleSize.y - paddleSpeed)
+      if (paddle.pos.y <= hght - paddleSize.y - paddleSpeed) {
         paddle.pos.y += paddleSpeed;
+      }
       break;
     default:
       break;
@@ -118,11 +126,12 @@ function updatePaddle(paddle: IPaddle) {
   return paddle;
 }
 
-function Game(props: { handleScoreChange: Function }): ReactElement {
+function Game(props: { handleScoreChange: () => void }): ReactElement {
   const [ticks, setTicks] = useState<number>(0);
   const [pBall, setPBall] = useState<IBall>(deepCpInitBall());
   const [speed, setSpeed] = useState<number>(1);
-  const [paddle, setPaddle] = useState<IPaddle>(initPaddle);
+  const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle);
+  const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle);
 
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
@@ -130,27 +139,30 @@ function Game(props: { handleScoreChange: Function }): ReactElement {
       pBall,
       deltaTime,
       speed,
-      paddle,
+      leftPaddle,
+      rightPaddle,
       props.handleScoreChange,
     );
-    const newPaddle = updatePaddle(paddle);
+    const newLeftPaddle = updatePaddle(leftPaddle);
+    const newRightPaddle = updatePaddle(rightPaddle);
     setPBall(newBall);
-    setPaddle(newPaddle);
+    setLeftPaddle(newLeftPaddle);
+    setRightPaddle(newRightPaddle);
     setTicks(time);
-    console.log(paddle.pos.y);
   });
 
   return (
     <div id="game">
       <Ball pBall={pBall} />
-      <Paddle paddle={paddle} />
+      <Paddle paddle={leftPaddle} />
+      <Paddle paddle={rightPaddle} />
     </div>
   );
 }
 
 export function Match(): ReactElement {
   const [score, setScore] = useState<number>(0);
-  const handleScoreChange = () => {
+  const handleScoreChange = (): void => {
     setScore((score) => {
       console.log(score + 1);
       return score + 1;
@@ -163,11 +175,11 @@ export function Match(): ReactElement {
     }
   }, [score]);
 
-  const handleOnKeyDonw = (e: KeyboardEvent) => {
+  const handleOnKeyDonw = (e: KeyboardEvent): void => {
     keydown = e.code;
   };
 
-  const handleOnKeyUp = (e: KeyboardEvent) => {
+  const handleOnKeyUp = (e: KeyboardEvent): void => {
     keydown = '';
   };
 
