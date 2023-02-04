@@ -9,12 +9,12 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
 @WebSocketGateway(3002, { cors: { origin: '*' } })
-export class EventsGateway {
+export class ChatGateway {
   @WebSocketServer()
   server: Server;
   clientList: Map<string, Socket[]> = new Map();
 
-  private logger: Logger = new Logger('EventsGateway');
+  private logger: Logger = new Logger('ChatGateway');
 
   @SubscribeMessage('message')
   handleMessage(
