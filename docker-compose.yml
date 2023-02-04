@@ -47,16 +47,16 @@ services:
   swagger:
     image: swaggerapi/swagger-ui:latest
     ports:
-      - 8001:8080
+      - 8080:8080
     volumes:
-      - ./api.yml:/api.yml
+      - ./swagger/api.yml:/api.yml
     environment:
       SWAGGER_JSON: /api.yml
 
   swagger-editor:
     image: swaggerapi/swagger-editor:latest
     ports:
-    - 8002:8080
+    - 8081:8080
 
 networks:
   trans:
