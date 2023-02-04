@@ -22,7 +22,7 @@ const wid: number = 800
 const hght: number = 500
 const ballPx: number = 20
 const initBall: ball = {
-  pos: { x: wid / 2, y: hght / 2 },
+  pos: { x: (wid / 2) - (ballPx / 2), y: hght / 2 },
   vel: { x: -233, y: 235 }
 }
 
@@ -64,6 +64,8 @@ function Game (): ReactElement {
   const [ticks, setTicks] = useState<number>(0)
   const [pBall, setPBall] = useState<ball>(initBall)
   const [speed, setSpeed] = useState<number>(1)
+  const [p1Score, setP1Score] = useState<number>(0)
+  const [p2Score, setP2Score] = useState<number>(0)
 
   // そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
@@ -74,6 +76,9 @@ function Game (): ReactElement {
 
   return (
     <div id="game">
+      <div id="leftScore">{p1Score}</div>
+      <div id="rightScore">{p2Score}</div>
+      <div id="gameDiv"></div>
       <Ball pBall={pBall} />
     </div>
   )
