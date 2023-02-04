@@ -1,4 +1,4 @@
-import React, {type ReactElement, type ChangeEvent, useState, useRef, useEffect} from 'react'
+import React, {type ReactElement, type ChangeEvent, useState, useRef} from 'react'
 import { useAnimationFrame } from '../utils'
 import './Match.css'
 // import axios from 'axios'
@@ -66,7 +66,6 @@ function Game(): ReactElement {
   const p1Score = useRef<number>(0)
   const p2Score = useRef<number>(0)
   const speed = useRef<number>(1)
-
 
   // そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {

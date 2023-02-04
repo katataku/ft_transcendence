@@ -11,6 +11,12 @@ init:
 	cd ./frontend && npm install
 	cd ./backend && npm install
 
+.PHONY:clean
+clean:
+	rm -rf ./frontend/node_modules
+	rm -rf ./backend/node_modules
+	rm -rf ./db-data
+
 .PHONY:build
 build:
 	${DC_CMD} ${DC_OPTIONS} build
