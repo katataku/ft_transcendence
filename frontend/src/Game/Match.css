@@ -1,3 +1,7 @@
+:root {
+  --wid: 800px;
+  --height: 500px;
+}
 #page {
 
 }
@@ -7,16 +11,46 @@
 }
 
 #game {
-    width:800px;
-    height:500px;
-    background-color:#000000;
-    margin: auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  width: var(--wid);
+  height: var(--height);
+  background-color:#000000;
+  margin: auto;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+#gameDiv {
+  height: var(--height);
+  position: relative;
+  background: repeating-linear-gradient(
+    to bottom,
+    white,
+    white 15px,
+    black 15px,
+    black 30px
+  ) 50%/1px 100% no-repeat;
+}
+
+#leftScore {
+  color: white;
+  position: relative;
+  float: left;
+  left: 40%;
+  top: 5%;
+  font-size: 50px;
+}
+
+#rightScore {
+  color: white;
+  position: relative;
+  float: right;
+  right: 40%;
+  top: 5%;
+  font-size: 50px;
 }
 
 #ball {
-    border-radius: 100px;
+  border-radius: 100px;
 }
