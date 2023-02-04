@@ -5,7 +5,9 @@ import { useEffect, useRef } from 'react'
  * @param callback - browserの次のrepaintをする前に呼び出したい関数
  * callback(time, deltaTime)
  */
-export const useAnimationFrame = (callback: (time: number, deltaTime: number) => void): void => {
+export const useAnimationFrame = (
+  callback: (time: number, deltaTime: number) => void
+): void => {
   // useRefは変更してもコンポーネントの再描画が発生しない可変変数
   // https://beta.reactjs.org/reference/react/useRef
   const requestIDRef = useRef<number>(0)
@@ -26,6 +28,8 @@ export const useAnimationFrame = (callback: (time: number, deltaTime: number) =>
   // https://ja.reactjs.org/docs/hooks-effect.html
   useEffect(() => {
     requestIDRef.current = requestAnimationFrame(loop)
-    return (): void => { cancelAnimationFrame(requestIDRef.current) }
+    return (): void => {
+      cancelAnimationFrame(requestIDRef.current)
+    }
   }, [])
 }

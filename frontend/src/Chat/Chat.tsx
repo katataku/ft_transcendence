@@ -17,7 +17,7 @@ interface State {
 }
 // const ServerURL: string = "wss://ws.postman-echo.com/raw";
 const ServerURL: string = 'ws://localhost:3002'
-export function Chat (): ReactElement {
+export function Chat(): ReactElement {
   // const [room, setRoom] = React.useState<string>("");
   // const [name, setName] = React.useState<string>("");
   const [message, setMessage] = React.useState<string>('')

@@ -3,7 +3,7 @@ import './styles.css'
 import { Link } from 'react-router-dom'
 import { type ReactElement } from 'react'
 
-export function ChatList (): ReactElement {
+export function ChatList(): ReactElement {
   const [name, setName] = React.useState<string>('')
   return (
     <>
@@ -23,12 +23,12 @@ export function ChatList (): ReactElement {
         </p>
         <ul>
           <li>
-            <Link to="/chat" state={{ room: 'room1', name: name }}>
+            <Link to="/chat" state={{ room: 'room1', name }}>
               Move to Chat room 1
             </Link>
           </li>
           <li>
-            <Link to="/chat" state={{ room: 'room2', name: name }}>
+            <Link to="/chat" state={{ room: 'room2', name }}>
               Move to Chat room 2
             </Link>
           </li>
