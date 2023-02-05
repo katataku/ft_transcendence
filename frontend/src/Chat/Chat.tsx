@@ -15,32 +15,54 @@ interface State {
   name: string
   room: string
 }
+
+interface messageItem {
+  name: string
+  body: JSX.Element
+}
+
 // const ServerURL: string = "wss://ws.postman-echo.com/raw";
 const ServerURL: string = 'ws://localhost:3002'
 export function Chat(): ReactElement {
   // const [room, setRoom] = React.useState<string>("");
   // const [name, setName] = React.useState<string>("");
   const [message, setMessage] = React.useState<string>('')
-  const [itemList, setItemList] = React.useState<JSX.Element[]>([])
+  const [itemList, setItemList] = React.useState<messageItem[]>([])
   const [socket, _setSocket] = React.useState(io(ServerURL))
+  const [mutedUserList, setMutedUserList] = React.useState<string[]>([])
 
   const location = useLocation()
   const { room, name }: State = location.state
 
-  const makeItem = (item: messageEventType): JSX.Element => {
+  const makeItem = (item: messageEventType): messageItem => {
     const outerClassName: string =
       name === item.name ? 'line__right' : 'line__left'
     const innerClassName: string =
       name === item.name ? 'line__right-text' : 'line__left-text'
 
-    return (
-      <div className={outerClassName} key={item.key}>
-        <div className={innerClassName}>
-          <div className="name">{item.name}</div>
-          <div className="text">{item.msg}</div>
+    return {
+      name: item.name,
+      body: (
+        <div className={outerClassName} key={item.key}>
+          <div className={innerClassName}>
+            <div
+              className="name"
+              // For debug.
+              // 名前をクリックするとミュートユーザに指定する。
+              onClick={(): void => {
+                setMutedUserList((mutedUserList) => [
+                  ...mutedUserList,
+                  item.name
+                ])
+              }}
+            >
+              {item.name}
+            </div>
+            <div className="text">{item.msg}</div>
+          </div>
         </div>
-      </div>
-    )
+      )
+    }
   }
 
   socket.on('connect', () => {
@@ -80,8 +102,13 @@ export function Chat(): ReactElement {
         <h1>Chat Page</h1>
         <p>user name: {name}</p>
         <p>room: {room}</p>
+        <p>muted user: {mutedUserList.join(', ')}</p>
         <div className="line__container">
-          <div className="line__contents">{itemList}</div>
+          <div className="line__contents">
+            {itemList
+              .filter((value) => !mutedUserList.includes(value.name))
+              .map((value) => value.body)}
+          </div>
         </div>
         <label>
           Message:
