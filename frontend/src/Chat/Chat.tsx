@@ -3,6 +3,7 @@ import './styles.css'
 import io from 'socket.io-client'
 import { useLocation } from 'react-router-dom'
 import { type ReactElement } from 'react'
+import axios from 'axios'
 
 interface messageEventType {
   key: number
@@ -21,6 +22,11 @@ interface messageItem {
   body: JSX.Element
 }
 
+interface muteUserList {
+  muteUserId: string
+  mutedUserId: string
+}
+
 // const ServerURL: string = "wss://ws.postman-echo.com/raw";
 const ServerURL: string = 'ws://localhost:3002'
 export function Chat(): ReactElement {
@@ -33,6 +39,22 @@ export function Chat(): ReactElement {
 
   const location = useLocation()
   const { room, name }: State = location.state
+
+  React.useEffect(() => {
+    axios.defaults.baseURL = 'http://localhost:3001'
+    axios
+      .get('/chat-mute-user')
+      .then((response) => {
+        setMutedUserList(
+          response.data
+            .filter((value: muteUserList) => name === value.muteUserId)
+            .map((value: muteUserList) => value.mutedUserId)
+        )
+      })
+      .catch(() => {
+        alert('エラーです！')
+      })
+  }, [])
 
   const makeItem = (item: messageEventType): messageItem => {
     const outerClassName: string =
