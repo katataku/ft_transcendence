@@ -26,7 +26,7 @@ const paddleSize: Vector2 = {
 }
 const paddleSpeed: number = 10
 const initBall: IBall = {
-  pos: { x: wid / 2, y: hght / 2 },
+  pos: { x: wid / 2 - ballPx / 2, y: hght / 2 },
   vel: { x: -233, y: 235 }
 }
 const initLeftPaddle: IPaddle = {
@@ -41,7 +41,7 @@ const deepCpInitBall = (): IBall => {
 
 let keydown = ''
 
-function Paddle (props: { paddle: IPaddle }): ReactElement {
+function Paddle(props: { paddle: IPaddle }): ReactElement {
   return (
     <div
       style={{
@@ -57,7 +57,7 @@ function Paddle (props: { paddle: IPaddle }): ReactElement {
   )
 }
 
-function Ball (props: { pBall: IBall }): ReactElement {
+function Ball(props: { pBall: IBall }): ReactElement {
   return (
     <div
       style={{
@@ -73,7 +73,7 @@ function Ball (props: { pBall: IBall }): ReactElement {
   )
 }
 
-function updateBall (
+function updateBall(
   pBall: IBall,
   deltaTime: number,
   speed: number,
@@ -110,7 +110,7 @@ function updateBall (
   }
   return pBall
 }
-function updatePaddle (paddle: IPaddle): IPaddle {
+function updatePaddle(paddle: IPaddle): IPaddle {
   switch (keydown) {
     case 'ArrowUp':
       if (paddle.pos.y >= paddleSpeed) paddle.pos.y += -paddleSpeed
@@ -126,12 +126,14 @@ function updatePaddle (paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function Game (props: { handleScoreChange: () => void }): ReactElement {
-  const [ticks, setTicks] = useState<number>(0)
+function Game(props: { handleScoreChange: () => void }): ReactElement {
+  const [_ticks, setTicks] = useState<number>(0)
   const [pBall, setPBall] = useState<IBall>(deepCpInitBall())
-  const [speed, setSpeed] = useState<number>(1)
+  const [speed, _setSpeed] = useState<number>(1)
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
+  const [p1Score, _setP1Score] = useState<number>(0)
+  const [p2Score, _setP2Score] = useState<number>(0)
 
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
@@ -153,6 +155,9 @@ function Game (props: { handleScoreChange: () => void }): ReactElement {
 
   return (
     <div id="game">
+      <div id="leftScore">{p1Score}</div>
+      <div id="rightScore">{p2Score}</div>
+      <div id="gameDiv"></div>
       <Ball pBall={pBall} />
       <Paddle paddle={leftPaddle} />
       <Paddle paddle={rightPaddle} />
@@ -160,7 +165,7 @@ function Game (props: { handleScoreChange: () => void }): ReactElement {
   )
 }
 
-export function Match (): ReactElement {
+export function Match(): ReactElement {
   const [score, setScore] = useState<number>(0)
   const handleScoreChange = (): void => {
     setScore((score) => {
@@ -198,7 +203,7 @@ export function Match (): ReactElement {
   )
 }
 
-function req (): void {
+function req(): void {
   // const res = await axios.get('http://localhost:3001/api')
   // console.log(res.data)
 }

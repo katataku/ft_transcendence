@@ -7,9 +7,7 @@ import { ChatList } from './Chat/ChatList'
 import { Chat } from './Chat/Chat'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-)
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <React.StrictMode>
     <BrowserRouter>
