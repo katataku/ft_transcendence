@@ -184,7 +184,7 @@ export function Match(): ReactElement {
     keydown = e.code
   }
 
-  const handleOnKeyUp = (e: KeyboardEvent): void => {
+  const handleOnKeyUp = (): void => {
     keydown = ''
   }
 
