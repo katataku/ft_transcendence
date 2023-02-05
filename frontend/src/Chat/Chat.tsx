@@ -17,12 +17,13 @@ interface State {
 }
 // const ServerURL: string = "wss://ws.postman-echo.com/raw";
 const ServerURL: string = 'ws://localhost:3002'
+const socket = io(ServerURL)
+
 export function Chat(): ReactElement {
   // const [room, setRoom] = React.useState<string>("");
   // const [name, setName] = React.useState<string>("");
   const [message, setMessage] = React.useState<string>('')
   const [itemList, setItemList] = React.useState<JSX.Element[]>([])
-  const [socket, _setSocket] = React.useState(io(ServerURL))
 
   const location = useLocation()
   const { room, name }: State = location.state
@@ -43,21 +44,27 @@ export function Chat(): ReactElement {
     )
   }
 
-  socket.on('connect', () => {
-    console.log('socket connected.')
-  })
+  React.useEffect(() => {
+    socket.on('connect', () => {
+      console.log('socket connected.')
+    })
 
-  socket.on('message', (data: string) => {
-    console.log('message received:' + data)
-    try {
-      const item: messageEventType = JSON.parse(data)
-      if (item.room === room) {
-        setItemList([...itemList, makeItem(item)])
+    socket.on('message', (data: string) => {
+      console.log('message received:' + data)
+      try {
+        const item: messageEventType = JSON.parse(data)
+        if (item.room === room) {
+          setItemList((itemList) => [...itemList, makeItem(item)])
+        }
+      } catch (error) {
+        console.log('message parse error.')
       }
-    } catch (error) {
-      console.log('message parse error.')
+    })
+    return () => {
+      socket.off('connect')
+      socket.off('message')
     }
-  })
+  }, [])
 
   const clickSendMessage = (msg: string): void => {
     console.log('clicked')
