@@ -97,11 +97,13 @@ function updateBall(
     handleScoreChange()
   } else if (
     // paddle hit
-    (leftPaddle.pos.x <= pBall.pos.x + ballPx &&
+    (pBall.vel.x < 0 &&
+      leftPaddle.pos.x <= pBall.pos.x + ballPx &&
       pBall.pos.x <= leftPaddle.pos.x + paddleSize.x &&
       leftPaddle.pos.y <= pBall.pos.y + ballPx &&
       pBall.pos.y <= leftPaddle.pos.y + paddleSize.y) ||
-    (rightPaddle.pos.x <= pBall.pos.x + ballPx &&
+    (pBall.vel.x > 0 &&
+      rightPaddle.pos.x <= pBall.pos.x + ballPx &&
       pBall.pos.x <= rightPaddle.pos.x + paddleSize.x &&
       rightPaddle.pos.y <= pBall.pos.y + ballPx &&
       pBall.pos.y <= rightPaddle.pos.y + paddleSize.y)
