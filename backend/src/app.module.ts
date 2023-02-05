@@ -4,7 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthCheck } from './healthCheck/healthCheck.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { ChatGateway } from './Chat/chat.gateway';
+import { ChatMuteUserModule } from './Chat/chat-mute-user.module';
 import * as dotenv from 'dotenv';
+import { ChatMuteUser } from './Chat/chat-mute-user.entity';
 
 dotenv.config();
 
@@ -15,12 +17,16 @@ const options: PostgresConnectionOptions = {
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  entities: [HealthCheck],
+  entities: [HealthCheck, ChatMuteUser],
   synchronize: true,
 };
 
 @Module({
-  imports: [TypeOrmModule.forRoot(options), HealthCheckModulle],
+  imports: [
+    TypeOrmModule.forRoot(options),
+    HealthCheckModulle,
+    ChatMuteUserModule,
+  ],
   providers: [ChatGateway],
 })
 export class AppModule {}
