@@ -10,6 +10,12 @@ export function App(): ReactElement {
       <p>
         <Link to="chatlist">Move to ChatList</Link>
       </p>
+      <p>
+        <Link to="Match">Move to Match</Link>
+      </p>
+      <p>
+        <Link to="Login">Move to Login</Link>
+      </p>
     </div>
   )
 }
