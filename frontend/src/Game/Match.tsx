@@ -1,4 +1,4 @@
-import React, { type ReactElement, useState } from 'react'
+import React, {type ReactElement, type ChangeEvent, useState, useRef} from 'react'
 import { useAnimationFrame } from '../utils'
 import './Match.css'
 // import axios from 'axios'
@@ -18,11 +18,11 @@ interface _paddle {
   dir: number
 }
 
-const wid: number = 800
-const hght: number = 500
+const gameWinWid: number = 800
+const gameWinHght: number = 500
 const ballPx: number = 20
 const initBall: ball = {
-  pos: { x: (wid / 2) - (ballPx / 2), y: hght / 2 },
+  pos: { x: (gameWinWid / 2) - (ballPx / 2), y: gameWinHght / 2 },
   vel: { x: -233, y: 235 }
 }
 
@@ -48,13 +48,13 @@ function updateBall(pBall: ball, deltaTime: number, speed: number): ball {
   if (pBall.pos.y <= 0 && pBall.vel.y < 0) {
     pBall.vel.y *= -1
   }
-  if (pBall.pos.y >= hght - ballPx && pBall.vel.y > 0) {
+  if (pBall.pos.y >= gameWinHght - ballPx && pBall.vel.y > 0) {
     pBall.vel.y *= -1
   }
   if (pBall.pos.x <= 0 && pBall.vel.x < 0) {
     pBall.vel.x *= -1
   }
-  if (pBall.pos.x >= wid - ballPx && pBall.vel.x > 0) {
+  if (pBall.pos.x >= gameWinWid - ballPx && pBall.vel.x > 0) {
     pBall.vel.x *= -1
   }
   return pBall
@@ -63,21 +63,44 @@ function updateBall(pBall: ball, deltaTime: number, speed: number): ball {
 function Game(): ReactElement {
   const [_ticks, setTicks] = useState<number>(0)
   const [pBall, setPBall] = useState<ball>(initBall)
-  const [speed, _setSpeed] = useState<number>(1)
-  const [p1Score, _setP1Score] = useState<number>(0)
-  const [p2Score, _setP2Score] = useState<number>(0)
+  const p1Score = useRef<number>(0)
+  const p2Score = useRef<number>(0)
+  const speed = useRef<number>(1)
 
   // そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
-    const newBall = updateBall(pBall, deltaTime, speed)
+    const newBall = updateBall(pBall, deltaTime, speed.current)
     setPBall(newBall)
     setTicks(time)
   })
 
+  const modifySpeed = (e: ChangeEvent<HTMLSelectElement>): void => {
+    console.log(typeof e.target.value)
+    switch (e.target.value) {
+      case("easy"):
+        speed.current = 1
+        break
+      case("medium"):
+        speed.current = 2
+        break
+      case("hard"):
+        speed.current = 3
+        break
+    }
+  }
+
   return (
     <div id="game">
-      <div id="leftScore">{p1Score}</div>
-      <div id="rightScore">{p2Score}</div>
+      <div id="leftScore">{p1Score.current}</div>
+      <div id="rightScore">{p2Score.current}</div>
+      <div id="powerup">
+        <label htmlFor="powerup">Speed:</label>
+        <select onChange={modifySpeed} name="speed" id="powerup">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
       <div id="gameDiv"></div>
       <Ball pBall={pBall} />
     </div>
