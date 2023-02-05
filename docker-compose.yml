@@ -44,6 +44,20 @@ services:
     env_file:
       -  ./backend/.env
 
+  swagger:
+    image: swaggerapi/swagger-ui:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - ./swagger/api.yml:/api.yml
+    environment:
+      SWAGGER_JSON: /api.yml
+
+  swagger-editor:
+    image: swaggerapi/swagger-editor:latest
+    ports:
+    - 8081:8080
+
 networks:
   trans:
     driver: bridge

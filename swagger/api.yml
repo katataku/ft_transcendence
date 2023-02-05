@@ -1,0 +1,30 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: ft_transcendence API
+  description: API Document for ft_transcendence
+servers:
+  - url: "http://localhost:3001"
+
+tags:
+  - name: health
+    description: ヘルスチェック
+
+paths:
+  /health:
+    get:
+      tags: 
+        - health
+      summary: Health check
+      description: ヘルスチェック
+      responses:
+        200:
+          description: 成功例
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  health:
+                    type: string
+                    example: OK
