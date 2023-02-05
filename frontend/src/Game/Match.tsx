@@ -1,4 +1,10 @@
-import React, { type ReactElement, useState, useEffect } from 'react'
+import React, {
+  type ReactElement,
+  type ChangeEvent,
+  useState,
+  useRef,
+  useEffect
+} from 'react'
 import { useAnimationFrame } from '../utils'
 import './Match.css'
 // import axios from 'axios'
@@ -17,8 +23,8 @@ interface IPaddle {
   pos: Vector2
 }
 
-const wid: number = 800
-const hght: number = 500
+const gameWinWid: number = 800
+const gameWinHght: number = 500
 const ballPx: number = 20
 const paddleSize: Vector2 = {
   x: 8,
@@ -26,14 +32,17 @@ const paddleSize: Vector2 = {
 }
 const paddleSpeed: number = 10
 const initBall: IBall = {
-  pos: { x: wid / 2 - ballPx / 2, y: hght / 2 },
+  pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 },
   vel: { x: -233, y: 235 }
 }
 const initLeftPaddle: IPaddle = {
-  pos: { x: wid / 20, y: hght / 2 - paddleSize.y / 2 }
+  pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 }
 }
 const initRightPaddle: IPaddle = {
-  pos: { x: wid - (wid / 20 + paddleSize.x), y: hght / 2 - paddleSize.y / 2 }
+  pos: {
+    x: gameWinWid - (gameWinWid / 20 + paddleSize.x),
+    y: gameWinHght / 2 - paddleSize.y / 2
+  }
 }
 const deepCpInitBall = (): IBall => {
   return JSON.parse(JSON.stringify(initBall)) // deep copy of Object
@@ -85,12 +94,12 @@ function updateBall(
   pBall.pos.y += pBall.vel.y * deltaTime * speed
   if (pBall.pos.y <= 0 && pBall.vel.y < 0) {
     pBall.vel.y *= -1
-  } else if (pBall.pos.y >= hght - ballPx && pBall.vel.y > 0) {
+  } else if (pBall.pos.y >= gameWinHght - ballPx && pBall.vel.y > 0) {
     pBall.vel.y *= -1
   } else if (
     // goal hit
     (pBall.pos.x <= 0 && pBall.vel.x < 0) ||
-    (pBall.pos.x >= wid - ballPx && pBall.vel.x > 0)
+    (pBall.pos.x >= gameWinWid - ballPx && pBall.vel.x > 0)
   ) {
     pBall.pos = deepCpInitBall().pos
     pBall.vel.x *= -1
@@ -118,7 +127,7 @@ function updatePaddle(paddle: IPaddle): IPaddle {
       if (paddle.pos.y >= paddleSpeed) paddle.pos.y += -paddleSpeed
       break
     case 'ArrowDown':
-      if (paddle.pos.y <= hght - paddleSize.y - paddleSpeed) {
+      if (paddle.pos.y <= gameWinHght - paddleSize.y - paddleSpeed) {
         paddle.pos.y += paddleSpeed
       }
       break
@@ -131,34 +140,57 @@ function updatePaddle(paddle: IPaddle): IPaddle {
 function Game(props: { handleScoreChange: () => void }): ReactElement {
   const [_ticks, setTicks] = useState<number>(0)
   const [pBall, setPBall] = useState<IBall>(deepCpInitBall())
-  const [speed, _setSpeed] = useState<number>(1)
+  const p1Score = useRef<number>(0)
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
-  const [p1Score, _setP1Score] = useState<number>(0)
-  const [p2Score, _setP2Score] = useState<number>(0)
+  const p2Score = useRef<number>(0)
+  const speed = useRef<number>(1)
 
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
+    const newLeftPaddle = updatePaddle(leftPaddle)
+    const newRightPaddle = updatePaddle(rightPaddle)
     const newBall = updateBall(
       pBall,
       deltaTime,
-      speed,
-      leftPaddle,
-      rightPaddle,
+      speed.current,
+      newLeftPaddle,
+      newRightPaddle,
       props.handleScoreChange
     )
-    const newLeftPaddle = updatePaddle(leftPaddle)
-    const newRightPaddle = updatePaddle(rightPaddle)
-    setPBall(newBall)
     setLeftPaddle(newLeftPaddle)
     setRightPaddle(newRightPaddle)
+    setPBall(newBall)
     setTicks(time)
   })
 
+  const modifySpeed = (e: ChangeEvent<HTMLSelectElement>): void => {
+    console.log(typeof e.target.value)
+    switch (e.target.value) {
+      case 'easy':
+        speed.current = 1
+        break
+      case 'medium':
+        speed.current = 2
+        break
+      case 'hard':
+        speed.current = 3
+        break
+    }
+  }
+
   return (
     <div id="game">
-      <div id="leftScore">{p1Score}</div>
-      <div id="rightScore">{p2Score}</div>
+      <div id="leftScore">{p1Score.current}</div>
+      <div id="rightScore">{p2Score.current}</div>
+      <div id="powerup">
+        <label htmlFor="powerup">Speed:</label>
+        <select onChange={modifySpeed} name="speed" id="powerup">
+          <option value="easy">Easy</option>
+          <option value="medium">Medium</option>
+          <option value="hard">Hard</option>
+        </select>
+      </div>
       <div id="gameDiv"></div>
       <Ball pBall={pBall} />
       <Paddle paddle={leftPaddle} />

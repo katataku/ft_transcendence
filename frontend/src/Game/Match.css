@@ -19,18 +19,7 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-}
-
-#gameDiv {
-  height: var(--height);
-  position: relative;
-  background: repeating-linear-gradient(
-    to bottom,
-    white,
-    white 15px,
-    black 15px,
-    black 30px
-  ) 50%/1px 100% no-repeat;
+  font-family: 'Courier New', monospace;
 }
 
 #leftScore {
@@ -53,4 +42,23 @@
 
 #ball {
   border-radius: 100px;
+}
+
+#powerup {
+  position: relative;
+  color: black;
+  top: -5%;
+}
+
+#gameDiv {
+  height: var(--height);
+  top: -5%;
+  position: relative;
+  background: repeating-linear-gradient(
+    to bottom,
+    white,
+    white 15px,
+    black 15px,
+    black 30px
+  ) 50%/1px 100% no-repeat;
 }
