@@ -180,16 +180,17 @@ export function Match(): ReactElement {
     }
   }, [score])
 
-  const handleOnKeyDonw = (e: KeyboardEvent): void => {
-    keydown = e.code
-  }
+  useEffect(() => {
+    const handleOnKeyDown = (e: KeyboardEvent): void => {
+      keydown = e.code
+    }
+    const handleOnKeyUp = (): void => {
+      keydown = ''
+    }
+    window.addEventListener('keydown', handleOnKeyDown)
+    window.addEventListener('keyup', handleOnKeyUp)
+  }, [])
 
-  const handleOnKeyUp = (): void => {
-    keydown = ''
-  }
-
-  window.addEventListener('keydown', handleOnKeyDonw)
-  window.addEventListener('keyup', handleOnKeyUp)
   return (
     <div id="page">
       <div id="header">
