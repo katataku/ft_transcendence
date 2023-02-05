@@ -2,6 +2,7 @@
     "cSpell.words": [
         "chatlist",
         "nestjs",
+        "typeorm",
         "websockets"
     ],
     "editor.formatOnSave": true,
