@@ -5,6 +5,8 @@ import { type ReactElement } from 'react'
 
 export function ChatList(): ReactElement {
   const [name, setName] = React.useState<string>('')
+  const [roomList, _setRoomList] = React.useState<string[]>(['room1', 'room2'])
+
   return (
     <>
       <div className="Chat">
@@ -22,16 +24,13 @@ export function ChatList(): ReactElement {
           </label>
         </p>
         <ul>
-          <li>
-            <Link to="/chat" state={{ room: 'room1', name }}>
-              Move to Chat room 1
-            </Link>
-          </li>
-          <li>
-            <Link to="/chat" state={{ room: 'room2', name }}>
-              Move to Chat room 2
-            </Link>
-          </li>
+          {roomList.map((room, index) => (
+            <li key={index}>
+              <Link to="/chat" state={{ room, name }}>
+                Move to Chat {room}
+              </Link>
+            </li>
+          ))}
         </ul>
       </div>
     </>
