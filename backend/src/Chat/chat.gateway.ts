@@ -42,6 +42,15 @@ export class ChatGateway {
     return data;
   }
 
+  @SubscribeMessage('banNotification')
+  handleBanNotification(
+    @MessageBody() data: string,
+    @ConnectedSocket() _client: Socket,
+  ): void {
+    this.logger.log(`banNotification`);
+    this.server.emit('banNotification', data);
+  }
+
   afterInit(_server: Server) {
     //初期化
     this.logger.log('初期化しました。');

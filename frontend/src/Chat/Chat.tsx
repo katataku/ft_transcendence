@@ -1,7 +1,7 @@
 import * as React from 'react'
 import './styles.css'
 import io from 'socket.io-client'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { type ReactElement } from 'react'
 import axios from 'axios'
 
@@ -10,6 +10,12 @@ interface messageEventType {
   name: string
   room: string
   msg: string
+}
+
+interface banEventType {
+  key: number
+  name: string
+  room: string
 }
 
 interface State {
@@ -40,6 +46,7 @@ export function Chat(): ReactElement {
 
   const location = useLocation()
   const { room, name }: State = location.state
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     axios.defaults.baseURL = 'http://localhost:3001'
@@ -62,23 +69,40 @@ export function Chat(): ReactElement {
       name === item.name ? 'line__right' : 'line__left'
     const innerClassName: string =
       name === item.name ? 'line__right-text' : 'line__left-text'
+    const buttonObject: JSX.Element =
+      name === item.name ? (
+        <></>
+      ) : (
+        <>
+          <button
+            onClick={(): void => {
+              setMutedUserList((mutedUserList) => [...mutedUserList, item.name])
+            }}
+          >
+            mute
+          </button>
+          <button
+            onClick={(): void => {
+              const sendMsg: banEventType = {
+                key: Date.now(),
+                name: item.name,
+                room
+              }
+              socket.emit('banNotification', sendMsg)
+            }}
+          >
+            ban
+          </button>
+        </>
+      )
 
     return {
       name: item.name,
       body: (
         <div className={outerClassName} key={item.key}>
           <div className={innerClassName}>
-            <div
-              className="name"
-              // For debug.
-              // 名前をクリックするとミュートユーザに指定する。
-              onClick={(): void => {
-                setMutedUserList((mutedUserList) => [
-                  ...mutedUserList,
-                  item.name
-                ])
-              }}
-            >
+            <div className="name">
+              {buttonObject}
               {item.name}
             </div>
             <div className="text">{item.msg}</div>
@@ -104,9 +128,17 @@ export function Chat(): ReactElement {
         console.log('message parse error.')
       }
     })
+
+    socket.on('banNotification', (item: banEventType) => {
+      if (item.room === room && item.name === name) {
+        navigate('/chatlist', { state: { banned: true } })
+      }
+    })
+
     return () => {
       socket.off('connect')
       socket.off('message')
+      socket.off('banNotification')
     }
   }, [])
 
