@@ -32,8 +32,8 @@ const paddleSize: Vector2 = {
 }
 const paddleSpeed: number = 10
 const initBall: IBall = {
-  pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 },
-  vel: { x: -233, y: 235 }
+  pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 - ballPx / 2 },
+  vel: { x: -1, y: 0.5 }
 }
 const initLeftPaddle: IPaddle = {
   pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 }
@@ -82,6 +82,51 @@ function Ball(props: { pBall: IBall }): ReactElement {
   )
 }
 
+function amplifyTilt(
+  absValFromPaddle: number,
+  relativePosBall: number
+): number {
+  let x = 0
+  /*
+    absValue >= 0.n
+    nの最大値の求め方
+    n = (paddleSize.y / 2 + ballPx / 2) / 10
+  */
+  if (absValFromPaddle >= 0.5) {
+    x = 1.5
+  } else if (absValFromPaddle >= 0.4) {
+    x = 2
+  } else if (absValFromPaddle >= 0.3) {
+    x = 3
+  } else if (absValFromPaddle >= 0.2) {
+    x = 4
+  } else if (absValFromPaddle >= 0.1) {
+    x = 5
+  }
+  return x === 0 ? 0 : relativePosBall / x
+}
+
+function handlePaddleCollision(pBall: IBall, paddle: IPaddle): void {
+  const relativePosBall =
+    (pBall.pos.y + ballPx / 2 - (paddle.pos.y + paddleSize.y / 2)) / 100
+  const absValFromPaddle = Math.abs(relativePosBall)
+  /*
+    relativePosBallはpaddle.yが100pxであるから機能している。
+    pBall.vel.y = relativePosBall
+    ではボールの傾きが小さいので傾きを大きくするために足している。
+  */
+  pBall.vel.y = relativePosBall + amplifyTilt(absValFromPaddle, relativePosBall)
+  /*
+    yの速度が速くなるほどxの速度を遅くしなければ、直線の軌道が遅く見えてしまう
+    n = 2.3 パドルの端に当たった時のボールのxの速度を決める変数
+    nを大きくすればxの速度は速くなる
+    nを小さくすればxの速度は遅くなる
+  */
+  const n = 2.3
+  pBall.vel.x =
+    pBall.vel.x < 0 ? 1 - absValFromPaddle / n : absValFromPaddle / n - 1
+}
+
 function updateBall(
   pBall: IBall,
   deltaTime: number,
@@ -102,22 +147,26 @@ function updateBall(
     (pBall.pos.x >= gameWinWid - ballPx && pBall.vel.x > 0)
   ) {
     pBall.pos = deepCpInitBall().pos
+    pBall.vel = deepCpInitBall().vel
     pBall.vel.x *= -1
     handleScoreChange()
   } else if (
-    // paddle hit
-    (pBall.vel.x < 0 &&
-      leftPaddle.pos.x <= pBall.pos.x + ballPx &&
-      pBall.pos.x <= leftPaddle.pos.x + paddleSize.x &&
-      leftPaddle.pos.y <= pBall.pos.y + ballPx &&
-      pBall.pos.y <= leftPaddle.pos.y + paddleSize.y) ||
-    (pBall.vel.x > 0 &&
-      rightPaddle.pos.x <= pBall.pos.x + ballPx &&
-      pBall.pos.x <= rightPaddle.pos.x + paddleSize.x &&
-      rightPaddle.pos.y <= pBall.pos.y + ballPx &&
-      pBall.pos.y <= rightPaddle.pos.y + paddleSize.y)
+    // left paddle hit
+    pBall.vel.x < 0 &&
+    leftPaddle.pos.x <= pBall.pos.x + ballPx &&
+    pBall.pos.x <= leftPaddle.pos.x + paddleSize.x &&
+    leftPaddle.pos.y <= pBall.pos.y + ballPx &&
+    pBall.pos.y <= leftPaddle.pos.y + paddleSize.y
   ) {
-    pBall.vel.x *= -1
+    handlePaddleCollision(pBall, leftPaddle)
+  } else if (
+    pBall.vel.x > 0 &&
+    rightPaddle.pos.x <= pBall.pos.x + ballPx &&
+    pBall.pos.x <= rightPaddle.pos.x + paddleSize.x &&
+    rightPaddle.pos.y <= pBall.pos.y + ballPx &&
+    pBall.pos.y <= rightPaddle.pos.y + paddleSize.y
+  ) {
+    handlePaddleCollision(pBall, rightPaddle)
   }
   return pBall
 }
@@ -144,7 +193,7 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
   const p2Score = useRef<number>(0)
-  const speed = useRef<number>(1)
+  const speed = useRef<number>(300)
 
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
@@ -161,6 +210,8 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
     setLeftPaddle(newLeftPaddle)
     setRightPaddle(newRightPaddle)
     setPBall(newBall)
+    setLeftPaddle(newLeftPaddle)
+    setRightPaddle(newRightPaddle)
     setTicks(time)
   })
 
@@ -168,13 +219,13 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
     console.log(typeof e.target.value)
     switch (e.target.value) {
       case 'easy':
-        speed.current = 1
+        speed.current = 300
         break
       case 'medium':
-        speed.current = 2
+        speed.current = 500
         break
       case 'hard':
-        speed.current = 3
+        speed.current = 800
         break
     }
   }
@@ -203,7 +254,6 @@ export function Match(): ReactElement {
   const [score, setScore] = useState<number>(0)
   const handleScoreChange = (): void => {
     setScore((score) => {
-      console.log(score + 1)
       return score + 1
     })
   }
