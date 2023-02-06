@@ -82,47 +82,45 @@ function Ball(props: { pBall: IBall }): ReactElement {
   )
 }
 
-function amplifyTilt(
+function calculateTilt(
   absValFromPaddle: number,
   relativePosBall: number
 ): number {
   let x = 0
   /*
-    absValue >= 0.n
-    nの最大値の求め方
-    n = (paddleSize.y / 2 + ballPx / 2) / 10
+    paddleの半分から80%だったら
+	paddleの半分から60%だったら...
+	xは大きくなれば傾きも大きくなる
   */
-  if (absValFromPaddle >= 0.5) {
-    x = 1.5
+  if (absValFromPaddle >= 0.9) {
+    x = 0.8
+  } else if (absValFromPaddle >= 0.8) {
+    x = 0.6
+  } else if (absValFromPaddle >= 0.6) {
+    x = 0.4
   } else if (absValFromPaddle >= 0.4) {
-    x = 2
-  } else if (absValFromPaddle >= 0.3) {
-    x = 3
+    x = 0.3
   } else if (absValFromPaddle >= 0.2) {
-    x = 4
-  } else if (absValFromPaddle >= 0.1) {
-    x = 5
+    x = 0.2
+  } else {
+    x = absValFromPaddle
   }
-  return x === 0 ? 0 : relativePosBall / x
+  return relativePosBall < 0 ? -x : x
 }
 
 function handlePaddleCollision(pBall: IBall, paddle: IPaddle): void {
   const relativePosBall =
-    (pBall.pos.y + ballPx / 2 - (paddle.pos.y + paddleSize.y / 2)) / 100
+    (pBall.pos.y + ballPx / 2 - (paddle.pos.y + paddleSize.y / 2)) /
+    (paddleSize.y / 2) // ボールがパドルの何%で衝突したのか
   const absValFromPaddle = Math.abs(relativePosBall)
-  /*
-    relativePosBallはpaddle.yが100pxであるから機能している。
-    pBall.vel.y = relativePosBall
-    ではボールの傾きが小さいので傾きを大きくするために足している。
-  */
-  pBall.vel.y = relativePosBall + amplifyTilt(absValFromPaddle, relativePosBall)
+  pBall.vel.y = calculateTilt(absValFromPaddle, relativePosBall)
   /*
     yの速度が速くなるほどxの速度を遅くしなければ、直線の軌道が遅く見えてしまう
-    n = 2.3 パドルの端に当たった時のボールのxの速度を決める変数
+    n = 3.5 パドルの端に当たった時のボールのxの速度を決める変数
     nを大きくすればxの速度は速くなる
     nを小さくすればxの速度は遅くなる
   */
-  const n = 2.3
+  const n = 3.5
   pBall.vel.x =
     pBall.vel.x < 0 ? 1 - absValFromPaddle / n : absValFromPaddle / n - 1
 }
@@ -160,6 +158,7 @@ function updateBall(
   ) {
     handlePaddleCollision(pBall, leftPaddle)
   } else if (
+    // right paddle hit
     pBall.vel.x > 0 &&
     rightPaddle.pos.x <= pBall.pos.x + ballPx &&
     pBall.pos.x <= rightPaddle.pos.x + paddleSize.x &&
@@ -219,10 +218,10 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
     console.log(typeof e.target.value)
     switch (e.target.value) {
       case 'easy':
-        speed.current = 300
+        speed.current = 400
         break
       case 'medium':
-        speed.current = 500
+        speed.current = 600
         break
       case 'hard':
         speed.current = 800
