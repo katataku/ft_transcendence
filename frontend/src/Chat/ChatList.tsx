@@ -5,7 +5,8 @@ import { type ReactElement } from 'react'
 
 export function ChatList(): ReactElement {
   const [name, setName] = React.useState<string>('')
-  const [roomList, _setRoomList] = React.useState<string[]>(['room1', 'room2'])
+  const [newRoom, setNewRoom] = React.useState<string>('')
+  const [roomList, setRoomList] = React.useState<string[]>(['room1', 'room2'])
 
   return (
     <>
@@ -29,9 +30,38 @@ export function ChatList(): ReactElement {
               <Link to="/chat" state={{ room, name }}>
                 Move to Chat {room}
               </Link>
+              <button
+                onClick={() => {
+                  setRoomList((roomList) =>
+                    roomList.filter((item) => !(item === room))
+                  )
+                }}
+              >
+                delete room
+              </button>
             </li>
           ))}
         </ul>
+        <p>
+          new room:
+          <label>
+            <input
+              type="text"
+              value={newRoom}
+              onChange={(e) => {
+                setNewRoom(e.target.value)
+              }}
+            />
+          </label>
+          <button
+            onClick={() => {
+              setRoomList((roomList) => [...roomList, newRoom])
+              setNewRoom('')
+            }}
+          >
+            create room
+          </button>
+        </p>
       </div>
     </>
   )
