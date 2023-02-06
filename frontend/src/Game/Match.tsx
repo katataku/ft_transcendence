@@ -209,8 +209,6 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
     setLeftPaddle(newLeftPaddle)
     setRightPaddle(newRightPaddle)
     setPBall(newBall)
-    setLeftPaddle(newLeftPaddle)
-    setRightPaddle(newRightPaddle)
     setTicks(time)
   })
 
