@@ -20,10 +20,9 @@ export class ChatGateway {
   handleMessage(
     @MessageBody() data: string,
     @ConnectedSocket() _client: Socket,
-  ): string {
+  ): void {
     this.logger.log(`message`);
     this.server.emit('message', data);
-    return data;
   }
 
   @SubscribeMessage('channelNotification')
