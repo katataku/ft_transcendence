@@ -23,7 +23,7 @@ interface IPaddle {
   pos: Vector2
 }
 
-const gameWinWid: number = 800
+const gameWinWid: number = 1000
 const gameWinHght: number = 500
 const ballPx: number = 20
 const paddleSize: Vector2 = {
@@ -181,8 +181,6 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
 
   return (
     <div id="game">
-      <div id="leftScore">{p1Score.current}</div>
-      <div id="rightScore">{p2Score.current}</div>
       <div id="powerup">
         <label htmlFor="powerup">Speed:</label>
         <select onChange={modifySpeed} name="speed" id="powerup">
@@ -191,10 +189,14 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
           <option value="hard">Hard</option>
         </select>
       </div>
-      <div id="gameDiv"></div>
-      <Ball pBall={pBall} />
-      <Paddle paddle={leftPaddle} />
-      <Paddle paddle={rightPaddle} />
+      <div id="match">
+        <div id="leftScore">{p1Score.current}</div>
+        <div id="rightScore">{p2Score.current}</div>
+        <div id="gameDiv"></div>
+        <Ball pBall={pBall} />
+        <Paddle paddle={leftPaddle} />
+        <Paddle paddle={rightPaddle} />
+      </div>
     </div>
   )
 }
@@ -227,13 +229,14 @@ export function Match(): ReactElement {
 
   return (
     <div id="page">
-      <div id="header">
-        <button onClick={req}>click</button>
+      <div className="row" id="header">
+        <div className="column" id="p1">Player 1</div>
+        <div className="column" id="p2">Player 2</div>
       </div>
       <div id="score">
         <p>score: {score}</p>
       </div>
-      <Game handleScoreChange={handleScoreChange} />
+        <Game handleScoreChange={handleScoreChange} />
     </div>
   )
 }
