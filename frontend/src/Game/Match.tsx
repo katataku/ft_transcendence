@@ -125,6 +125,15 @@ function handlePaddleCollision(pBall: IBall, paddle: IPaddle): void {
     pBall.vel.x < 0 ? 1 - absValFromPaddle / n : absValFromPaddle / n - 1
 }
 
+function isHitPaddle(pBall: IBall, paddle: IPaddle): boolean {
+  return (
+    paddle.pos.x <= pBall.pos.x + ballPx &&
+    pBall.pos.x <= paddle.pos.x + paddleSize.x &&
+    paddle.pos.y <= pBall.pos.y + ballPx &&
+    pBall.pos.y <= paddle.pos.y + paddleSize.y
+  )
+}
+
 function updateBall(
   pBall: IBall,
   deltaTime: number,
@@ -151,19 +160,13 @@ function updateBall(
   } else if (
     // left paddle hit
     pBall.vel.x < 0 &&
-    leftPaddle.pos.x <= pBall.pos.x + ballPx &&
-    pBall.pos.x <= leftPaddle.pos.x + paddleSize.x &&
-    leftPaddle.pos.y <= pBall.pos.y + ballPx &&
-    pBall.pos.y <= leftPaddle.pos.y + paddleSize.y
+    isHitPaddle(pBall, leftPaddle)
   ) {
     handlePaddleCollision(pBall, leftPaddle)
   } else if (
     // right paddle hit
     pBall.vel.x > 0 &&
-    rightPaddle.pos.x <= pBall.pos.x + ballPx &&
-    pBall.pos.x <= rightPaddle.pos.x + paddleSize.x &&
-    rightPaddle.pos.y <= pBall.pos.y + ballPx &&
-    pBall.pos.y <= rightPaddle.pos.y + paddleSize.y
+    isHitPaddle(pBall, rightPaddle)
   ) {
     handlePaddleCollision(pBall, rightPaddle)
   }
@@ -192,7 +195,7 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
   const p2Score = useRef<number>(0)
-  const speed = useRef<number>(300)
+  const speed = useRef<number>(400)
 
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
