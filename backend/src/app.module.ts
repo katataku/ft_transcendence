@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { HealthCheckModulle } from './healthCheck/healthCheck.module';
+import { HealthCheckModule } from './healthCheck/healthCheck.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthCheck } from './healthCheck/healthCheck.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
@@ -24,7 +24,7 @@ const options: PostgresConnectionOptions = {
 @Module({
   imports: [
     TypeOrmModule.forRoot(options),
-    HealthCheckModulle,
+    HealthCheckModule,
     ChatMuteUserModule,
   ],
   providers: [ChatGateway],
