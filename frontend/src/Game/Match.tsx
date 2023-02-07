@@ -82,10 +82,8 @@ function Ball(props: { pBall: IBall }): ReactElement {
   )
 }
 
-function calculateTilt(
-  absValFromPaddle: number,
-  relativePosBall: number
-): number {
+function calculateTilt(relativePosBall: number): number {
+  const absValFromPaddle = Math.abs(relativePosBall)
   let x = 0
   /*
     paddleの半分から80%だったら
@@ -109,20 +107,16 @@ function calculateTilt(
 }
 
 function handlePaddleCollision(pBall: IBall, paddle: IPaddle): void {
-  const relativePosBall =
+  const compositeVelocity = Math.sqrt(pBall.vel.x ** 2 + pBall.vel.y ** 2)
+  pBall.vel.y = calculateTilt(
+    // ボールがパドルの何%で衝突したのか)
     (pBall.pos.y + ballPx / 2 - (paddle.pos.y + paddleSize.y / 2)) /
-    (paddleSize.y / 2) // ボールがパドルの何%で衝突したのか
-  const absValFromPaddle = Math.abs(relativePosBall)
-  pBall.vel.y = calculateTilt(absValFromPaddle, relativePosBall)
-  /*
-    yの速度が速くなるほどxの速度を遅くしなければ、直線の軌道が遅く見えてしまう
-    n = 3.5 パドルの端に当たった時のボールのxの速度を決める変数
-    nを大きくすればxの速度は速くなる
-    nを小さくすればxの速度は遅くなる
-  */
-  const n = 3.5
+      (paddleSize.y / 2)
+  )
   pBall.vel.x =
-    pBall.vel.x < 0 ? 1 - absValFromPaddle / n : absValFromPaddle / n - 1
+    pBall.vel.x < 0
+      ? Math.sqrt(compositeVelocity ** 2 - pBall.vel.y ** 2)
+      : -Math.sqrt(compositeVelocity ** 2 - pBall.vel.y ** 2)
 }
 
 function isHitPaddle(pBall: IBall, paddle: IPaddle): boolean {
