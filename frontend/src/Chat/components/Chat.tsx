@@ -1,54 +1,22 @@
-import * as React from 'react'
-import './styles.css'
+import { useEffect, useState } from 'react'
+import '../assets/styles.css'
 import io from 'socket.io-client'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { type ReactElement } from 'react'
 import axios from 'axios'
 
-interface messageEventType {
-  key: number
-  name: string
-  room: string
-  msg: string
-}
-
-interface banEventType {
-  key: number
-  name: string
-  room: string
-}
-
-interface State {
-  name: string
-  room: string
-}
-
-interface messageItem {
-  name: string
-  body: JSX.Element
-}
-
-interface muteUserList {
-  muteUserId: string
-  mutedUserId: string
-}
-
-// const ServerURL: string = "wss://ws.postman-echo.com/raw";
 const ServerURL: string = 'ws://localhost:3002'
 const socket = io(ServerURL)
 
 export function Chat(): ReactElement {
-  // const [room, setRoom] = React.useState<string>("");
-  // const [name, setName] = React.useState<string>("");
-  const [message, setMessage] = React.useState<string>('')
-  const [itemList, setItemList] = React.useState<messageItem[]>([])
-  const [mutedUserList, setMutedUserList] = React.useState<string[]>([])
+  const [message, setMessage] = useState<string>('')
+  const [itemList, setItemList] = useState<messageItem[]>([])
+  const [mutedUserList, setMutedUserList] = useState<string[]>([])
 
-  const location = useLocation()
-  const { room, name }: State = location.state
+  const { room, name }: ChatState = useLocation().state
   const navigate = useNavigate()
 
-  React.useEffect(() => {
+  useEffect(() => {
     axios.defaults.baseURL = 'http://localhost:3001'
     axios
       .get('/chat-mute-user')
@@ -65,6 +33,19 @@ export function Chat(): ReactElement {
   }, [])
 
   const makeItem = (item: messageEventType): messageItem => {
+    const handleMuteButtonClick = (): void => {
+      setMutedUserList((mutedUserList) => [...mutedUserList, item.name])
+    }
+
+    const handleBanButtonClick = (): void => {
+      const sendMsg: banEventType = {
+        key: Date.now(),
+        name: item.name,
+        room
+      }
+      socket.emit('banNotification', sendMsg)
+    }
+
     const outerClassName: string =
       name === item.name ? 'line__right' : 'line__left'
     const innerClassName: string =
@@ -74,25 +55,8 @@ export function Chat(): ReactElement {
         <></>
       ) : (
         <>
-          <button
-            onClick={(): void => {
-              setMutedUserList((mutedUserList) => [...mutedUserList, item.name])
-            }}
-          >
-            mute
-          </button>
-          <button
-            onClick={(): void => {
-              const sendMsg: banEventType = {
-                key: Date.now(),
-                name: item.name,
-                room
-              }
-              socket.emit('banNotification', sendMsg)
-            }}
-          >
-            ban
-          </button>
+          <button onClick={handleMuteButtonClick}>mute</button>
+          <button onClick={handleBanButtonClick}>ban</button>
         </>
       )
 
@@ -112,24 +76,29 @@ export function Chat(): ReactElement {
     }
   }
 
-  React.useEffect(() => {
-    socket.on('connect', () => {
-      console.log('socket connected.')
-    })
+  const handleConnectEvent = (): void => {
+    console.log('socket connected.')
+  }
 
-    socket.on('message', (data: messageEventType) => {
-      console.log('message received:' + JSON.stringify(data))
-      if (data.room === room) {
-        setItemList((itemList) => [...itemList, makeItem(data)])
-      }
-    })
+  const handleMessageEvent = (data: messageEventType): void => {
+    console.log('message received:' + JSON.stringify(data))
+    if (data.room === room) {
+      setItemList((itemList) => [...itemList, makeItem(data)])
+    }
+  }
 
-    socket.on('banNotification', (item: banEventType) => {
-      if (item.room === room && item.name === name) {
-        navigate('/chatlist', { state: { banned: true } })
-      }
-    })
+  const handleBanEvent = (item: banEventType): void => {
+    console.log('ban received:' + JSON.stringify(item))
+    const ChatListState: ChatListState = { banned: true }
+    if (item.room === room && item.name === name) {
+      navigate('/chatlist', { state: ChatListState })
+    }
+  }
 
+  useEffect(() => {
+    socket.on('connect', handleConnectEvent)
+    socket.on('message', handleMessageEvent)
+    socket.on('banNotification', handleBanEvent)
     socket.emit('channelNotification', room)
 
     return () => {
