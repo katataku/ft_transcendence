@@ -117,15 +117,10 @@ export function Chat(): ReactElement {
       console.log('socket connected.')
     })
 
-    socket.on('message', (data: string) => {
-      console.log('message received:' + data)
-      try {
-        const item: messageEventType = JSON.parse(data)
-        if (item.room === room) {
-          setItemList((itemList) => [...itemList, makeItem(item)])
-        }
-      } catch (error) {
-        console.log('message parse error.')
+    socket.on('message', (data: messageEventType) => {
+      console.log('message received:' + JSON.stringify(data))
+      if (data.room === room) {
+        setItemList((itemList) => [...itemList, makeItem(data)])
       }
     })
 
@@ -135,7 +130,9 @@ export function Chat(): ReactElement {
       }
     })
 
-    return () => {
+   socket.emit('channelNotification', room)
+
+   return () => {
       socket.off('connect')
       socket.off('message')
       socket.off('banNotification')
@@ -152,7 +149,7 @@ export function Chat(): ReactElement {
       msg
     }
     const sendMsg: string = JSON.stringify(obj)
-    socket.emit('message', sendMsg)
+    socket.emit('message', obj)
     console.log('message sent:' + sendMsg)
     setMessage('')
   }
