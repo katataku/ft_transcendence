@@ -130,9 +130,9 @@ export function Chat(): ReactElement {
       }
     })
 
-   socket.emit('channelNotification', room)
+    socket.emit('channelNotification', room)
 
-   return () => {
+    return () => {
       socket.off('connect')
       socket.off('message')
       socket.off('banNotification')
