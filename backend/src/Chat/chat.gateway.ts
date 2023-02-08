@@ -24,12 +24,11 @@ export class ChatGateway {
 
   @SubscribeMessage('message')
   handleMessage(
-    @MessageBody() data: string,
+    @MessageBody() data: messageEventType,
     @ConnectedSocket() _client: Socket,
   ): void {
-    const item: messageEventType = JSON.parse(data);
     this.logger.log(`message`);
-    this.server.to(item.room).emit('message', data);
+    this.server.to(data.room).emit('message', data);
   }
 
   @SubscribeMessage('channelNotification')
