@@ -8,11 +8,17 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
+interface messageEventType {
+  key: number;
+  name: string;
+  room: string;
+  msg: string;
+}
+
 @WebSocketGateway(3002, { cors: { origin: '*' } })
 export class ChatGateway {
   @WebSocketServer()
   server: Server;
-  clientList: Map<string, Socket[]> = new Map();
 
   private logger: Logger = new Logger('ChatGateway');
 
@@ -21,8 +27,9 @@ export class ChatGateway {
     @MessageBody() data: string,
     @ConnectedSocket() _client: Socket,
   ): void {
+    const item: messageEventType = JSON.parse(data);
     this.logger.log(`message`);
-    this.server.emit('message', data);
+    this.server.to(item.room).emit('message', data);
   }
 
   @SubscribeMessage('channelNotification')
@@ -33,12 +40,7 @@ export class ChatGateway {
     const room: string = data;
     this.logger.log(`channelNotification`);
     this.logger.log('room notify:' + room);
-    this.logger.log('clientList.get(room):' + this.clientList.get(room));
-    if (this.clientList.get(room) === undefined) {
-      this.clientList[room] = [];
-    }
-    this.clientList[room].push(client);
-    this.logger.log('clientList.get(room):' + this.clientList.get(room));
+    client.join(room);
     return data;
   }
 

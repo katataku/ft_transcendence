@@ -104,6 +104,7 @@ export function Chat(): ReactElement {
         console.log('message parse error.')
       }
     })
+    socket.emit('channelNotification', room)
     return () => {
       socket.off('connect')
       socket.off('message')
