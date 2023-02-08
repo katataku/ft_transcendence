@@ -9,4 +9,4 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [HealthCheckController],
   providers: [HealthCheckService],
 })
-export class HealthCheckModulle {}
+export class HealthCheckModule {}
