@@ -94,10 +94,10 @@ function calculateTilt(relativePosBall: number): number {
   const absValFromPaddle = Math.abs(relativePosBall)
   let x = 0
   /*
-	  paddleの半分から80%だったら
-	  paddleの半分から60%だったら...
-	  xは大きくなれば傾きも大きくなる
-	*/
+    paddleの半分から80%だったら
+    paddleの半分から60%だったら...
+    xは大きくなれば傾きも大きくなる
+  */
   if (absValFromPaddle >= 0.9) {
     x = 0.8
   } else if (absValFromPaddle >= 0.8) {
@@ -161,6 +161,7 @@ function updateBall(
       updateScore('left')
     }
     pBall.pos = deepCpInitBall().pos
+    pBall.vel = deepCpInitBall().vel
     pBall.vel.x *= -1
   } else if (
     // left paddle hit
