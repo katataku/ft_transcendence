@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
-import { HealthCheckModule } from './healthCheck/healthCheck.module';
+import { HealthCheckModule } from '../healthCheck';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HealthCheck } from './healthCheck/healthCheck.entity';
+import { HealthCheck } from '../entity/healthCheck.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
-import { ChatGateway } from './Chat/chat.gateway';
-import { ChatMuteUserModule } from './Chat/chat-mute-user.module';
+import { ChatModule } from '../chat';
+import { ChatMuteUserModule } from '../chatMuteUser';
 import * as dotenv from 'dotenv';
-import { ChatMuteUser } from './Chat/chat-mute-user.entity';
+import { ChatMuteUser } from '../entity/chatMuteUser.entity';
 
 dotenv.config();
 
@@ -26,7 +26,7 @@ const options: PostgresConnectionOptions = {
     TypeOrmModule.forRoot(options),
     HealthCheckModule,
     ChatMuteUserModule,
+    ChatModule,
   ],
-  providers: [ChatGateway],
 })
 export class AppModule {}

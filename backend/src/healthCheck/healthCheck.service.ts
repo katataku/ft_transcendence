@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { HealthCheck } from './healthCheck.entity';
+import { HealthCheck } from '../entity/healthCheck.entity';
 
 @Injectable()
 export class HealthCheckService {

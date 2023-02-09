@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChatMuteUserController } from './chat-mute-user.controller';
-import { ChatMuteUser } from './chat-mute-user.entity';
-import { ChatMuteUserService } from './chat-mute-user.service';
+import { ChatMuteUserController } from './chatMuteUser.controller';
+import { ChatMuteUser } from '../entity/chatMuteUser.entity';
+import { ChatMuteUserService } from './chatMuteUser.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ChatMuteUser])],

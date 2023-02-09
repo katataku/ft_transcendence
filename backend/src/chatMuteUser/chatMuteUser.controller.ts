@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
-import { ChatMuteUserService } from './chat-mute-user.service';
-import { ChatMuteUser } from './chat-mute-user.entity';
+import { ChatMuteUserService } from './chatMuteUser.service';
+import { ChatMuteUser } from '../entity/chatMuteUser.entity';
 
 @Controller('chat-mute-user')
 export class ChatMuteUserController {

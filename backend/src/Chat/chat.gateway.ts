@@ -8,13 +8,6 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 
-interface messageEventType {
-  key: number;
-  name: string;
-  room: string;
-  msg: string;
-}
-
 @WebSocketGateway(3002, { cors: { origin: '*' } })
 export class ChatGateway {
   @WebSocketServer()
