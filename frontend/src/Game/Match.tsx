@@ -23,6 +23,13 @@ interface IPaddle {
   pos: Vector2
 }
 
+interface IScore {
+  leftScore: number
+  rightScore: number
+}
+
+type UPlayer = 'left' | 'right'
+
 const gameWinWid: number = 800
 const gameWinHght: number = 500
 const ballPx: number = 20
@@ -47,6 +54,7 @@ const initRightPaddle: IPaddle = {
 const deepCpInitBall = (): IBall => {
   return JSON.parse(JSON.stringify(initBall)) // deep copy of Object
 }
+const winningScore = 3
 
 let keydown = ''
 
@@ -88,7 +96,7 @@ function updateBall(
   speed: number,
   leftPaddle: IPaddle,
   rightPaddle: IPaddle,
-  handleScoreChange: () => void
+  updateScore: (player: UPlayer) => void
 ): IBall {
   pBall.pos.x += pBall.vel.x * deltaTime * speed
   pBall.pos.y += pBall.vel.y * deltaTime * speed
@@ -98,12 +106,16 @@ function updateBall(
     pBall.vel.y *= -1
   } else if (
     // goal hit
-    (pBall.pos.x <= 0 && pBall.vel.x < 0) ||
-    (pBall.pos.x >= gameWinWid - ballPx && pBall.vel.x > 0)
+    pBall.pos.x <= 0 ||
+    pBall.pos.x >= gameWinWid - ballPx
   ) {
+    if (pBall.vel.x < 0) {
+      updateScore('right')
+    } else {
+      updateScore('left')
+    }
     pBall.pos = deepCpInitBall().pos
     pBall.vel.x *= -1
-    handleScoreChange()
   } else if (
     // paddle hit
     (pBall.vel.x < 0 &&
@@ -137,14 +149,30 @@ function updatePaddle(paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function Game(props: { handleScoreChange: () => void }): ReactElement {
+function renderResult(isLeftWinner: boolean): ReactElement {
+  const winner = isLeftWinner ? 'left' : 'right'
+  return <div id={`${winner}Result`}>WIN</div>
+}
+
+function Game(): ReactElement {
   const [_ticks, setTicks] = useState<number>(0)
   const [pBall, setPBall] = useState<IBall>(deepCpInitBall())
-  const p1Score = useRef<number>(0)
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
-  const p2Score = useRef<number>(0)
+  const score = useRef<IScore>({ leftScore: 0, rightScore: 0 })
   const speed = useRef<number>(1)
+  const updateScore = useRef<(player: UPlayer) => void>((player) => {
+    if (player === 'left') {
+      score.current.leftScore++
+    } else if (player === 'right') {
+      score.current.rightScore++
+    }
+  })
+
+  const isGameSet = !(
+    score.current.leftScore < winningScore &&
+    score.current.rightScore < winningScore
+  )
 
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
@@ -156,13 +184,13 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
       speed.current,
       newLeftPaddle,
       newRightPaddle,
-      props.handleScoreChange
+      updateScore.current
     )
     setLeftPaddle(newLeftPaddle)
     setRightPaddle(newRightPaddle)
     setPBall(newBall)
     setTicks(time)
-  })
+  }, isGameSet)
 
   const modifySpeed = (e: ChangeEvent<HTMLSelectElement>): void => {
     console.log(typeof e.target.value)
@@ -181,8 +209,9 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
 
   return (
     <div id="game">
-      <div id="leftScore">{p1Score.current}</div>
-      <div id="rightScore">{p2Score.current}</div>
+      <div id="gameDiv"></div>
+      <div id="leftScore">{score.current.leftScore}</div>
+      <div id="rightScore">{score.current.rightScore}</div>
       <div id="powerup">
         <label htmlFor="powerup">Speed:</label>
         <select onChange={modifySpeed} name="speed" id="powerup">
@@ -191,8 +220,12 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
           <option value="hard">Hard</option>
         </select>
       </div>
-      <div id="gameDiv"></div>
-      <Ball pBall={pBall} />
+      {/* <div id="gameDiv"></div> */}
+      {isGameSet ? (
+        renderResult(score.current.leftScore > score.current.rightScore)
+      ) : (
+        <Ball pBall={pBall} />
+      )}
       <Paddle paddle={leftPaddle} />
       <Paddle paddle={rightPaddle} />
     </div>
@@ -200,20 +233,6 @@ function Game(props: { handleScoreChange: () => void }): ReactElement {
 }
 
 export function Match(): ReactElement {
-  const [score, setScore] = useState<number>(0)
-  const handleScoreChange = (): void => {
-    setScore((score) => {
-      console.log(score + 1)
-      return score + 1
-    })
-  }
-
-  useEffect(() => {
-    if (score === 10) {
-      console.log('GAME SET')
-    }
-  }, [score])
-
   useEffect(() => {
     const handleOnKeyDown = (e: KeyboardEvent): void => {
       keydown = e.code
@@ -230,10 +249,7 @@ export function Match(): ReactElement {
       <div id="header">
         <button onClick={req}>click</button>
       </div>
-      <div id="score">
-        <p>score: {score}</p>
-      </div>
-      <Game handleScoreChange={handleScoreChange} />
+      <Game />
     </div>
   )
 }
