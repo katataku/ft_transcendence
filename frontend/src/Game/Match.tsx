@@ -274,12 +274,8 @@ export function Match(): ReactElement {
   return (
     <div id="page">
       <div className="row" id="header">
-        <div className="column" id="p1">
-          Player 1
-        </div>
-        <div className="column" id="p2">
-          Player 2
-        </div>
+        <div className="column" id="p1">Player 1</div>
+        <div className="column" id="p2">Player 2</div>
       </div>
       <div id="score">
         <p>score: {score}</p>

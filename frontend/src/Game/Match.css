@@ -9,7 +9,6 @@
 #header {
   color: black;
   font-family: 'Courier New', monospace;
-  overflow: hidden;
   font-weight: bolder;
   font-size: 4em;
 }
@@ -70,7 +69,6 @@
 
 #powerup {
   color: black;
-  top: 80%
 }
 
 #gameDiv {
