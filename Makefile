@@ -36,3 +36,8 @@ re:down build up
 .PHONY:prune
 prune:
 	docker system  prune
+
+.PHONY:lint
+lint:
+	cd ./frontend && npm run lint && npm run format
+	cd ./backend && npm run lint && npm run format

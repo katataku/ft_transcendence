@@ -8,7 +8,9 @@ export function App(): ReactElement {
       <button onClick={req}>req</button>
       React
       <p>
-        <Link to="chatlist">Move to ChatList</Link>
+        <Link to="chatlist" state={{ banned: false }}>
+          Move to ChatList
+        </Link>
       </p>
       <p>
         <Link to="Match">Move to Match</Link>
