@@ -39,8 +39,8 @@ const paddleSize: Vector2 = {
 }
 const paddleSpeed: number = 10
 const initBall: IBall = {
-  pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 },
-  vel: { x: -233, y: 235 }
+  pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 - ballPx / 2 },
+  vel: { x: -1, y: 0.5 }
 }
 const initLeftPaddle: IPaddle = {
   pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 }
@@ -90,6 +90,52 @@ function Ball(props: { pBall: IBall }): ReactElement {
   )
 }
 
+function calculateTilt(relativePosBall: number): number {
+  const absValFromPaddle = Math.abs(relativePosBall)
+  let x = 0
+  /*
+	  paddleの半分から80%だったら
+	  paddleの半分から60%だったら...
+	  xは大きくなれば傾きも大きくなる
+	*/
+  if (absValFromPaddle >= 0.9) {
+    x = 0.8
+  } else if (absValFromPaddle >= 0.8) {
+    x = 0.6
+  } else if (absValFromPaddle >= 0.6) {
+    x = 0.4
+  } else if (absValFromPaddle >= 0.4) {
+    x = 0.3
+  } else if (absValFromPaddle >= 0.2) {
+    x = 0.2
+  } else {
+    x = absValFromPaddle
+  }
+  return relativePosBall < 0 ? -x : x
+}
+
+function handlePaddleCollision(pBall: IBall, paddle: IPaddle): void {
+  const compositeVelocity = Math.sqrt(pBall.vel.x ** 2 + pBall.vel.y ** 2)
+  pBall.vel.y = calculateTilt(
+    // ボールがパドルの何%で衝突したのか)
+    (pBall.pos.y + ballPx / 2 - (paddle.pos.y + paddleSize.y / 2)) /
+      (paddleSize.y / 2)
+  )
+  pBall.vel.x =
+    pBall.vel.x < 0
+      ? Math.sqrt(compositeVelocity ** 2 - pBall.vel.y ** 2)
+      : -Math.sqrt(compositeVelocity ** 2 - pBall.vel.y ** 2)
+}
+
+function isHitPaddle(pBall: IBall, paddle: IPaddle): boolean {
+  return (
+    paddle.pos.x <= pBall.pos.x + ballPx &&
+    pBall.pos.x <= paddle.pos.x + paddleSize.x &&
+    paddle.pos.y <= pBall.pos.y + ballPx &&
+    pBall.pos.y <= paddle.pos.y + paddleSize.y
+  )
+}
+
 function updateBall(
   pBall: IBall,
   deltaTime: number,
@@ -117,19 +163,17 @@ function updateBall(
     pBall.pos = deepCpInitBall().pos
     pBall.vel.x *= -1
   } else if (
-    // paddle hit
-    (pBall.vel.x < 0 &&
-      leftPaddle.pos.x <= pBall.pos.x + ballPx &&
-      pBall.pos.x <= leftPaddle.pos.x + paddleSize.x &&
-      leftPaddle.pos.y <= pBall.pos.y + ballPx &&
-      pBall.pos.y <= leftPaddle.pos.y + paddleSize.y) ||
-    (pBall.vel.x > 0 &&
-      rightPaddle.pos.x <= pBall.pos.x + ballPx &&
-      pBall.pos.x <= rightPaddle.pos.x + paddleSize.x &&
-      rightPaddle.pos.y <= pBall.pos.y + ballPx &&
-      pBall.pos.y <= rightPaddle.pos.y + paddleSize.y)
+    // left paddle hit
+    pBall.vel.x < 0 &&
+    isHitPaddle(pBall, leftPaddle)
   ) {
-    pBall.vel.x *= -1
+    handlePaddleCollision(pBall, leftPaddle)
+  } else if (
+    // right paddle hit
+    pBall.vel.x > 0 &&
+    isHitPaddle(pBall, rightPaddle)
+  ) {
+    handlePaddleCollision(pBall, rightPaddle)
   }
   return pBall
 }
@@ -160,7 +204,7 @@ function Game(): ReactElement {
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
   const score = useRef<IScore>({ leftScore: 0, rightScore: 0 })
-  const speed = useRef<number>(1)
+  const speed = useRef<number>(400)
   const updateScore = useRef<(player: UPlayer) => void>((player) => {
     if (player === 'left') {
       score.current.leftScore++
@@ -196,13 +240,13 @@ function Game(): ReactElement {
     console.log(typeof e.target.value)
     switch (e.target.value) {
       case 'easy':
-        speed.current = 1
+        speed.current = 400
         break
       case 'medium':
-        speed.current = 2
+        speed.current = 600
         break
       case 'hard':
-        speed.current = 3
+        speed.current = 800
         break
     }
   }
@@ -220,7 +264,6 @@ function Game(): ReactElement {
           <option value="hard">Hard</option>
         </select>
       </div>
-      {/* <div id="gameDiv"></div> */}
       {isGameSet ? (
         renderResult(score.current.leftScore > score.current.rightScore)
       ) : (
