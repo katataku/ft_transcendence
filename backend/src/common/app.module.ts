@@ -7,7 +7,7 @@ import { ChatModule } from '../chat';
 import { ChatMuteUserModule } from '../chatMuteUser';
 import * as dotenv from 'dotenv';
 import { ChatMuteUser } from '../entities/chatMuteUser.entity';
-import { ChatRoom } from 'src/entity/chatRoom.entity';
+import { ChatRoom } from 'src/entities/chatRoom.entity';
 import { ChatRoomModule } from 'src/chatRoom';
 
 dotenv.config();

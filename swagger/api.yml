@@ -9,7 +9,8 @@ servers:
 tags:
   - name: health
     description: ヘルスチェック
-
+  - name: chatRoom
+    description: チャットルーム
 paths:
   /health:
     get:
@@ -28,3 +29,28 @@ paths:
                   health:
                     type: string
                     example: OK
+  /chatroom:
+    get:
+      tags:
+        - chatRoom
+      summary: get chatRoom List
+      description: chatRoom情報の一覧を取得
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chat_room_res'
+
+components:
+  schemas:
+    chat_room_res:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Tom Brady
