@@ -17,8 +17,8 @@ export class HealthCheckService {
     });
     this.healthCheckRepository
       .save({ health: healthContent })
-      .then((res) => {
-        Logger.debug(`Health Check Seeded ID:${res.id}`);
+      .then(() => {
+        Logger.debug('Health Check Seeded');
       })
       .catch((err) => {
         Logger.error('Faild to Seed:', err);
