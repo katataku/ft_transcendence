@@ -1,35 +1,30 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HealthCheck } from '../entities/healthCheck.entity';
+import { HealthDto } from 'src/common/dto/health.dto';
+
+const healthContent: string = 'OK'
 
 @Injectable()
 export class HealthCheckService {
   constructor(
     @InjectRepository(HealthCheck)
     private healthCheckRepository: Repository<HealthCheck>,
-  ) {}
-
-  async create() {
-    const data = new HealthCheck();
-    data.health = 'OK';
-    this.healthCheckRepository.save(data);
+    ) {
+      this.healthCheckRepository.save({health: healthContent}).then(res => {
+        Logger.debug('Health Check Seeded')
+      }).catch(err => {
+        Logger.error('Faild to Seed')
+      })
   }
 
-  async getLatest(): Promise<HealthCheck> {
-    const rows: HealthCheck[] = await this.healthCheckRepository.find();
-    if (rows.length != 0) {
-      return this.healthCheckRepository.findOne({ where: { id: rows.length } });
+  async get(): Promise<HealthDto> {
+    const data: HealthCheck = await this.healthCheckRepository.findOne({where: {health: healthContent}});
+    if (data == null) {
+      throw new HttpException('Not found.', HttpStatus.NOT_FOUND);
     }
-    throw new HttpException('Not found.', HttpStatus.NOT_FOUND);
-  }
-
-  async deleteLatest() {
-    const rows: HealthCheck[] = await this.healthCheckRepository.find();
-    if (rows.length != 0) {
-      this.healthCheckRepository.delete(rows.length);
-      return;
-    }
-    throw new HttpException('Not found.', HttpStatus.NOT_FOUND);
+    const res: HealthDto = { health: data.health };
+    return res;
   }
 }
