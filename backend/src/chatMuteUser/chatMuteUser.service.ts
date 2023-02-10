@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ChatMuteUser } from '../entity/chatMuteUser.entity';
+import { ChatMuteUser } from '../entities/chatMuteUser.entity';
 
 @Injectable()
 export class ChatMuteUserService {

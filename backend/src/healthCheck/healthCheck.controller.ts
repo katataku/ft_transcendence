@@ -1,5 +1,5 @@
 import { Get, Post, Delete, Controller } from '@nestjs/common';
-import { HealthCheck } from '../entity/healthCheck.entity';
+import { HealthCheck } from '../entities/healthCheck.entity';
 import { HealthCheckService } from './healthCheck.service';
 
 @Controller('health')

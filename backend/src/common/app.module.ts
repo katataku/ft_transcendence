@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { HealthCheckModule } from '../healthCheck';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { HealthCheck } from '../entity/healthCheck.entity';
+import { HealthCheck } from '../entities/healthCheck.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { ChatModule } from '../chat';
 import { ChatMuteUserModule } from '../chatMuteUser';
 import * as dotenv from 'dotenv';
-import { ChatMuteUser } from '../entity/chatMuteUser.entity';
+import { ChatMuteUser } from '../entities/chatMuteUser.entity';
 
 dotenv.config();
 
