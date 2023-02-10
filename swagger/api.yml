@@ -9,6 +9,8 @@ servers:
 tags:
   - name: health
     description: ヘルスチェック
+  - name: user
+    description: ユーザー
 
 paths:
   /health:
@@ -19,12 +21,84 @@ paths:
       description: ヘルスチェック
       responses:
         200:
-          description: 成功例
+          description: 成功
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  health:
-                    type: string
-                    example: OK
+                $ref: '#/components/schemas/health'
+
+  /user:
+    post:
+      tags:
+        - user
+      summary: user
+      description: ユーザーの作成
+      requestBody:
+        description: create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_create_req'
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_create_res'
+
+  /user/{userId}:
+    get:
+      tags:
+        - user
+      summary: get user by ID
+      description: IDを指定してuser情報を取得
+      parameters:
+        - name: userId
+          description: id
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_get_res'
+
+components:
+  schemas:
+    health:
+      type: object
+      properties:
+        health:
+          type: string
+          example: OK
+
+    user_create_req:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Tom Brady
+        password:
+          type: string
+          example: hashhash
+
+    user_create_res:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+    user_get_res:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Tom Brady
