@@ -31,10 +31,14 @@ export class UsersService {
     return res;
   }
 
-  async getById(target: number): Promise<UserGetDto> {
-    const data = await this.usersRepository.findOne({ where: { id: target } });
+  async getById(target: string): Promise<UserGetDto> {
+    const id = Number(target);
+    if (isNaN(id)) {
+      throw new HttpException('Invalid Parameter.', HttpStatus.BAD_REQUEST);
+    }
+    const data = await this.usersRepository.findOne({ where: { id: id } });
     if (data == null) {
-      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
+      throw new HttpException('User Not Found.', HttpStatus.NO_CONTENT);
     }
 
     const res: UserGetDto = {
