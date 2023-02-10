@@ -10,7 +10,7 @@
 
 }
 
-#game {
+#match {
   width: var(--wid);
   height: var(--height);
   background-color:#000000;
@@ -68,7 +68,7 @@
   top: -105%;
 }
 
-#gameDiv {
+#boardDiv {
   height: var(--height);
   position: relative;
   background: repeating-linear-gradient(

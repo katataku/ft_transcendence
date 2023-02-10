@@ -188,7 +188,7 @@ function Result(props: { isLeftWinner: boolean }): ReactElement {
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function Game(): ReactElement {
+function Match(): ReactElement {
   const [_ticks, setTicks] = useState<number>(0)
   const [ball, setBall] = useState<IBall>(deepCpInitBall())
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
@@ -203,7 +203,7 @@ function Game(): ReactElement {
     }
   })
 
-  const isGameSet = !(
+  const isMatchSet = !(
     score.current.leftScore < winningScore &&
     score.current.rightScore < winningScore
   )
@@ -224,7 +224,7 @@ function Game(): ReactElement {
     setRightPaddle(newRightPaddle)
     setBall(newBall)
     setTicks(time)
-  }, isGameSet)
+  }, isMatchSet)
 
   const modifySpeed = (e: ChangeEvent<HTMLSelectElement>): void => {
     console.log(typeof e.target.value)
@@ -242,8 +242,8 @@ function Game(): ReactElement {
   }
 
   return (
-    <div id="game">
-      <div id="gameDiv"></div>
+    <div id="match">
+      <div id="boardDiv"></div>
       <div id="leftScore">{score.current.leftScore}</div>
       <div id="rightScore">{score.current.rightScore}</div>
       <div id="powerup">
@@ -254,7 +254,7 @@ function Game(): ReactElement {
           <option value="hard">Hard</option>
         </select>
       </div>
-      {isGameSet ? (
+      {isMatchSet ? (
         <Result
           isLeftWinner={score.current.leftScore > score.current.rightScore}
         />
@@ -267,7 +267,7 @@ function Game(): ReactElement {
   )
 }
 
-export function Match(): ReactElement {
+export function Game(): ReactElement {
   useEffect(() => {
     const handleOnKeyDown = (e: KeyboardEvent): void => {
       keydown = e.code
@@ -284,7 +284,7 @@ export function Match(): ReactElement {
       <div id="header">
         <button onClick={req}>click</button>
       </div>
-      <Game />
+      <Match />
     </div>
   )
 }
