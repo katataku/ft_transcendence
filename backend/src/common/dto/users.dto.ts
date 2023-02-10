@@ -1,15 +1,13 @@
-class UserCreateReqDto {
+export class UserCreateReqDto {
   name: string;
   password: string;
 }
 
-class UserCreateResDto {
+export class UserCreateResDto {
   id: number;
 }
 
-class UserGetDto {
+export class UserGetDto {
   id: number;
   name: string;
 }
-
-export { UserCreateReqDto, UserCreateResDto, UserGetDto };

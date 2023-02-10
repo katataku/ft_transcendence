@@ -1,5 +1,3 @@
-class HealthDto {
+export class HealthDto {
   health: string;
 }
-
-export { HealthDto };
