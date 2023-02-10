@@ -1,6 +1,6 @@
 import { Entity, PrimaryColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'chat_mute_user' })
 export class ChatMuteUser {
   @PrimaryColumn()
   muteUserId: string;
