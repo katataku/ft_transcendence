@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   UserCreateReqDto,
@@ -17,7 +17,6 @@ export class UsersService {
 
   async create(data: UserCreateReqDto): Promise<UserCreateResDto> {
     const obj = new User();
-    Logger.log('aa');
     obj.name = data.name;
     obj.password = data.password;
     obj.createdAt = new Date();
