@@ -41,3 +41,8 @@ prune:
 lint:
 	cd ./frontend && npm run lint && npm run format
 	cd ./backend && npm run lint && npm run format
+
+.PHONY:back
+back:
+	mkdir -p ${DB_STORAGE_DIR}
+	${DC_CMD} ${DC_OPTIONS} up db backend swagger
