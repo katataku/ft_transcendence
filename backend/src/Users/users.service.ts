@@ -16,10 +16,12 @@ export class UsersService {
   ) {}
 
   async create(data: UserCreateReqDto): Promise<UserCreateResDto> {
-    const obj = new User();
-    obj.name = data.name;
-    obj.password = data.password;
-    obj.createdAt = new Date();
+    const obj: User = {
+      id: null,
+      name: data.name,
+      password: data.password,
+      createdAt: new Date()
+    }
     const saved = await this.usersRepository.save(obj);
     const res: UserCreateResDto = {
       id: saved.id,
