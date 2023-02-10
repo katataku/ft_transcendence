@@ -29,7 +29,7 @@ const options: PostgresConnectionOptions = {
     HealthCheckModule,
     ChatMuteUserModule,
     ChatModule,
-    UsersModule
+    UsersModule,
   ],
 })
 export class AppModule {}

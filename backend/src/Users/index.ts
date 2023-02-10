@@ -1,3 +1,3 @@
-import { UsersModule } from "./users.module";
+import { UsersModule } from './users.module';
 
-export { UsersModule }
+export { UsersModule };
