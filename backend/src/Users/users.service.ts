@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   UserCreateReqDto,
@@ -7,6 +7,7 @@ import {
 } from 'src/common/dto/users.dto';
 import { User } from '../entities/users.entity';
 import { Repository } from 'typeorm';
+import { SHA256 } from 'crypto-js';
 
 @Injectable()
 export class UsersService {
@@ -16,10 +17,11 @@ export class UsersService {
   ) {}
 
   async create(data: UserCreateReqDto): Promise<UserCreateResDto> {
+    const passHash = SHA256(data.password).toString()
     const obj: User = {
       id: null,
       name: data.name,
-      password: data.password,
+      password: passHash,
       createdAt: new Date()
     }
     const saved = await this.usersRepository.save(obj);

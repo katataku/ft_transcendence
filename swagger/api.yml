@@ -84,7 +84,7 @@ components:
           example: Tom Brady
         password:
           type: string
-          example: hashhash
+          example: password
 
     user_create_res:
       type: object
