@@ -6,12 +6,17 @@ import { useEffect, useRef } from 'react'
  * callback(time, deltaTime)
  */
 export const useAnimationFrame = (
-  callback: (time: number, deltaTime: number) => void
+  callback: (time: number, deltaTime: number) => void,
+  useFrameFinished: boolean
 ): void => {
   // useRefは変更してもコンポーネントの再描画が発生しない可変変数
   // https://beta.reactjs.org/reference/react/useRef
   const requestIDRef = useRef<number>(0)
   const previousTimeRef = useRef<number>(performance.now())
+
+  if (useFrameFinished) {
+    cancelAnimationFrame(requestIDRef.current)
+  }
 
   // requestAnimationFrameのためcallback
   // https://developer.mozilla.org/ja/docs/Web/API/window/requestAnimationFrame
