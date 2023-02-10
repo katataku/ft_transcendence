@@ -8,7 +8,7 @@ import { ChatMuteUserModule } from '../chatMuteUser';
 import * as dotenv from 'dotenv';
 import { ChatMuteUser } from '../entities/chatMuteUser.entity';
 import { UsersModule } from 'src/users';
-import { User } from 'src/entities/users.entity';
+import { Friends, User } from 'src/entities/users.entity';
 
 dotenv.config();
 
@@ -19,7 +19,7 @@ const options: PostgresConnectionOptions = {
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  entities: [HealthCheck, ChatMuteUser, User],
+  entities: [HealthCheck, ChatMuteUser, User, Friends],
   synchronize: true,
 };
 

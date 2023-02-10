@@ -5,7 +5,7 @@ import {
   UserCreateResDto,
   UserGetDto,
 } from 'src/common/dto/users.dto';
-import { User } from '../entities/users.entity';
+import { Friends, User } from '../entities/users.entity';
 import { Repository } from 'typeorm';
 import { SHA256 } from 'crypto-js';
 
@@ -14,6 +14,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Friends)
+    private friendsRepository: Repository<Friends>,
   ) {}
 
   async create(data: UserCreateReqDto): Promise<UserCreateResDto> {
