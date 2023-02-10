@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { App } from './App'
 import { Match } from './Game/Match'
 import { Login } from './Login'
-import { ChatList } from './Chat/ChatList'
-import { Chat } from './Chat/Chat'
+import { ChatList, Chat } from './Chat'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)

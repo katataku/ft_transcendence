@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { HealthCheck } from './healthCheck.entity';
+import { HealthCheck } from '../entities/healthCheck.entity';
 import { HealthCheckService } from './healthCheck.service';
 import { HealthCheckController } from './healthCheck.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -9,4 +9,4 @@ import { TypeOrmModule } from '@nestjs/typeorm';
   controllers: [HealthCheckController],
   providers: [HealthCheckService],
 })
-export class HealthCheckModulle {}
+export class HealthCheckModule {}

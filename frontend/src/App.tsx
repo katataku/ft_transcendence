@@ -3,12 +3,15 @@ import React, { type ReactElement } from 'react'
 import { Link } from 'react-router-dom'
 
 export function App(): ReactElement {
+  const ChatListState: ChatListState = { banned: false }
   return (
     <div className="App">
       <button onClick={req}>req</button>
       React
       <p>
-        <Link to="chatlist">Move to ChatList</Link>
+        <Link to="chatlist" state={{ ChatListState }}>
+          Move to ChatList
+        </Link>
       </p>
       <p>
         <Link to="Match">Move to Match</Link>

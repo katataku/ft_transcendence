@@ -15,6 +15,12 @@ jobs:
       - name: Backend format
         working-directory: ./backend
         run: npm run format
+      - name: Frontend lint
+        working-directory: ./frontend
+        run: npm run lint
+      - name: Frontend format
+        working-directory: ./frontend
+        run: npm run format
       - name: 差分を push
         run: |
           git remote set-url origin https://github-actions:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}
