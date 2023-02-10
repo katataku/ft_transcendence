@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { App } from './App'
-import { Match } from './Game/Match'
+import { Match } from './Game'
 import { Login } from './Login'
 import { ChatList, Chat } from './Chat'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
