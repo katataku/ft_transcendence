@@ -1,15 +1,15 @@
 class UserCreateReqDto {
-	name: string;
-	password: string;
+  name: string;
+  password: string;
 }
 
 class UserCreateResDto {
-	id: number
+  id: number;
 }
 
 class UserGetDto {
-	id: number;
-	name: string;
+  id: number;
+  name: string;
 }
 
-export {UserCreateReqDto, UserCreateResDto, UserGetDto}
+export { UserCreateReqDto, UserCreateResDto, UserGetDto };
