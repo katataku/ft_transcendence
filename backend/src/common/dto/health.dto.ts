@@ -1,5 +1,5 @@
 class HealthDto {
-	health: string
+  health: string;
 }
 
-export { HealthDto }
+export { HealthDto };
