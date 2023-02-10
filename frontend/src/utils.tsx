@@ -7,14 +7,14 @@ import { useEffect, useRef } from 'react'
  */
 export const useAnimationFrame = (
   callback: (time: number, deltaTime: number) => void,
-  isGameSet: boolean
+  useFrameFinished: boolean
 ): void => {
   // useRefは変更してもコンポーネントの再描画が発生しない可変変数
   // https://beta.reactjs.org/reference/react/useRef
   const requestIDRef = useRef<number>(0)
   const previousTimeRef = useRef<number>(performance.now())
 
-  if (isGameSet) {
+  if (useFrameFinished) {
     cancelAnimationFrame(requestIDRef.current)
   }
 

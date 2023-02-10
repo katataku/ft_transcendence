@@ -142,7 +142,7 @@ function updateBall(
   speed: number,
   leftPaddle: IPaddle,
   rightPaddle: IPaddle,
-  updateScore: (player: UPlayer) => void
+  incrementScore: (player: UPlayer) => void
 ): IBall {
   pBall.pos.x += pBall.vel.x * deltaTime * speed
   pBall.pos.y += pBall.vel.y * deltaTime * speed
@@ -156,9 +156,9 @@ function updateBall(
     pBall.pos.x >= gameWinWid - ballPx
   ) {
     if (pBall.vel.x < 0) {
-      updateScore('right')
+      incrementScore('right')
     } else {
-      updateScore('left')
+      incrementScore('left')
     }
     pBall.pos = deepCpInitBall().pos
     pBall.vel = deepCpInitBall().vel
@@ -194,8 +194,8 @@ function updatePaddle(paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function renderResult(isLeftWinner: boolean): ReactElement {
-  const winner = isLeftWinner ? 'left' : 'right'
+function Result(props: { isLeftWinner: boolean }): ReactElement {
+  const winner = props.isLeftWinner ? 'left' : 'right'
   return <div id={`${winner}Result`}>WIN</div>
 }
 
@@ -206,7 +206,7 @@ function Game(): ReactElement {
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
   const score = useRef<IScore>({ leftScore: 0, rightScore: 0 })
   const speed = useRef<number>(400)
-  const updateScore = useRef<(player: UPlayer) => void>((player) => {
+  const incrementScore = useRef<(player: UPlayer) => void>((player) => {
     if (player === 'left') {
       score.current.leftScore++
     } else if (player === 'right') {
@@ -229,7 +229,7 @@ function Game(): ReactElement {
       speed.current,
       newLeftPaddle,
       newRightPaddle,
-      updateScore.current
+      incrementScore.current
     )
     setLeftPaddle(newLeftPaddle)
     setRightPaddle(newRightPaddle)
@@ -266,7 +266,9 @@ function Game(): ReactElement {
         </select>
       </div>
       {isGameSet ? (
-        renderResult(score.current.leftScore > score.current.rightScore)
+        <Result
+          isLeftWinner={score.current.leftScore > score.current.rightScore}
+        />
       ) : (
         <Ball pBall={pBall} />
       )}
