@@ -6,6 +6,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
+type numRef = React.MutableRefObject<number>
+type scoreRef = React.MutableRefObject<IScore>
 // import axios from 'axios'
 
 const gameWinWid: number = 1000
@@ -177,10 +179,7 @@ function updatePaddle(paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function Result(props: {
-  score: React.MutableRefObject<IScore>
-}): ReactElement {
-
+function Result(props: { score: scoreRef }): ReactElement {
   const winner =
     props.score.current.leftScore > props.score.current.rightScore
       ? 'left'
@@ -189,10 +188,7 @@ function Result(props: {
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function SpeedPU(props: {
-  speed: React.MutableRefObject<number>
-}): ReactElement {
-
+function SpeedPU(props: { speed: numRef }): ReactElement {
   const [title, setTitle] = useState<string>('Difficulty')
 
   const modifySpeed = (
