@@ -1,9 +1,7 @@
 import { useEffect, useRef } from 'react'
 
 /**
- *
  * @param callback - browserの次のrepaintをする前に呼び出したい関数
- * callback(time, deltaTime)
  */
 export const useAnimationFrame = (
   callback: (time: number, deltaTime: number) => void,

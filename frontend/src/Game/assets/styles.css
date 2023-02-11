@@ -91,7 +91,7 @@
   top: -105%;
 }
 
-#gameDiv {
+#boardDiv {
   height: var(--height);
   position: relative;
   background: repeating-linear-gradient(
