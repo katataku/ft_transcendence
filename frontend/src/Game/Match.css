@@ -1,5 +1,5 @@
 :root {
-  --wid: 1000px;
+  --wid: 800px;
   --height: 500px;
 }
 #page {
@@ -50,7 +50,7 @@
   position: relative;
   float: left;
   left: 40%;
-  top: 5%;
+  top: -95%;
   font-size: 50px;
 }
 
@@ -59,7 +59,25 @@
   position: relative;
   float: right;
   right: 40%;
-  top: 5%;
+  top: -95%;
+  font-size: 50px;
+}
+
+#leftResult {
+  color: white;
+  position: relative;
+  float: left;
+  top: -80%;
+  left: 15%;
+  font-size: 50px;
+}
+
+#rightResult {
+  color: white;
+  position: relative;
+  float: right;
+  top: -80%;
+  right: 15%;
   font-size: 50px;
 }
 
@@ -68,7 +86,9 @@
 }
 
 #powerup {
+  position: relative;
   color: black;
+  top: -105%;
 }
 
 #gameDiv {
