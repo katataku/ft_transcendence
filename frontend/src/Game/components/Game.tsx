@@ -7,6 +7,7 @@ import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
 type numRef = React.MutableRefObject<number>
+type stateSetter = React.Dispatch<React.SetStateAction<any>>
 // import axios from 'axios'
 
 const gameWinWid: number = 1000
@@ -221,13 +222,14 @@ function SpeedPU(props: { speed: numRef }): ReactElement {
   )
 }
 
-function Match(): ReactElement {
+function Match(props: {p1: IPlayer, p2: IPlayer}): ReactElement {
   const [_ticks, setTicks] = useState<number>(0)
   const [ball, setBall] = useState<IBall>(deepCpInitBall())
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
   const score = useRef<IScore>({ left: 0, right: 0 })
   const speed = useRef<number>(400)
+  const gameOn = useRef<boolean>(false)
   const incrementScore = useRef<(player: UPlayer) => void>((player) => {
     if (player === 'left') {
       score.current.left++
@@ -235,6 +237,10 @@ function Match(): ReactElement {
       score.current.right++
     }
   })
+
+  useEffect(()=> {
+    if(props.p1.ready && props.p2.ready) gameOn.current = true
+  }, [props.p1.ready, props.p2.ready])
 
   const isMatchSet = !(
     score.current.left < winningScore &&
@@ -245,17 +251,19 @@ function Match(): ReactElement {
   useAnimationFrame((time: number, deltaTime: number) => {
     const newLeftPaddle = updatePaddle(leftPaddle)
     const newRightPaddle = updatePaddle(rightPaddle)
-    const newBall = updateBall(
-      ball,
-      deltaTime,
-      speed.current,
-      newLeftPaddle,
-      newRightPaddle,
-      incrementScore.current
-    )
+    if (gameOn.current) {
+      const newBall = updateBall(
+        ball,
+        deltaTime,
+        speed.current,
+        newLeftPaddle,
+        newRightPaddle,
+        incrementScore.current
+      )
+      setBall(newBall)
+    }
     setLeftPaddle(newLeftPaddle)
     setRightPaddle(newRightPaddle)
-    setBall(newBall)
     setTicks(time)
   }, isMatchSet)
 
@@ -274,13 +282,16 @@ function Match(): ReactElement {
   )
 }
 
-function Ready(): ReactElement {
+function Ready(props: { player: IPlayer, setPlayer: stateSetter}): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
 
   function setReady(): void {
-    if (button === grayButton) setButton(greenButton)
+    if (button === grayButton) {
+      setButton(greenButton)
+      props.setPlayer({...props.player, ready: true})
+    }
   }
 
   return (
@@ -290,7 +301,7 @@ function Ready(): ReactElement {
   )
 }
 
-function Player(props: { player: IPlayer }): ReactElement {
+function Player(props: { player: IPlayer, setPlayer: stateSetter }): ReactElement {
   return (
     <Col>
       <div id="playerName"> {props.player.name} </div>
@@ -298,12 +309,15 @@ function Player(props: { player: IPlayer }): ReactElement {
         wins:<span className="text-success">{props.player.wins} </span>
         losses:<span className="text-danger">{props.player.losses}</span>
       </div>
-      <Ready />
+      <Ready player={props.player} setPlayer={props.setPlayer}/>
     </Col>
   )
 }
 
 export function Game(): ReactElement {
+  const [p1, setP1] = useState<IPlayer>({ id: 1, name: 'Player1', wins: 3, losses: 7, ready: false })
+  const [p2, setP2] = useState<IPlayer>({ id: 2, name: 'Player2', wins: 13, losses: 17, ready: false })
+
   useEffect(() => {
     const handleOnKeyDown = (e: KeyboardEvent): void => {
       keydown = e.code
@@ -315,17 +329,14 @@ export function Game(): ReactElement {
     window.addEventListener('keyup', handleOnKeyUp)
   }, [])
 
-  const p1: IPlayer = { id: 1, name: 'Player1', wins: 3, losses: 7 }
-  const p2: IPlayer = { id: 2, name: 'Player2', wins: 13, losses: 17 }
-
   return (
     <Container>
       <Row id="header">
-        <Player player={p1} />
-        <Player player={p2} />
+        <Player player={p1} setPlayer={setP1}/>
+        <Player player={p2} setPlayer={setP2}/>
       </Row>
       <Row>
-        <Match />
+        <Match p1={p1} p2={p2} />
       </Row>
     </Container>
   )
