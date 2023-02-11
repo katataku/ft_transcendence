@@ -14,7 +14,7 @@ export function App(): ReactElement {
         </Link>
       </p>
       <p>
-        <Link to="Match">Move to Match</Link>
+        <Link to="Game">Move to Game</Link>
       </p>
       <p>
         <Link to="Login">Move to Login</Link>
