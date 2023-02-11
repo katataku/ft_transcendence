@@ -1,20 +1,20 @@
-export interface Vector2 {
+interface Vector2 {
   x: number
   y: number
 }
 
-export interface IBall {
+interface IBall {
   pos: Vector2
   vel: Vector2
 }
 
-export interface IPaddle {
+interface IPaddle {
   pos: Vector2
 }
 
-export interface IScore {
+interface IScore {
   leftScore: number
   rightScore: number
 }
 
-export type UPlayer = 'left' | 'right'
+type UPlayer = 'left' | 'right'

@@ -5,15 +5,6 @@ import React, {
   useRef,
   useEffect
 } from 'react'
-
-import {
-  type Vector2,
-  type IBall,
-  type IPaddle,
-  type IScore,
-  type UPlayer
-} from '../types/Game'
-
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
 // import axios from 'axios'
