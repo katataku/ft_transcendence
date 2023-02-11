@@ -179,7 +179,10 @@ function updatePaddle(paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function Result(props: { score: scoreRef }): ReactElement {
+function Result(props: {
+  score: React.MutableRefObject<IScore>
+}): ReactElement {
+
   const winner =
     props.score.current.leftScore > props.score.current.rightScore
       ? 'left'
@@ -188,7 +191,10 @@ function Result(props: { score: scoreRef }): ReactElement {
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function SpeedPU(props: { speed: numRef }): ReactElement {
+function SpeedPU(props: {
+  speed: React.MutableRefObject<number>
+}): ReactElement {
+
   const [title, setTitle] = useState<string>('Difficulty')
 
   const modifySpeed = (
@@ -283,12 +289,12 @@ function Ready(): ReactElement {
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
 
-  function colorChng(): void {
+  function setReady(): void {
     if (button === grayButton) setButton(greenButton)
   }
 
   return (
-    <button type="button" id="buttonPos" className={button} onClick={colorChng}>
+    <button type="button" id="buttonPos" className={button} onClick={setReady}>
       Ready
     </button>
   )
