@@ -221,7 +221,10 @@ function Match(): ReactElement {
     setTicks(time)
   }, isMatchSet)
 
-  const modifySpeed = (eventKey: string | null, e: React.SyntheticEvent<unknown>): void => {
+  const modifySpeed = (
+    eventKey: string | null,
+    e: React.SyntheticEvent<unknown>
+  ): void => {
     console.log(eventKey)
     switch (eventKey) {
       case 'easy':
@@ -238,7 +241,12 @@ function Match(): ReactElement {
 
   return (
     <Col id="centerCol">
-      <DropdownButton id="dropdown-basic-button" variant="info" title="Difficulty" onSelect={modifySpeed}>
+      <DropdownButton
+        id="dropdown-basic-button"
+        variant="info"
+        title="Difficulty"
+        onSelect={modifySpeed}
+      >
         <Dropdown.Item eventKey="easy">Easy</Dropdown.Item>
         <Dropdown.Item eventKey="medium">Medium</Dropdown.Item>
         <Dropdown.Item eventKey="hard">Hard</Dropdown.Item>
