@@ -7,7 +7,6 @@ import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
 type numRef = React.MutableRefObject<number>
-type scoreRef = React.MutableRefObject<IScore>
 // import axios from 'axios'
 
 const gameWinWid: number = 1000
@@ -179,18 +178,13 @@ function updatePaddle(paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function Result(props: { score: scoreRef }): ReactElement {
-
-  const winner =
-    props.score.current.leftScore > props.score.current.rightScore
-      ? 'left'
-      : 'right'
+function Result(props: { score: IScore }): ReactElement {
+  const winner = props.score.left > props.score.right ? 'left' : 'right'
 
   return <div id={`${winner}Result`}>WIN</div>
 }
 
 function SpeedPU(props: { speed: numRef }): ReactElement {
-
   const [title, setTitle] = useState<string>('Difficulty')
 
   const modifySpeed = (
@@ -232,19 +226,19 @@ function Match(): ReactElement {
   const [ball, setBall] = useState<IBall>(deepCpInitBall())
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
-  const score = useRef<IScore>({ leftScore: 0, rightScore: 0 })
+  const score = useRef<IScore>({ left: 0, right: 0 })
   const speed = useRef<number>(400)
   const incrementScore = useRef<(player: UPlayer) => void>((player) => {
     if (player === 'left') {
-      score.current.leftScore++
+      score.current.left++
     } else if (player === 'right') {
-      score.current.rightScore++
+      score.current.right++
     }
   })
 
   const isMatchSet = !(
-    score.current.leftScore < winningScore &&
-    score.current.rightScore < winningScore
+    score.current.left < winningScore &&
+    score.current.right < winningScore
   )
 
   //   そのcallbackはupdateGame()のような関数です
@@ -270,9 +264,9 @@ function Match(): ReactElement {
       <SpeedPU speed={speed} />
       <div id="match">
         <div id="boardDiv"></div>
-        <div id="leftScore">{score.current.leftScore}</div>
-        <div id="rightScore">{score.current.rightScore}</div>
-        {isMatchSet ? <Result score={score} /> : <Ball ball={ball} />}
+        <div id="leftScore">{score.current.left}</div>
+        <div id="rightScore">{score.current.right}</div>
+        {isMatchSet ? <Result score={score.current} /> : <Ball ball={ball} />}
         <Paddle paddle={leftPaddle} />
         <Paddle paddle={rightPaddle} />
       </div>
