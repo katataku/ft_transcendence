@@ -11,6 +11,8 @@ tags:
     description: ヘルスチェック
   - name: chatRoom
     description: チャットルーム
+  - name:  chat-mute-user
+    description: チャット機能でのミュートユーザ情報
 paths:
   /health:
     get:
@@ -41,8 +43,63 @@ paths:
           content:
             application/json:
               schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat_room_res'
+    post:
+      summary: get chatRoom
+      tags:
+        - chatRoom
+      description: chatRoom情報を新規作成
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat_room_req'
+      responses:
+        201:
+          description: 成功
+          content:
+            application/json:
+              schema:
                 $ref: '#/components/schemas/chat_room_res'
 
+  /chatroom/{roomId}:
+    delete:
+      tags:
+        - chatRoom
+      summary: delete chatRoom
+      description: chatRoom情報を削除
+      parameters:
+        - in: path
+          name: roomId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat_room_res'
+  /chat-mute-user:
+    get:
+      tags:
+        - chat-mute-user
+      summary: get chat-mute-user
+      description: チャット機能でのミュートユーザ情報覧を取得
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat-mute-user'
 components:
   schemas:
     chat_room_res:
@@ -54,3 +111,30 @@ components:
         name:
           type: string
           example: Tom Brady
+        created_by:
+          type: string
+          example: Tom Brady
+        isPublic:
+          type: boolean
+          example: true
+    chat_room_req:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Tom Brady
+        created_by:
+          type: string
+          example: Tom Brady
+        isPublic:
+          type: boolean
+          example: true
+    chat-mute-user:
+      type: object
+      properties:
+        muteUserId:
+          type: string
+          example: Tom Brady mute
+        mutedUserId:
+          type: string
+          example: Tom Brady muted

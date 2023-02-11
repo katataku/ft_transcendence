@@ -89,7 +89,7 @@ export function ChatList(): ReactElement {
               <button
                 onClick={() => {
                   axios
-                    .delete('/chatRoom/' + room.name)
+                    .delete('/chatRoom/' + String(room.id))
                     .then((_response) => {
                       updateChatRoomList()
                     })

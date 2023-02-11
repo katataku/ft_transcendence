@@ -12,12 +12,12 @@ export class ChatRoomController {
   }
 
   @Post()
-  post(@Body() data): Promise<void> {
+  post(@Body() data): Promise<ChatRoom> {
     return this.service.createRoom(data);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  delete(@Param('id') id: number) {
     return this.service.deleteRoom(id);
   }
 }

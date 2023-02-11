@@ -19,18 +19,18 @@ export class ChatRoomService {
     return rows;
   }
 
-  async createRoom(param): Promise<void> {
+  async createRoom(param): Promise<ChatRoom> {
     const data = new ChatRoom();
     data.name = param.name;
     data.created_by = param.created_by;
     data.isPublic = param.isPublic;
-    this.chatRoomRepository.save(data);
+    return this.chatRoomRepository.save(data);
   }
 
-  async deleteRoom(id: string): Promise<void> {
+  async deleteRoom(id: number): Promise<void> {
     const targetRoom: ChatRoom = await this.chatRoomRepository.findOne({
       where: {
-        name: id,
+        id: id,
       },
     });
     this.chatRoomRepository.remove(targetRoom);
