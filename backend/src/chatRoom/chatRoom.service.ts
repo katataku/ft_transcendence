@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ChatRoom } from 'src/entities/chatRoom.entity';
 import { Repository } from 'typeorm';
+import { ChatRoomDto } from './dto/chatRoom.dto';
 
 @Injectable()
 export class ChatRoomService {
@@ -10,7 +11,7 @@ export class ChatRoomService {
     private chatRoomRepository: Repository<ChatRoom>,
   ) {}
 
-  async getList(): Promise<ChatRoom[]> {
+  async getList(): Promise<ChatRoomDto[]> {
     const rows: ChatRoom[] = await this.chatRoomRepository.find({
       order: {
         id: 'ASC',
@@ -19,12 +20,13 @@ export class ChatRoomService {
     return rows;
   }
 
-  async createRoom(param): Promise<ChatRoom> {
+  async createRoom(param): Promise<ChatRoomDto> {
     const data = new ChatRoom();
     data.name = param.name;
     data.created_by = param.created_by;
     data.isPublic = param.isPublic;
-    return this.chatRoomRepository.save(data);
+    const ret = await this.chatRoomRepository.save(data);
+    return ret;
   }
 
   async deleteRoom(id: number): Promise<void> {

@@ -1,4 +1,4 @@
-interface messageEventType {
+export interface messageEventDto {
   key: number;
   name: string;
   room: string;
