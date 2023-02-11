@@ -257,7 +257,6 @@ function Match(): ReactElement {
   )
 }
 
-
 function Player(props: { player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
@@ -267,15 +266,18 @@ function Player(props: { player: IPlayer }): ReactElement {
     <div className="col">
       <div id="playerName"> {props.player.name} </div>
       <div id="playerInfo">
-        wins:<span className="text-success">{props.player.wins}  </span>
+        wins:<span className="text-success">{props.player.wins} </span>
         losses:<span className="text-danger">{props.player.losses}</span>
       </div>
       <button
         type="button"
         id="buttonPos"
         className={button}
-        onClick={() => { if (button === grayButton) setButton(greenButton) }}>
-          Ready
+        onClick={() => {
+          if (button === grayButton) setButton(greenButton)
+        }}
+      >
+        Ready
       </button>
     </div>
   )
