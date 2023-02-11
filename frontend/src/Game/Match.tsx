@@ -253,7 +253,7 @@ function Game(): ReactElement {
   }
 
   return (
-    <div id="game">
+    <div id="match">
       <div id="gameDiv"></div>
       <div id="leftScore">{score.current.leftScore}</div>
       <div id="rightScore">{score.current.rightScore}</div>
