@@ -1,9 +1,6 @@
 :root {
   --wid: 1000px;
-  --height: 500px;
-}
-#page {
-
+  --height: 600px;
 }
 
 #header {
@@ -24,6 +21,10 @@
 
 #buttonPos {
   margin-top: 20px;
+}
+
+#game {
+
 }
 
 #match {
@@ -78,11 +79,9 @@
   border-radius: 100px;
 }
 
-#powerup {
-  position: relative;
-  color: black;
-  top: -108%;
+#centerCol {
   text-align-last: center;
+  margin-top: 0.5%;
 }
 
 #boardDiv {
