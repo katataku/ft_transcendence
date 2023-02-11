@@ -180,7 +180,6 @@ function updatePaddle(paddle: IPaddle): IPaddle {
 }
 
 function Result(props: { score: scoreRef }): ReactElement {
-
   const winner =
     props.score.current.leftScore > props.score.current.rightScore
       ? 'left'
@@ -190,7 +189,6 @@ function Result(props: { score: scoreRef }): ReactElement {
 }
 
 function SpeedPU(props: { speed: numRef }): ReactElement {
-
   const [title, setTitle] = useState<string>('Difficulty')
 
   const modifySpeed = (
