@@ -5,8 +5,10 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { type ReactElement } from 'react'
 import axios from 'axios'
 
-const ServerURL: string = 'ws://localhost:3002'
+const ServerURL: string = process.env.REACT_APP_BACKEND_WEBSOCKET_BASE_URL ?? ''
 const socket = io(ServerURL)
+
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
 export function Chat(): ReactElement {
   const [message, setMessage] = useState<string>('')
@@ -17,7 +19,6 @@ export function Chat(): ReactElement {
   const navigate = useNavigate()
 
   useEffect(() => {
-    axios.defaults.baseURL = 'http://localhost:3001'
     axios
       .get('/chat-mute-user')
       .then((response) => {

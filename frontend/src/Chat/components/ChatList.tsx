@@ -1,14 +1,17 @@
 import * as React from 'react'
 import '../assets/styles.css'
 import { Link, useLocation } from 'react-router-dom'
-import { type ReactElement } from 'react'
+import { useEffect, type ReactElement } from 'react'
 import { Alert } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import axios from 'axios'
+
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
 export function ChatList(): ReactElement {
   const [name, setName] = React.useState<string>('')
   const [newRoom, setNewRoom] = React.useState<string>('')
-  const [roomList, setRoomList] = React.useState<string[]>(['room1', 'room2'])
+  const [roomList, setRoomList] = React.useState<ChatRoom[]>([])
 
   const { banned }: ChatListState = useLocation().state
   const [show, setShow] = React.useState<boolean>(banned)
@@ -26,6 +29,39 @@ export function ChatList(): ReactElement {
   ) : (
     <></>
   )
+
+  const updateChatRoomList = (): void => {
+    axios
+      .get<ChatRoom[]>('/chatRoom')
+      .then((response) => {
+        setRoomList(response.data.map((value: ChatRoom) => value))
+      })
+      .catch(() => {
+        alert('エラーです！')
+      })
+  }
+
+  useEffect(() => {
+    updateChatRoomList()
+  }, [])
+
+  const handleCreateRoom = (): void => {
+    const requestData: ChatRoom = {
+      name: newRoom,
+      created_by: name,
+      isPublic: true
+    }
+    axios
+      .post<ChatRoom>('/chatRoom', requestData)
+      .then((_response) => {
+        setNewRoom('')
+        updateChatRoomList()
+      })
+      .catch((reason) => {
+        alert('エラーです！')
+        console.log(reason)
+      })
+  }
 
   return (
     <>
@@ -47,14 +83,20 @@ export function ChatList(): ReactElement {
         <ul>
           {roomList.map((room, index) => (
             <li key={index}>
-              <Link to="/chat" state={{ room, name }}>
-                Move to Chat {room}
+              <Link to="/chat" state={{ room: room.name, name }}>
+                Move to Chat {room.name}
               </Link>
               <button
                 onClick={() => {
-                  setRoomList((roomList) =>
-                    roomList.filter((item) => !(item === room))
-                  )
+                  axios
+                    .delete('/chatRoom/' + String(room.id))
+                    .then((_response) => {
+                      updateChatRoomList()
+                    })
+                    .catch((reason) => {
+                      alert('エラーです！')
+                      console.log(reason)
+                    })
                 }}
               >
                 delete room
@@ -73,14 +115,7 @@ export function ChatList(): ReactElement {
               }}
             />
           </label>
-          <button
-            onClick={() => {
-              setRoomList((roomList) => [...roomList, newRoom])
-              setNewRoom('')
-            }}
-          >
-            create room
-          </button>
+          <button onClick={handleCreateRoom}>create room</button>
         </p>
       </div>
     </>
