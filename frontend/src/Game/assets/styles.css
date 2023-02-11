@@ -9,30 +9,23 @@
 #header {
   color: black;
   font-family: 'Courier New', monospace;
+  text-align: center;
+  overflow: hidden;
+}
+
+#playerName {
   font-weight: bolder;
   font-size: 4em;
 }
 
-.column {
-  text-align: center;
-  width: 50%;
+#playerInfo {
+  font-size: 2em;
 }
 
-.row:after {
-  content: "";
-  display: table;
-  clear: both;
+#buttonPos {
+  margin-top: 20px;
 }
 
-#p1 {
-  float: left;
-}
-#p2 {
-  float: right;
-}
-#game {
-
-}
 #match {
   width: var(--wid);
   height: var(--height);
@@ -88,7 +81,8 @@
 #powerup {
   position: relative;
   color: black;
-  top: -105%;
+  top: -108%;
+  text-align-last: center;
 }
 
 #boardDiv {

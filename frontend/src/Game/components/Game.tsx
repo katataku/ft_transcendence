@@ -237,7 +237,7 @@ function Match(): ReactElement {
       <div id="leftScore">{score.current.leftScore}</div>
       <div id="rightScore">{score.current.rightScore}</div>
       <div id="powerup">
-        <label htmlFor="powerup">Speed:</label>
+        <label htmlFor="powerup">Difficulty:</label>
         <select onChange={modifySpeed} name="speed" id="powerup">
           <option value="easy">Easy</option>
           <option value="medium">Medium</option>
@@ -257,6 +257,30 @@ function Match(): ReactElement {
   )
 }
 
+
+function Player(props: { player: IPlayer }): ReactElement {
+  const greenButton = 'btn btn-success btn-lg pull bottom'
+  const grayButton = 'btn btn-secondary btn-lg pull bottom'
+  const [button, setButton] = useState<string>(grayButton)
+
+  return (
+    <div className="col">
+      <div id="playerName"> {props.player.name} </div>
+      <div id="playerInfo">
+        wins:<span className="text-success">{props.player.wins}  </span>
+        losses:<span className="text-danger">{props.player.losses}</span>
+      </div>
+      <button
+        type="button"
+        id="buttonPos"
+        className={button}
+        onClick={() => { if (button === grayButton) setButton(greenButton) }}>
+          Ready
+      </button>
+    </div>
+  )
+}
+
 export function Game(): ReactElement {
   useEffect(() => {
     const handleOnKeyDown = (e: KeyboardEvent): void => {
@@ -269,15 +293,14 @@ export function Game(): ReactElement {
     window.addEventListener('keyup', handleOnKeyUp)
   }, [])
 
+  const p1: IPlayer = { id: 1, name: 'Player1', wins: 3, losses: 7 }
+  const p2: IPlayer = { id: 2, name: 'Player2', wins: 13, losses: 17 }
+
   return (
     <div id="page">
       <div className="row" id="header">
-        <div className="column" id="p1">
-          Player 1
-        </div>
-        <div className="column" id="p2">
-          Player 2
-        </div>
+        <Player player={p1} />
+        <Player player={p2} />
       </div>
       <Match />
     </div>
