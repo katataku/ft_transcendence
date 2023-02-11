@@ -179,9 +179,7 @@ function updatePaddle(paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function Result(props: {
-  score: React.MutableRefObject<IScore>
-}): ReactElement {
+function Result(props: { score: scoreRef }): ReactElement {
 
   const winner =
     props.score.current.leftScore > props.score.current.rightScore
@@ -191,9 +189,7 @@ function Result(props: {
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function SpeedPU(props: {
-  speed: React.MutableRefObject<number>
-}): ReactElement {
+function SpeedPU(props: { speed: numRef }): ReactElement {
 
   const [title, setTitle] = useState<string>('Difficulty')
 
