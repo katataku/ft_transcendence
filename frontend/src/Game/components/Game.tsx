@@ -180,17 +180,21 @@ function updatePaddle(paddle: IPaddle): IPaddle {
 function Result(props: {
   score: React.MutableRefObject<IScore>
 }): ReactElement {
+
   const winner =
     props.score.current.leftScore > props.score.current.rightScore
       ? 'left'
       : 'right'
+
   return <div id={`${winner}Result`}>WIN</div>
 }
 
 function SpeedPU(props: {
   speed: React.MutableRefObject<number>
 }): ReactElement {
+
   const [title, setTitle] = useState<string>('Difficulty')
+
   const modifySpeed = (
     op: string | null,
     e: React.SyntheticEvent<unknown>
