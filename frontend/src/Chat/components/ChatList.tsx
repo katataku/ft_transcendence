@@ -45,7 +45,7 @@ export function ChatList(): ReactElement {
     updateChatRoomList()
   }, [])
 
-  const handleCrateRoom = (): void => {
+  const handleCreateRoom = (): void => {
     const requestData: ChatRoom = {
       name: newRoom,
       created_by: name,
@@ -115,7 +115,7 @@ export function ChatList(): ReactElement {
               }}
             />
           </label>
-          <button onClick={handleCrateRoom}>create room</button>
+          <button onClick={handleCreateRoom}>create room</button>
         </p>
       </div>
     </>
