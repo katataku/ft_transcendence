@@ -237,8 +237,7 @@ function Match(): ReactElement {
   })
 
   const isMatchSet = !(
-    score.current.left < winningScore &&
-    score.current.right < winningScore
+    score.current.left < winningScore && score.current.right < winningScore
   )
 
   //   そのcallbackはupdateGame()のような関数です
