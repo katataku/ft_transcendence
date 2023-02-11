@@ -189,22 +189,27 @@ function Result(props: { score: React.MutableRefObject<IScore>}): ReactElement {
 }
 
 function SpeedPU(props: {speed: React.MutableRefObject<number>}): ReactElement {
+  const [title, setTitle] = useState<string>('Difficulty')
+
   const modifySpeed = (op: string | null, e: React.SyntheticEvent<unknown>): void => {
     switch (op) {
       case 'easy':
         props.speed.current = 400
+        setTitle('Easy')
         break
       case 'medium':
         props.speed.current = 600
+        setTitle('Medium')
         break
       case 'hard':
         props.speed.current = 800
+        setTitle('Hard')
         break
     }
   }
 
   return (
-    <DropdownButton id="dropdown-basic-button" variant="info" title="Difficulty" onSelect={modifySpeed}>
+    <DropdownButton id="dropdown-basic-button" variant="info" title={title} onSelect={modifySpeed}>
       <Dropdown.Item eventKey="easy">Easy</Dropdown.Item>
       <Dropdown.Item eventKey="medium">Medium</Dropdown.Item>
       <Dropdown.Item eventKey="hard">Hard</Dropdown.Item>
