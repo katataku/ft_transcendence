@@ -222,7 +222,7 @@ function SpeedPU(props: { speed: numRef }): ReactElement {
   )
 }
 
-function Match(props: {p1: IPlayer, p2: IPlayer}): ReactElement {
+function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
   const [_ticks, setTicks] = useState<number>(0)
   const [ball, setBall] = useState<IBall>(deepCpInitBall())
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
@@ -238,13 +238,12 @@ function Match(props: {p1: IPlayer, p2: IPlayer}): ReactElement {
     }
   })
 
-  useEffect(()=> {
-    if(props.p1.ready && props.p2.ready) gameOn.current = true
+  useEffect(() => {
+    if (props.p1.ready && props.p2.ready) gameOn.current = true
   }, [props.p1.ready, props.p2.ready])
 
   const isMatchSet = !(
-    score.current.left < winningScore &&
-    score.current.right < winningScore
+    score.current.left < winningScore && score.current.right < winningScore
   )
 
   //   そのcallbackはupdateGame()のような関数です
@@ -282,7 +281,10 @@ function Match(props: {p1: IPlayer, p2: IPlayer}): ReactElement {
   )
 }
 
-function Ready(props: { player: IPlayer, setPlayer: stateSetter}): ReactElement {
+function Ready(props: {
+  player: IPlayer
+  setPlayer: stateSetter
+}): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
@@ -290,7 +292,7 @@ function Ready(props: { player: IPlayer, setPlayer: stateSetter}): ReactElement 
   function setReady(): void {
     if (button === grayButton) {
       setButton(greenButton)
-      props.setPlayer({...props.player, ready: true})
+      props.setPlayer({ ...props.player, ready: true })
     }
   }
 
@@ -301,7 +303,10 @@ function Ready(props: { player: IPlayer, setPlayer: stateSetter}): ReactElement 
   )
 }
 
-function Player(props: { player: IPlayer, setPlayer: stateSetter }): ReactElement {
+function Player(props: {
+  player: IPlayer
+  setPlayer: stateSetter
+}): ReactElement {
   return (
     <Col>
       <div id="playerName"> {props.player.name} </div>
@@ -309,14 +314,26 @@ function Player(props: { player: IPlayer, setPlayer: stateSetter }): ReactElemen
         wins:<span className="text-success">{props.player.wins} </span>
         losses:<span className="text-danger">{props.player.losses}</span>
       </div>
-      <Ready player={props.player} setPlayer={props.setPlayer}/>
+      <Ready player={props.player} setPlayer={props.setPlayer} />
     </Col>
   )
 }
 
 export function Game(): ReactElement {
-  const [p1, setP1] = useState<IPlayer>({ id: 1, name: 'Player1', wins: 3, losses: 7, ready: false })
-  const [p2, setP2] = useState<IPlayer>({ id: 2, name: 'Player2', wins: 13, losses: 17, ready: false })
+  const [p1, setP1] = useState<IPlayer>({
+    id: 1,
+    name: 'Player1',
+    wins: 3,
+    losses: 7,
+    ready: false
+  })
+  const [p2, setP2] = useState<IPlayer>({
+    id: 2,
+    name: 'Player2',
+    wins: 13,
+    losses: 17,
+    ready: false
+  })
 
   useEffect(() => {
     const handleOnKeyDown = (e: KeyboardEvent): void => {
@@ -332,8 +349,8 @@ export function Game(): ReactElement {
   return (
     <Container>
       <Row id="header">
-        <Player player={p1} setPlayer={setP1}/>
-        <Player player={p2} setPlayer={setP2}/>
+        <Player player={p1} setPlayer={setP1} />
+        <Player player={p2} setPlayer={setP2} />
       </Row>
       <Row>
         <Match p1={p1} p2={p2} />
