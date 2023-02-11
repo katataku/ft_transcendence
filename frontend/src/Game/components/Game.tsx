@@ -1,9 +1,4 @@
-import React, {
-  type ReactElement,
-  useState,
-  useRef,
-  useEffect
-} from 'react'
+import React, { type ReactElement, useState, useRef, useEffect } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Container from 'react-bootstrap/Container'
@@ -182,16 +177,24 @@ function updatePaddle(paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function Result(props: { score: React.MutableRefObject<IScore>}): ReactElement {
-  const winner = props.score.current.leftScore > props.score.current.rightScore
-    ? 'left' : 'right'
+function Result(props: {
+  score: React.MutableRefObject<IScore>
+}): ReactElement {
+  const winner =
+    props.score.current.leftScore > props.score.current.rightScore
+      ? 'left'
+      : 'right'
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function SpeedPU(props: {speed: React.MutableRefObject<number>}): ReactElement {
+function SpeedPU(props: {
+  speed: React.MutableRefObject<number>
+}): ReactElement {
   const [title, setTitle] = useState<string>('Difficulty')
-
-  const modifySpeed = (op: string | null, e: React.SyntheticEvent<unknown>): void => {
+  const modifySpeed = (
+    op: string | null,
+    e: React.SyntheticEvent<unknown>
+  ): void => {
     switch (op) {
       case 'easy':
         props.speed.current = 400
@@ -209,7 +212,12 @@ function SpeedPU(props: {speed: React.MutableRefObject<number>}): ReactElement {
   }
 
   return (
-    <DropdownButton id="dropdown-basic-button" variant="info" title={title} onSelect={modifySpeed}>
+    <DropdownButton
+      id="dropdown-basic-button"
+      variant="info"
+      title={title}
+      onSelect={modifySpeed}
+    >
       <Dropdown.Item eventKey="easy">Easy</Dropdown.Item>
       <Dropdown.Item eventKey="medium">Medium</Dropdown.Item>
       <Dropdown.Item eventKey="hard">Hard</Dropdown.Item>
@@ -257,12 +265,12 @@ function Match(): ReactElement {
 
   return (
     <Col id="centerCol">
-      <SpeedPU speed={speed}/>
+      <SpeedPU speed={speed} />
       <div id="match">
         <div id="boardDiv"></div>
         <div id="leftScore">{score.current.leftScore}</div>
         <div id="rightScore">{score.current.rightScore}</div>
-        {isMatchSet ? (<Result score={score}/>) : (<Ball ball={ball} />)}
+        {isMatchSet ? <Result score={score} /> : <Ball ball={ball} />}
         <Paddle paddle={leftPaddle} />
         <Paddle paddle={rightPaddle} />
       </div>
@@ -294,7 +302,7 @@ function Player(props: { player: IPlayer }): ReactElement {
         wins:<span className="text-success">{props.player.wins} </span>
         losses:<span className="text-danger">{props.player.losses}</span>
       </div>
-      <Ready/>
+      <Ready />
     </Col>
   )
 }
