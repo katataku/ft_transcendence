@@ -22,7 +22,7 @@ enum EStatus {
   ready = 1,
   play = 2,
   pause = 3,
-  set = 4,
+  set = 4
 }
 
 const paddleSize: Vector2 = {
@@ -230,7 +230,7 @@ function SpeedPU(props: { speed: Ref }): ReactElement {
   )
 }
 
-function CountDown(props: { ticks: number, status: Ref}): ReactElement {
+function CountDown(props: { ticks: number; status: Ref }): ReactElement {
   const oneSecond = useRef<number>(0)
   const prevTicks = useRef<number>(0)
   const timer = useRef<number>(4)
@@ -246,7 +246,7 @@ function CountDown(props: { ticks: number, status: Ref}): ReactElement {
     props.status.current = EStatus.play
   }
 
-  return (<div>{timer.current !== 0 && timer.current}</div>)
+  return <div>{timer.current !== 0 && timer.current}</div>
 }
 
 function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
@@ -269,7 +269,10 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
     status.current = EStatus.ready
   }
 
-  if (score.current.left === winningScore || score.current.right === winningScore) {
+  if (
+    score.current.left === winningScore ||
+    score.current.right === winningScore
+  ) {
     status.current = EStatus.set
   }
 
@@ -301,7 +304,9 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
         <div id="leftScore">{score.current.left}</div>
         <div id="rightScore">{score.current.right}</div>
         <div id="countDown">
-          {status.current === EStatus.ready && <CountDown ticks={ticks} status={status} />}
+          {status.current === EStatus.ready && (
+            <CountDown ticks={ticks} status={status} />
+          )}
         </div>
         {status.current === EStatus.play && <Ball ball={ball} />}
         {status.current === EStatus.set && <Result score={score.current} />}
@@ -312,7 +317,7 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
   )
 }
 
-function Ready(props: { player: IPlayer, setPlayer: Setter }): ReactElement {
+function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
@@ -331,7 +336,7 @@ function Ready(props: { player: IPlayer, setPlayer: Setter }): ReactElement {
   )
 }
 
-function Player(props: { player: IPlayer, setPlayer: Setter }): ReactElement {
+function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   return (
     <Col>
       <div id="playerName"> {props.player.name} </div>
