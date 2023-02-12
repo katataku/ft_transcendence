@@ -391,6 +391,9 @@ export function Game(): ReactElement {
     window.addEventListener('keyup', handleOnKeyUp)
   }, [])
 
+  const p1: IPlayer = { id: 1, name: 'Player1', wins: 3, losses: 7 }
+  const p2: IPlayer = { id: 2, name: 'Player2', wins: 13, losses: 17 }
+
   return (
     <Container>
       <Row id="header">
