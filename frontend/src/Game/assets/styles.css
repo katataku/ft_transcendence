@@ -10,17 +10,8 @@
   overflow: hidden;
 }
 
-#playerName {
-  font-weight: bolder;
-  font-size: 4em;
-}
-
-#playerInfo {
-  font-size: 2em;
-}
-
 #buttonPos {
-  margin-top: 20px;
+  margin-top: 15px;
 }
 
 #match {
@@ -31,8 +22,9 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -35%);
+  transform: translate(-50%, -26%);
   font-family: 'Courier New', monospace;
+  overflow: hidden;
 }
 
 #leftScore {
@@ -41,7 +33,7 @@
   float: left;
   left: 40%;
   top: -95%;
-  font-size: 3em;
+  font-size: 4em;
 }
 
 #rightScore {
@@ -50,7 +42,7 @@
   float: right;
   right: 40%;
   top: -95%;
-  font-size: 3em;
+  font-size: 4em;
 }
 
 #countDown {

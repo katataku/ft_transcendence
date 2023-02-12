@@ -254,10 +254,12 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
   const [ball, setBall] = useState<IBall>(deepCpInitBall())
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
+  const waitTime = useRef<number>(0)
   const score = useRef<IScore>({ left: 0, right: 0 })
   const status = useRef<number>(EStatus.none)
   const speed = useRef<number>(400)
   const incrementScore = useRef<(player: UPlayer) => void>((player) => {
+    status.current = EStatus.pause
     if (player === 'left') {
       score.current.left++
     } else if (player === 'right') {
@@ -267,6 +269,16 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
 
   if (props.p1.ready && props.p2.ready && status.current === EStatus.none) {
     status.current = EStatus.ready
+  }
+
+  if (status.current === EStatus.pause) {
+    if (waitTime.current === 0) {
+      waitTime.current = ticks + 900
+    }
+    if (ticks >= waitTime.current) {
+      waitTime.current = 0
+      status.current = EStatus.play
+    }
   }
 
   if (
@@ -339,10 +351,13 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
 function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   return (
     <Col>
-      <div id="playerName"> {props.player.name} </div>
-      <div id="playerInfo">
-        wins:<span className="text-success">{props.player.wins} </span>
-        losses:<span className="text-danger">{props.player.losses}</span>
+      <div className="display-1" > {props.player.name} </div>
+      <div className="border">
+        <h1>Match History</h1>
+          <h3>
+            wins:<span className="text-success">{props.player.wins} </span>
+            losses:<span className="text-danger">{props.player.losses}</span>
+          </h3>
       </div>
       <Ready player={props.player} setPlayer={props.setPlayer} />
     </Col>
