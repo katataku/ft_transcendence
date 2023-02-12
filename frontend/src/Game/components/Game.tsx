@@ -353,11 +353,11 @@ function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
     <Col>
       <div className="display-1"> {props.player.name} </div>
       <div className="border">
-        <h1>Match History</h1>
-        <h3>
+        <h2>Match History</h2>
+        <h4>
           wins:<span className="text-success">{props.player.wins} </span>
           losses:<span className="text-danger">{props.player.losses}</span>
-        </h3>
+        </h4>
       </div>
       <Ready player={props.player} setPlayer={props.setPlayer} />
     </Col>
