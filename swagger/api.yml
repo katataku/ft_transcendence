@@ -90,7 +90,7 @@ paths:
       tags:
         - chat-mute-user
       summary: get chat-mute-user
-      description: チャット機能でのミュートユーザ情報覧を取得
+      description: チャット機能でのミュートユーザ情報一覧を取得
       responses:
         200:
           description: 成功
@@ -100,6 +100,58 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/chat-mute-user'
+    post:
+      summary: update mute
+      tags:
+        - chat-mute-user
+      description: チャット機能でのミュートユーザ情報を更新
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat-mute-user'
+      responses:
+        201:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chat-mute-user'
+    delete:
+      summary: update mute
+      tags:
+        - chat-mute-user
+      description: チャット機能でのミュートユーザ情報を削除
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat-mute-user'
+      responses:
+        200:
+          description: 成功
+  /chat-mute-user/{muteUserId}:
+    get:
+      tags:
+        - chat-mute-user
+      summary: get mute for the specified user
+      description: チャット機能でのミュートユーザ情報の取得
+      parameters:
+        - in: path
+          name: muteUserId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat-mute-user'
+
 components:
   schemas:
     chat_room_res:
@@ -138,3 +190,6 @@ components:
         mutedUserId:
           type: string
           example: Tom Brady muted
+        muteUntil:
+          type: timestamp
+          example: "2024-01-31T14:59:00.000Z"
