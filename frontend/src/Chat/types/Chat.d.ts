@@ -19,4 +19,5 @@ interface messageItem {
 interface muteUserList {
   muteUserId: string
   mutedUserId: string
+  mute_until: Date
 }
