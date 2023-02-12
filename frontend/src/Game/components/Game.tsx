@@ -6,8 +6,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
-type numRef = React.MutableRefObject<number>
-type stateSetter = React.Dispatch<React.SetStateAction<any>>
+type Ref = React.MutableRefObject<any>
+type Setter = React.Dispatch<React.SetStateAction<any>>
 // import axios from 'axios'
 
 const gameWinWid: number = 1000
@@ -16,6 +16,14 @@ const ballPx: number = 20
 const paddleSpeed: number = 10
 const winningScore = 3
 let keydown = ''
+
+enum EStatus {
+  none = 0,
+  ready = 1,
+  play = 2,
+  pause = 3,
+  set = 4,
+}
 
 const paddleSize: Vector2 = {
   x: 8,
@@ -185,7 +193,7 @@ function Result(props: { score: IScore }): ReactElement {
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function SpeedPU(props: { speed: numRef }): ReactElement {
+function SpeedPU(props: { speed: Ref }): ReactElement {
   const [title, setTitle] = useState<string>('Difficulty')
 
   const modifySpeed = (
@@ -222,14 +230,33 @@ function SpeedPU(props: { speed: numRef }): ReactElement {
   )
 }
 
+function CountDown(props: { ticks: number, status: Ref}): ReactElement {
+  const oneSecond = useRef<number>(0)
+  const prevTicks = useRef<number>(0)
+  const timer = useRef<number>(4)
+
+  oneSecond.current += props.ticks - prevTicks.current
+  prevTicks.current = props.ticks
+
+  if (oneSecond.current >= 1000) {
+    oneSecond.current = 0
+    timer.current--
+  }
+  if (timer.current === 0) {
+    props.status.current = EStatus.play
+  }
+
+  return (<div>{timer.current !== 0 && timer.current}</div>)
+}
+
 function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
-  const [_ticks, setTicks] = useState<number>(0)
+  const [ticks, setTicks] = useState<number>(0)
   const [ball, setBall] = useState<IBall>(deepCpInitBall())
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
   const score = useRef<IScore>({ left: 0, right: 0 })
+  const status = useRef<number>(EStatus.none)
   const speed = useRef<number>(400)
-  const gameOn = useRef<boolean>(false)
   const incrementScore = useRef<(player: UPlayer) => void>((player) => {
     if (player === 'left') {
       score.current.left++
@@ -238,19 +265,19 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
     }
   })
 
-  useEffect(() => {
-    if (props.p1.ready && props.p2.ready) gameOn.current = true
-  }, [props.p1.ready, props.p2.ready])
+  if (props.p1.ready && props.p2.ready && status.current === EStatus.none) {
+    status.current = EStatus.ready
+  }
 
-  const isMatchSet = !(
-    score.current.left < winningScore && score.current.right < winningScore
-  )
+  if (score.current.left === winningScore || score.current.right === winningScore) {
+    status.current = EStatus.set
+  }
 
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
     const newLeftPaddle = updatePaddle(leftPaddle)
     const newRightPaddle = updatePaddle(rightPaddle)
-    if (gameOn.current) {
+    if (status.current === EStatus.play) {
       const newBall = updateBall(
         ball,
         deltaTime,
@@ -264,7 +291,7 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
     setLeftPaddle(newLeftPaddle)
     setRightPaddle(newRightPaddle)
     setTicks(time)
-  }, isMatchSet)
+  }, status.current === EStatus.set)
 
   return (
     <Col id="centerCol">
@@ -273,7 +300,11 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
         <div id="boardDiv"></div>
         <div id="leftScore">{score.current.left}</div>
         <div id="rightScore">{score.current.right}</div>
-        {isMatchSet ? <Result score={score.current} /> : <Ball ball={ball} />}
+        <div id="countDown">
+          {status.current === EStatus.ready && <CountDown ticks={ticks} status={status} />}
+        </div>
+        {status.current === EStatus.play && <Ball ball={ball} />}
+        {status.current === EStatus.set && <Result score={score.current} />}
         <Paddle paddle={leftPaddle} />
         <Paddle paddle={rightPaddle} />
       </div>
@@ -281,10 +312,7 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
   )
 }
 
-function Ready(props: {
-  player: IPlayer
-  setPlayer: stateSetter
-}): ReactElement {
+function Ready(props: { player: IPlayer, setPlayer: Setter }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
@@ -303,10 +331,7 @@ function Ready(props: {
   )
 }
 
-function Player(props: {
-  player: IPlayer
-  setPlayer: stateSetter
-}): ReactElement {
+function Player(props: { player: IPlayer, setPlayer: Setter }): ReactElement {
   return (
     <Col>
       <div id="playerName"> {props.player.name} </div>

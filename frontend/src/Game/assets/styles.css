@@ -41,7 +41,7 @@
   float: left;
   left: 40%;
   top: -95%;
-  font-size: 50px;
+  font-size: 3em;
 }
 
 #rightScore {
@@ -50,7 +50,15 @@
   float: right;
   right: 40%;
   top: -95%;
-  font-size: 50px;
+  font-size: 3em;
+}
+
+#countDown {
+  position: relative;
+  top: -65%;
+  color: white;
+  font-size: 6em;
+  font-weight: bolder;
 }
 
 #leftResult {
