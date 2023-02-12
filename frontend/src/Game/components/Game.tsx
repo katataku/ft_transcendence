@@ -351,13 +351,13 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
 function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   return (
     <Col>
-      <div className="display-1" > {props.player.name} </div>
+      <div className="display-1"> {props.player.name} </div>
       <div className="border">
         <h1>Match History</h1>
-          <h3>
-            wins:<span className="text-success">{props.player.wins} </span>
-            losses:<span className="text-danger">{props.player.losses}</span>
-          </h3>
+        <h3>
+          wins:<span className="text-success">{props.player.wins} </span>
+          losses:<span className="text-danger">{props.player.losses}</span>
+        </h3>
       </div>
       <Ready player={props.player} setPlayer={props.setPlayer} />
     </Col>
