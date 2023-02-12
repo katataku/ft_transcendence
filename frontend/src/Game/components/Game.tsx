@@ -1,41 +1,45 @@
-import React, {
-  type ReactElement,
-  type ChangeEvent,
-  useState,
-  useRef,
-  useEffect
-} from 'react'
+import React, { type ReactElement, useState, useRef, useEffect } from 'react'
+import Dropdown from 'react-bootstrap/Dropdown'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Container from 'react-bootstrap/Container'
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
+type numRef = React.MutableRefObject<number>
 // import axios from 'axios'
 
-const gameWinWid: number = 800
-const gameWinHght: number = 500
+const gameWinWid: number = 1000
+const gameWinHght: number = 600
 const ballPx: number = 20
+const paddleSpeed: number = 10
+const winningScore = 3
+let keydown = ''
+
 const paddleSize: Vector2 = {
   x: 8,
   y: 100
 }
-const paddleSpeed: number = 10
+
 const initBall: IBall = {
   pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 - ballPx / 2 },
   vel: { x: -1, y: 0.5 }
 }
+
 const initLeftPaddle: IPaddle = {
   pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 }
 }
+
 const initRightPaddle: IPaddle = {
   pos: {
     x: gameWinWid - (gameWinWid / 20 + paddleSize.x),
     y: gameWinHght / 2 - paddleSize.y / 2
   }
 }
+
 const deepCpInitBall = (): IBall => {
   return JSON.parse(JSON.stringify(initBall)) // deep copy of Object
 }
-const winningScore = 3
-
-let keydown = ''
 
 function Paddle(props: { paddle: IPaddle }): ReactElement {
   return (
@@ -157,6 +161,7 @@ function updateBall(
   }
   return ball
 }
+
 function updatePaddle(paddle: IPaddle): IPaddle {
   switch (keydown) {
     case 'ArrowUp':
@@ -173,9 +178,47 @@ function updatePaddle(paddle: IPaddle): IPaddle {
   return paddle
 }
 
-function Result(props: { isLeftWinner: boolean }): ReactElement {
-  const winner = props.isLeftWinner ? 'left' : 'right'
+function Result(props: { score: IScore }): ReactElement {
+  const winner = props.score.left > props.score.right ? 'left' : 'right'
+
   return <div id={`${winner}Result`}>WIN</div>
+}
+
+function SpeedPU(props: { speed: numRef }): ReactElement {
+  const [title, setTitle] = useState<string>('Difficulty')
+
+  const modifySpeed = (
+    op: string | null,
+    e: React.SyntheticEvent<unknown>
+  ): void => {
+    switch (op) {
+      case 'easy':
+        props.speed.current = 400
+        setTitle('Easy')
+        break
+      case 'medium':
+        props.speed.current = 600
+        setTitle('Medium')
+        break
+      case 'hard':
+        props.speed.current = 800
+        setTitle('Hard')
+        break
+    }
+  }
+
+  return (
+    <DropdownButton
+      id="dropdown-basic-button"
+      variant="info"
+      title={title}
+      onSelect={modifySpeed}
+    >
+      <Dropdown.Item eventKey="easy">Easy</Dropdown.Item>
+      <Dropdown.Item eventKey="medium">Medium</Dropdown.Item>
+      <Dropdown.Item eventKey="hard">Hard</Dropdown.Item>
+    </DropdownButton>
+  )
 }
 
 function Match(): ReactElement {
@@ -183,19 +226,18 @@ function Match(): ReactElement {
   const [ball, setBall] = useState<IBall>(deepCpInitBall())
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
-  const score = useRef<IScore>({ leftScore: 0, rightScore: 0 })
+  const score = useRef<IScore>({ left: 0, right: 0 })
   const speed = useRef<number>(400)
   const incrementScore = useRef<(player: UPlayer) => void>((player) => {
     if (player === 'left') {
-      score.current.leftScore++
+      score.current.left++
     } else if (player === 'right') {
-      score.current.rightScore++
+      score.current.right++
     }
   })
 
   const isMatchSet = !(
-    score.current.leftScore < winningScore &&
-    score.current.rightScore < winningScore
+    score.current.left < winningScore && score.current.right < winningScore
   )
 
   //   そのcallbackはupdateGame()のような関数です
@@ -216,44 +258,47 @@ function Match(): ReactElement {
     setTicks(time)
   }, isMatchSet)
 
-  const modifySpeed = (e: ChangeEvent<HTMLSelectElement>): void => {
-    console.log(typeof e.target.value)
-    switch (e.target.value) {
-      case 'easy':
-        speed.current = 400
-        break
-      case 'medium':
-        speed.current = 600
-        break
-      case 'hard':
-        speed.current = 800
-        break
-    }
+  return (
+    <Col id="centerCol">
+      <SpeedPU speed={speed} />
+      <div id="match">
+        <div id="boardDiv"></div>
+        <div id="leftScore">{score.current.left}</div>
+        <div id="rightScore">{score.current.right}</div>
+        {isMatchSet ? <Result score={score.current} /> : <Ball ball={ball} />}
+        <Paddle paddle={leftPaddle} />
+        <Paddle paddle={rightPaddle} />
+      </div>
+    </Col>
+  )
+}
+
+function Ready(): ReactElement {
+  const greenButton = 'btn btn-success btn-lg pull bottom'
+  const grayButton = 'btn btn-secondary btn-lg pull bottom'
+  const [button, setButton] = useState<string>(grayButton)
+
+  function setReady(): void {
+    if (button === grayButton) setButton(greenButton)
   }
 
   return (
-    <div id="match">
-      <div id="boardDiv"></div>
-      <div id="leftScore">{score.current.leftScore}</div>
-      <div id="rightScore">{score.current.rightScore}</div>
-      <div id="powerup">
-        <label htmlFor="powerup">Speed:</label>
-        <select onChange={modifySpeed} name="speed" id="powerup">
-          <option value="easy">Easy</option>
-          <option value="medium">Medium</option>
-          <option value="hard">Hard</option>
-        </select>
+    <button type="button" id="buttonPos" className={button} onClick={setReady}>
+      Ready
+    </button>
+  )
+}
+
+function Player(props: { player: IPlayer }): ReactElement {
+  return (
+    <Col>
+      <div id="playerName"> {props.player.name} </div>
+      <div id="playerInfo">
+        wins:<span className="text-success">{props.player.wins} </span>
+        losses:<span className="text-danger">{props.player.losses}</span>
       </div>
-      {isMatchSet ? (
-        <Result
-          isLeftWinner={score.current.leftScore > score.current.rightScore}
-        />
-      ) : (
-        <Ball ball={ball} />
-      )}
-      <Paddle paddle={leftPaddle} />
-      <Paddle paddle={rightPaddle} />
-    </div>
+      <Ready />
+    </Col>
   )
 }
 
@@ -269,13 +314,19 @@ export function Game(): ReactElement {
     window.addEventListener('keyup', handleOnKeyUp)
   }, [])
 
+  const p1: IPlayer = { id: 1, name: 'Player1', wins: 3, losses: 7 }
+  const p2: IPlayer = { id: 2, name: 'Player2', wins: 13, losses: 17 }
+
   return (
-    <div id="page">
-      <div id="header">
-        <button onClick={req}>click</button>
-      </div>
-      <Match />
-    </div>
+    <Container>
+      <Row id="header">
+        <Player player={p1} />
+        <Player player={p2} />
+      </Row>
+      <Row>
+        <Match />
+      </Row>
+    </Container>
   )
 }
 

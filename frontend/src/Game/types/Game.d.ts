@@ -13,8 +13,15 @@ interface IPaddle {
 }
 
 interface IScore {
-  leftScore: number
-  rightScore: number
+  left: number
+  right: number
 }
 
 type UPlayer = 'left' | 'right'
+
+interface IPlayer {
+  id: number
+  name: string
+  wins: number
+  losses: number
+}
