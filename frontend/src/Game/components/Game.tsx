@@ -6,7 +6,8 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
-type numRef = React.MutableRefObject<number>
+type Ref = React.MutableRefObject<any>
+type Setter = React.Dispatch<React.SetStateAction<any>>
 // import axios from 'axios'
 
 const gameWinWid: number = 1000
@@ -15,6 +16,14 @@ const ballPx: number = 20
 const paddleSpeed: number = 10
 const winningScore = 3
 let keydown = ''
+
+enum EStatus {
+  none = 0,
+  ready = 1,
+  play = 2,
+  pause = 3,
+  set = 4
+}
 
 const paddleSize: Vector2 = {
   x: 8,
@@ -184,7 +193,7 @@ function Result(props: { score: IScore }): ReactElement {
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function SpeedPU(props: { speed: numRef }): ReactElement {
+function SpeedPU(props: { speed: Ref }): ReactElement {
   const [title, setTitle] = useState<string>('Difficulty')
 
   const modifySpeed = (
@@ -221,14 +230,36 @@ function SpeedPU(props: { speed: numRef }): ReactElement {
   )
 }
 
-function Match(): ReactElement {
-  const [_ticks, setTicks] = useState<number>(0)
+function CountDown(props: { ticks: number; status: Ref }): ReactElement {
+  const oneSecond = useRef<number>(0)
+  const prevTicks = useRef<number>(0)
+  const timer = useRef<number>(4)
+
+  oneSecond.current += props.ticks - prevTicks.current
+  prevTicks.current = props.ticks
+
+  if (oneSecond.current >= 1000) {
+    oneSecond.current = 0
+    timer.current--
+  }
+  if (timer.current === 0) {
+    props.status.current = EStatus.play
+  }
+
+  return <div>{timer.current !== 0 && timer.current}</div>
+}
+
+function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
+  const [ticks, setTicks] = useState<number>(0)
   const [ball, setBall] = useState<IBall>(deepCpInitBall())
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(initLeftPaddle)
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(initRightPaddle)
+  const waitTime = useRef<number>(0)
   const score = useRef<IScore>({ left: 0, right: 0 })
+  const status = useRef<number>(EStatus.none)
   const speed = useRef<number>(400)
   const incrementScore = useRef<(player: UPlayer) => void>((player) => {
+    status.current = EStatus.pause
     if (player === 'left') {
       score.current.left++
     } else if (player === 'right') {
@@ -236,27 +267,46 @@ function Match(): ReactElement {
     }
   })
 
-  const isMatchSet = !(
-    score.current.left < winningScore && score.current.right < winningScore
-  )
+  if (props.p1.ready && props.p2.ready && status.current === EStatus.none) {
+    status.current = EStatus.ready
+  }
+
+  if (status.current === EStatus.pause) {
+    if (waitTime.current === 0) {
+      waitTime.current = ticks + 900
+    }
+    if (ticks >= waitTime.current) {
+      waitTime.current = 0
+      status.current = EStatus.play
+    }
+  }
+
+  if (
+    score.current.left === winningScore ||
+    score.current.right === winningScore
+  ) {
+    status.current = EStatus.set
+  }
 
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
     const newLeftPaddle = updatePaddle(leftPaddle)
     const newRightPaddle = updatePaddle(rightPaddle)
-    const newBall = updateBall(
-      ball,
-      deltaTime,
-      speed.current,
-      newLeftPaddle,
-      newRightPaddle,
-      incrementScore.current
-    )
+    if (status.current === EStatus.play) {
+      const newBall = updateBall(
+        ball,
+        deltaTime,
+        speed.current,
+        newLeftPaddle,
+        newRightPaddle,
+        incrementScore.current
+      )
+      setBall(newBall)
+    }
     setLeftPaddle(newLeftPaddle)
     setRightPaddle(newRightPaddle)
-    setBall(newBall)
     setTicks(time)
-  }, isMatchSet)
+  }, status.current === EStatus.set)
 
   return (
     <Col id="centerCol">
@@ -265,7 +315,13 @@ function Match(): ReactElement {
         <div id="boardDiv"></div>
         <div id="leftScore">{score.current.left}</div>
         <div id="rightScore">{score.current.right}</div>
-        {isMatchSet ? <Result score={score.current} /> : <Ball ball={ball} />}
+        <div id="countDown">
+          {status.current === EStatus.ready && (
+            <CountDown ticks={ticks} status={status} />
+          )}
+        </div>
+        {status.current === EStatus.play && <Ball ball={ball} />}
+        {status.current === EStatus.set && <Result score={score.current} />}
         <Paddle paddle={leftPaddle} />
         <Paddle paddle={rightPaddle} />
       </div>
@@ -273,13 +329,16 @@ function Match(): ReactElement {
   )
 }
 
-function Ready(): ReactElement {
+function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
 
   function setReady(): void {
-    if (button === grayButton) setButton(greenButton)
+    if (button === grayButton) {
+      setButton(greenButton)
+      props.setPlayer({ ...props.player, ready: true })
+    }
   }
 
   return (
@@ -289,20 +348,38 @@ function Ready(): ReactElement {
   )
 }
 
-function Player(props: { player: IPlayer }): ReactElement {
+function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   return (
     <Col>
-      <div id="playerName"> {props.player.name} </div>
-      <div id="playerInfo">
-        wins:<span className="text-success">{props.player.wins} </span>
-        losses:<span className="text-danger">{props.player.losses}</span>
+      <div className="display-1"> {props.player.name} </div>
+      <div className="border">
+        <h2>Match History</h2>
+        <h4>
+          wins:<span className="text-success">{props.player.wins} </span>
+          losses:<span className="text-danger">{props.player.losses}</span>
+        </h4>
       </div>
-      <Ready />
+      <Ready player={props.player} setPlayer={props.setPlayer} />
     </Col>
   )
 }
 
 export function Game(): ReactElement {
+  const [p1, setP1] = useState<IPlayer>({
+    id: 1,
+    name: 'Player1',
+    wins: 3,
+    losses: 7,
+    ready: false
+  })
+  const [p2, setP2] = useState<IPlayer>({
+    id: 2,
+    name: 'Player2',
+    wins: 13,
+    losses: 17,
+    ready: false
+  })
+
   useEffect(() => {
     const handleOnKeyDown = (e: KeyboardEvent): void => {
       keydown = e.code
@@ -314,17 +391,14 @@ export function Game(): ReactElement {
     window.addEventListener('keyup', handleOnKeyUp)
   }, [])
 
-  const p1: IPlayer = { id: 1, name: 'Player1', wins: 3, losses: 7 }
-  const p2: IPlayer = { id: 2, name: 'Player2', wins: 13, losses: 17 }
-
   return (
     <Container>
       <Row id="header">
-        <Player player={p1} />
-        <Player player={p2} />
+        <Player player={p1} setPlayer={setP1} />
+        <Player player={p2} setPlayer={setP2} />
       </Row>
       <Row>
-        <Match />
+        <Match p1={p1} p2={p2} />
       </Row>
     </Container>
   )
