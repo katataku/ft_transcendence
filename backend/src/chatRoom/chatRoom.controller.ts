@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ChatRoomService } from './chatRoom.service';
-import { ChatRoomDto } from './dto/chatRoom.dto';
+import { ChatRoomDto } from '../common/dto/chatRoom.dto';
 
 @Controller('chatRoom')
 export class ChatRoomController {

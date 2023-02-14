@@ -7,7 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { messageEventDto } from './dto/chat.dto';
+import { messageEventDto } from '../common/dto/chat.dto';
 
 @WebSocketGateway(3002, { cors: { origin: '*' } })
 export class ChatGateway {
