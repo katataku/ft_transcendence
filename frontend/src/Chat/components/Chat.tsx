@@ -79,7 +79,7 @@ const UserSettingModal = (props: {
   showModal: boolean
   targetUser: string
   handleModalClose: () => void
-  handleBanButtonClick: () => void
+  handleKickButtonClick: () => void
   handleMuteButtonClick: ({ muteSec }: { muteSec: number }) => void
 }): ReactElement => {
   return (
@@ -92,8 +92,8 @@ const UserSettingModal = (props: {
           <Button variant="secondary" onClick={props.handleModalClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={props.handleBanButtonClick}>
-            Ban
+          <Button variant="primary" onClick={props.handleKickButtonClick}>
+            Kick
           </Button>
           <Button
             variant="primary"
@@ -177,13 +177,13 @@ export function Chat(): ReactElement {
       })
   }
 
-  const handleBanButtonClick = (): void => {
-    const sendMsg: banEventType = {
+  const handleKickButtonClick = (): void => {
+    const sendMsg: kickEventType = {
       key: Date.now(),
       name: targetUser,
       room
     }
-    socket.emit('banNotification', sendMsg)
+    socket.emit('kickNotification', sendMsg)
     setShowModal(false)
   }
 
@@ -235,9 +235,9 @@ export function Chat(): ReactElement {
     }
   }
 
-  const handleBanEvent = (item: banEventType): void => {
-    console.log('ban received:' + JSON.stringify(item))
-    const ChatListState: ChatListState = { banned: true }
+  const handleKickEvent = (item: kickEventType): void => {
+    console.log('kick received:' + JSON.stringify(item))
+    const ChatListState: ChatListState = { kicked: true }
     if (item.room === room && item.name === name) {
       navigate('/chatlist', { state: ChatListState })
     }
@@ -246,13 +246,13 @@ export function Chat(): ReactElement {
   useEffect(() => {
     socket.on('connect', handleConnectEvent)
     socket.on('message', handleMessageEvent)
-    socket.on('banNotification', handleBanEvent)
+    socket.on('kickNotification', handleKickEvent)
     socket.emit('channelNotification', room)
 
     return () => {
       socket.off('connect')
       socket.off('message')
-      socket.off('banNotification')
+      socket.off('kickNotification')
     }
   }, [])
 
@@ -278,7 +278,7 @@ export function Chat(): ReactElement {
           showModal={showModal}
           targetUser={targetUser}
           handleModalClose={handleModalClose}
-          handleBanButtonClick={handleBanButtonClick}
+          handleKickButtonClick={handleKickButtonClick}
           handleMuteButtonClick={handleMuteButtonClick}
         ></UserSettingModal>
         <h1>Chat Page</h1>

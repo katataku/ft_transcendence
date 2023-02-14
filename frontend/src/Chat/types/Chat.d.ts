@@ -5,7 +5,7 @@ interface messageEventType {
   msg: string
 }
 
-interface banEventType {
+interface kickEventType {
   key: number
   name: string
   room: string
