@@ -17,6 +17,9 @@ clean:
 	rm -rf ./backend/node_modules
 	rm -rf ./db-data
 
+.PHONY:fclean
+fclean: down clean prune
+
 .PHONY:build
 build:
 	${DC_CMD} ${DC_OPTIONS} build
@@ -35,7 +38,7 @@ re:down build up
 
 .PHONY:prune
 prune:
-	docker system  prune
+	docker system  prune -a
 
 .PHONY:lint
 lint:

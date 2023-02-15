@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Friends, User } from '../entities/users.entity';
+import { Friendship, User, PendingFriendship } from '../entities/users.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Friends])],
+  imports: [TypeOrmModule.forFeature([User, Friendship, PendingFriendship])],
   controllers: [UsersController],
   providers: [UsersService],
 })

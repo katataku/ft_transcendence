@@ -11,3 +11,8 @@ export class UserGetDto {
   id: number;
   name: string;
 }
+
+export class FriendRequestDto {
+  from: number;
+  to: number;
+}

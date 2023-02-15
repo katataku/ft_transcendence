@@ -20,8 +20,8 @@ export class User {
   createdAt!: Date;
 }
 
-@Entity({ name: 'friends' })
-export class Friends {
+@Entity({ name: 'friendship' })
+export class Friendship {
   @PrimaryGeneratedColumn({ name: 'id' })
   id!: number;
 
@@ -30,4 +30,16 @@ export class Friends {
 
   @Column({ name: 'user_2' })
   user2!: number;
+}
+
+@Entity({ name: 'pending_friendship' })
+export class PendingFriendship {
+  @PrimaryGeneratedColumn({ name: 'id' })
+  id!: number;
+
+  @Column({ name: 'from' })
+  from!: number;
+
+  @Column({ name: 'to' })
+  to!: number;
 }

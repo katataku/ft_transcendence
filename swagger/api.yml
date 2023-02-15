@@ -47,14 +47,15 @@ paths:
               schema:
                 $ref: '#/components/schemas/user_create_res'
 
-  /user/{userId}:
+  /user/{userID}:
     get:
       tags:
         - user
       summary: get user by ID
       description: IDを指定してuser情報を取得
       parameters:
-        - name: userId
+        - name: userID
+          required: true
           description: id
           in: path
           schema:
@@ -67,18 +68,63 @@ paths:
               schema:
                 $ref: '#/components/schemas/user_get_res'
 
-  /user/friends:
+  /user/friends/{userID}:
     get:
       tags:
         - user
       summary: get friends
       description: パラメータ(userID)のフレンドを取得
+      parameters:
+        - name: userID
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/friends_get_res'
+
+  /user/friends:
+    post:
+      tags:
+        - user
+      summary: request or accept friendship
       requestBody:
-        description: get friends
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/friends_get_req'
+              $ref: '#/components/schemas/friends_post_req'
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/friends_post_req'
+
+  /user/friends/pending/{userID}:
+    get:
+      tags:
+        - user
+      summary: get pending list
+      description: パラメータ(userID)のフレンド待機リストを取得
+      parameters:
+        - name: userID
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/friends_get_res'
 
 components:
   schemas:
@@ -115,10 +161,25 @@ components:
         name:
           type: string
           example: Tom Brady
-
-    friends_get_req:
+  
+    friends_get_res:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          name:
+            type: string
+            example: Nick Foles
+    
+    friends_post_req:
       type: object
       properties:
-        id:
+        from:
           type: integer
           example: 1
+        to:
+          type: integer
+          example: 2
