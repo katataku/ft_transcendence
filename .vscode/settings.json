@@ -4,6 +4,7 @@
         "Hght",
         "nestjs",
         "openapi",
+        "ormconfig",
         "powerup",
         "typeorm",
         "websockets"
