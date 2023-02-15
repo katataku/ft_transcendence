@@ -1,12 +1,20 @@
 import * as React from 'react'
 import '../assets/styles.css'
-import { Link, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useEffect, type ReactElement } from 'react'
 import { Alert, Button, Dropdown, DropdownButton, Modal } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
+
+// フリー素材のアイコン。
+// ただし、LICENSEで再配布が禁止されているため、publicディレクトリに保存せずに、画像URLへ直接リンクする。
+// https://iconbox.fun/about/#LICENSE
+const _publicIconURL: string =
+  'https://iconbox.fun/wp/wp-content/uploads/lock_open_24.png'
+const privateIconURL: string =
+  'https://iconbox.fun/wp/wp-content/uploads/lock_24.png'
 
 const PublicSelectDropdownButton = (props: {
   setIsPublic: React.Dispatch<React.SetStateAction<boolean>>
@@ -111,6 +119,7 @@ export function ChatList(): ReactElement {
 
   const { kicked }: ChatListState = useLocation().state
   const [show, setShow] = React.useState<boolean>(kicked)
+  const navigate = useNavigate()
 
   const alertElement: JSX.Element = show ? (
     <Alert
@@ -146,6 +155,18 @@ export function ChatList(): ReactElement {
     updateChatRoomList()
   }
 
+  const handleDeleteRoom = (room: ChatRoom): void => {
+    axios
+      .delete('/chatRoom/' + String(room.id))
+      .then((_response) => {
+        updateChatRoomList()
+      })
+      .catch((reason) => {
+        alert('エラーです！')
+        console.log(reason)
+      })
+  }
+
   return (
     <>
       {alertElement}
@@ -169,28 +190,42 @@ export function ChatList(): ReactElement {
           </label>
         </p>
         <ul>
-          {roomList.map((room, index) => (
-            <li key={index}>
-              <Link to="/chat" state={{ room: room.name, name }}>
-                Move to Chat {room.name}
-              </Link>
-              <button
+          {roomList.map((room, index) => {
+            const isPublicIcon: JSX.Element = room.isPublic ? (
+              <></>
+            ) : (
+              <img src={privateIconURL} alt="new" width="20" height="20" />
+            )
+
+            const enterButton: JSX.Element = (
+              <Button
                 onClick={() => {
-                  axios
-                    .delete('/chatRoom/' + String(room.id))
-                    .then((_response) => {
-                      updateChatRoomList()
-                    })
-                    .catch((reason) => {
-                      alert('エラーです！')
-                      console.log(reason)
-                    })
+                  navigate('/chat', { state: { room: room.name, name } })
+                }}
+              >
+                Enter
+              </Button>
+            )
+            const deleteRoomButton: JSX.Element = (
+              <Button
+                variant="outline-danger"
+                onClick={() => {
+                  handleDeleteRoom(room)
                 }}
               >
                 delete room
-              </button>
-            </li>
-          ))}
+              </Button>
+            )
+
+            return (
+              <li key={index}>
+                {room.name}
+                {isPublicIcon}
+                {enterButton}
+                {deleteRoomButton}
+              </li>
+            )
+          })}
         </ul>
         <p>
           <Button
