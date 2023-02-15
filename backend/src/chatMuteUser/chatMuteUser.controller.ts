@@ -1,13 +1,31 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ChatMuteUserService } from './chatMuteUser.service';
-import { ChatMuteUser } from '../entities/chatMuteUser.entity';
+import {
+  ChatMuteUserDto,
+  ChatMuteUserPKDto,
+} from 'src/common/dto/chatMuteUser.dto';
 
 @Controller('chat-mute-user')
 export class ChatMuteUserController {
   constructor(private service: ChatMuteUserService) {}
 
   @Get()
-  get(): Promise<ChatMuteUser[]> {
+  get(): Promise<ChatMuteUserDto[]> {
     return this.service.getList();
+  }
+
+  @Get(':muteUser')
+  getOne(@Param('muteUser') muteUser: string): Promise<ChatMuteUserDto[]> {
+    return this.service.getListOne(muteUser);
+  }
+
+  @Post()
+  post(@Body() data: ChatMuteUserDto): Promise<ChatMuteUserDto> {
+    return this.service.updateMute(data);
+  }
+
+  @Delete()
+  delete(@Body() data: ChatMuteUserPKDto): Promise<void> {
+    return this.service.delete(data);
   }
 }

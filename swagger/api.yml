@@ -11,6 +11,10 @@ tags:
     description: ヘルスチェック
   - name: user
     description: ユーザー
+  - name: chatRoom
+    description: チャットルーム
+  - name:  chat-mute-user
+    description: チャット機能でのミュートユーザ情報
 
 paths:
   /health:
@@ -126,6 +130,127 @@ paths:
               schema:
                 $ref: '#/components/schemas/friends_get_res'
 
+  /chatroom:
+    get:
+      tags:
+        - chatRoom
+      summary: get chatRoom List
+      description: chatRoom情報の一覧を取得
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat_room_res'
+    post:
+      summary: get chatRoom
+      tags:
+        - chatRoom
+      description: chatRoom情報を新規作成
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat_room_req'
+      responses:
+        201:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chat_room_res'
+
+  /chatroom/{roomId}:
+    delete:
+      tags:
+        - chatRoom
+      summary: delete chatRoom
+      description: chatRoom情報を削除
+      parameters:
+        - in: path
+          name: roomId
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat_room_res'
+  /chat-mute-user:
+    get:
+      tags:
+        - chat-mute-user
+      summary: get chat-mute-user
+      description: チャット機能でのミュートユーザ情報一覧を取得
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat-mute-user'
+    post:
+      summary: update mute
+      tags:
+        - chat-mute-user
+      description: チャット機能でのミュートユーザ情報を更新
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat-mute-user'
+      responses:
+        201:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chat-mute-user'
+    delete:
+      summary: update mute
+      tags:
+        - chat-mute-user
+      description: チャット機能でのミュートユーザ情報を削除
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat-mute-user'
+      responses:
+        200:
+          description: 成功
+  /chat-mute-user/{muteUserId}:
+    get:
+      tags:
+        - chat-mute-user
+      summary: get mute for the specified user
+      description: チャット機能でのミュートユーザ情報の取得
+      parameters:
+        - in: path
+          name: muteUserId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat-mute-user'
+
 components:
   schemas:
     health:
@@ -183,3 +308,43 @@ components:
         to:
           type: integer
           example: 2
+
+    chat_room_res:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Tom Brady
+        created_by:
+          type: string
+          example: Tom Brady
+        isPublic:
+          type: boolean
+          example: true
+    chat_room_req:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Tom Brady
+        created_by:
+          type: string
+          example: Tom Brady
+        isPublic:
+          type: boolean
+          example: true
+    chat-mute-user:
+      type: object
+      properties:
+        muteUserId:
+          type: string
+          example: Tom Brady mute
+        mutedUserId:
+          type: string
+          example: Tom Brady muted
+        muteUntil:
+          type: timestamp
+          example: "2024-01-31T14:59:00.000Z"
