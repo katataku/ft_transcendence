@@ -37,13 +37,13 @@ export class ChatGateway {
     return data;
   }
 
-  @SubscribeMessage('banNotification')
-  handleBanNotification(
+  @SubscribeMessage('kickNotification')
+  handleKickNotification(
     @MessageBody() data: string,
     @ConnectedSocket() _client: Socket,
   ): void {
-    this.logger.log(`banNotification`);
-    this.server.emit('banNotification', data);
+    this.logger.log(`kickNotification`);
+    this.server.emit('kickNotification', data);
   }
 
   afterInit(_server: Server) {

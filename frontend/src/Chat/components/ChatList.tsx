@@ -13,8 +13,8 @@ export function ChatList(): ReactElement {
   const [newRoom, setNewRoom] = React.useState<string>('')
   const [roomList, setRoomList] = React.useState<ChatRoom[]>([])
 
-  const { banned }: ChatListState = useLocation().state
-  const [show, setShow] = React.useState<boolean>(banned)
+  const { kicked }: ChatListState = useLocation().state
+  const [show, setShow] = React.useState<boolean>(kicked)
 
   const alertElement: JSX.Element = show ? (
     <Alert
@@ -24,7 +24,7 @@ export function ChatList(): ReactElement {
       }}
       dismissible
     >
-      <Alert.Heading>You are banned from the Chat room! </Alert.Heading>
+      <Alert.Heading>You are kicked from the Chat room! </Alert.Heading>
     </Alert>
   ) : (
     <></>

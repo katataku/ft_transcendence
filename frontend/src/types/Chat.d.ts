@@ -4,5 +4,5 @@ interface ChatState {
 }
 
 interface ChatListState {
-  banned: boolean
+  kicked: boolean
 }

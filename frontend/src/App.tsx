@@ -3,7 +3,7 @@ import React, { type ReactElement } from 'react'
 import { Link } from 'react-router-dom'
 
 export function App(): ReactElement {
-  const ChatListState: ChatListState = { banned: false }
+  const ChatListState: ChatListState = { kicked: false }
   return (
     <div className="App">
       <button onClick={req}>req</button>
