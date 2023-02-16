@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   FriendRequestDto,
@@ -34,7 +34,6 @@ export class UsersController {
 
   @Get('friends/pending/:id')
   getPendingFriends(@Param() param: UserGetParam): Promise<UserGetDto[]> {
-    Logger.log(param);
     const list = this.service.getPendingFriends(param.id);
     return list;
   }
