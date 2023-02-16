@@ -71,6 +71,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user_get_res'
+    delete:
+      tags:
+        - user
+      summary: delete user
+      parameters:
+        - name: userID
+          required: true
+          description: id
+          in: path
+          schema:
+            type: integer
+    post:
+      tags:
+        - user
+      summary: update user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/user_create_req'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_get_res'
 
   /user/friends/{userID}:
     get:
@@ -286,7 +312,7 @@ components:
         name:
           type: string
           example: Tom Brady
-  
+
     friends_get_res:
       type: array
       items:
