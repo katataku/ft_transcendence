@@ -1,4 +1,5 @@
 import { IsNumberString } from 'class-validator';
+
 export class UserCreateReqDto {
   name: string;
   password: string;
