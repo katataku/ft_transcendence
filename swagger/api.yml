@@ -86,11 +86,18 @@ paths:
       tags:
         - user
       summary: update user
+      parameters:
+        - name: userID
+          required: true
+          description: id
+          in: path
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#components/schemas/user_create_req'
+              $ref: '#components/schemas/user_update_req'
       responses:
         200:
           content:
@@ -302,6 +309,16 @@ components:
         id:
           type: integer
           example: 1
+
+    user_update_req:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Updated!!!
+        password:
+          type: string
+          example: update
 
     user_get_res:
       type: object
