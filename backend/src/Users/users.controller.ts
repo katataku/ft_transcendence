@@ -7,7 +7,7 @@ import {
   UserGetDto,
   UserUpdateReqDto,
 } from 'src/common/dto/users.dto';
-import { UserGetParam } from 'src/common/params/user.params';
+import { UserIdParam } from 'src/common/params/user.params';
 
 @Controller('user')
 export class UsersController {
@@ -19,28 +19,32 @@ export class UsersController {
   }
 
   @Get(':id')
-  getUserById(@Param() param: UserGetParam): Promise<UserGetDto> {
+  getUserById(@Param() param: UserIdParam): Promise<UserGetDto> {
     return this.service.getUserById(param.id);
   }
 
   @Post(':id')
-  updateUser(@Body() body: UserUpdateReqDto, @Param() param: UserGetParam): Promise<UserGetDto> {
-    return this.service.update(param.id, body)
+  updateUser(@Body() body: UserUpdateReqDto, @Param() param: UserIdParam): Promise<UserGetDto> {
+    return this.service.updateUser(param.id, body)
+  }
+
+  @Delete(':id')
+  deleteUser(@Param() param: UserIdParam): Promise<string> {
+    return this.service.deleteUser(param.id)
   }
 
   @Post('friends')
   requestFriend(@Body() body: FriendRequestDto) {
-    this.service.requestFriendship(body);
+    return this.service.requestFriendship(body);
   }
 
   @Get('friends/:id')
-  getFriendsById(@Param() param: UserGetParam): Promise<UserGetDto[]> {
+  getFriendsById(@Param() param: UserIdParam): Promise<UserGetDto[]> {
     return this.service.getFriendsById(param.id);
   }
 
   @Get('friends/pending/:id')
-  getPendingFriends(@Param() param: UserGetParam): Promise<UserGetDto[]> {
-    const list = this.service.getPendingFriends(param.id);
-    return list;
+  getPendingFriends(@Param() param: UserIdParam): Promise<UserGetDto[]> {
+    return this.service.getPendingFriends(param.id);
   }
 }

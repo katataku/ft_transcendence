@@ -36,12 +36,23 @@ export class UsersService {
     return res;
   }
 
-  async update(id: number, data: UserUpdateReqDto): Promise<UserGetDto> {
+  async updateUser(id: number, data: UserUpdateReqDto): Promise<UserGetDto> {
     const target = await this.usersRepository.findOne({where: {id: id}})
+    if (target == null) {
+      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND)
+    }
     target.name = data.name
     target.password = SHA256(data.password).toString()
     await this.usersRepository.save(target)
     return this.getUserById(id)
+  }
+
+  async deleteUser(id: number): Promise<string> {
+    const target = await this.usersRepository.findOne({where: {id: id}})
+    if (target == null) {
+      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND)
+    }
+    return (this.usersRepository.remove(target)) ? 'OK' : '...'
   }
 
   async getUserById(id: number): Promise<UserGetDto> {
