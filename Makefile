@@ -49,3 +49,15 @@ lint:
 back:
 	mkdir -p ${DB_STORAGE_DIR}
 	${DC_CMD} ${DC_OPTIONS} up db backend swagger swagger-editor
+
+.PHONY:create
+create:
+	docker exec -it back npm run typeorm:create
+
+.PHONY:migrate
+migrate:
+	docker exec -it back npm run typeorm:run
+
+.PHONY:revert
+revert:
+	docker exec -it back npm run typeorm:revert
