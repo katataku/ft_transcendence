@@ -48,7 +48,7 @@ const PublicSelectDropdownButton = (props: {
 }
 
 const CreateRoomModal = (props: {
-  userName: string
+  user: User
   showCreateRoomModal: boolean
   handleModalClose: () => void
 }): ReactElement => {
@@ -58,7 +58,7 @@ const CreateRoomModal = (props: {
   const handleCreateRoom = (): void => {
     const requestData: ChatRoom = {
       name: newRoomName,
-      created_by: props.userName,
+      created_by: props.user.id,
       isPublic
     }
     axios
@@ -113,6 +113,7 @@ const CreateRoomModal = (props: {
 }
 
 export function ChatList(): ReactElement {
+  const [user, setUser] = React.useState<User>({ id: 0, name: '' })
   const [name, setName] = React.useState<string>('')
   const [roomList, setRoomList] = React.useState<ChatRoom[]>([])
   const [showCreateRoomModal, setShowCreateRoomModal] = React.useState(false)
@@ -167,11 +168,20 @@ export function ChatList(): ReactElement {
       })
   }
 
+  const StateInfo = (): ReactElement => {
+    return (
+      <>
+        <p>user id: {user.id}</p>
+        <p>user name: {user.name}</p>
+      </>
+    )
+  }
+
   return (
     <>
       {alertElement}
       <CreateRoomModal
-        userName={name}
+        user={user}
         showCreateRoomModal={showCreateRoomModal}
         handleModalClose={handleModalClose}
       ></CreateRoomModal>
@@ -187,8 +197,23 @@ export function ChatList(): ReactElement {
                 setName(e.target.value)
               }}
             />
+            <Button
+              onClick={() => {
+                axios
+                  .get<User>('/user/' + name)
+                  .then((response) => {
+                    setUser(response.data)
+                  })
+                  .catch(() => {
+                    alert('エラーです！')
+                  })
+              }}
+            >
+              get User info
+            </Button>
           </label>
         </p>
+        <StateInfo></StateInfo>
         <ul>
           {roomList.map((room, index) => {
             const isPublicIcon: JSX.Element = room.isPublic ? (
@@ -200,7 +225,7 @@ export function ChatList(): ReactElement {
             const enterButton: JSX.Element = (
               <Button
                 onClick={() => {
-                  navigate('/chat', { state: { room: room.name, name } })
+                  navigate('/chat', { state: { room: room.name, user } })
                 }}
               >
                 Enter

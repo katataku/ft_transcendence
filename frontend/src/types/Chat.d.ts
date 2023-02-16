@@ -1,8 +1,13 @@
 interface ChatState {
-  name: string
+  user: User
   room: string
 }
 
 interface ChatListState {
   kicked: boolean
+}
+
+interface User {
+  id: number;
+  name: string;
 }

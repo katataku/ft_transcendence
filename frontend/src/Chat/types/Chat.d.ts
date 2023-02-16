@@ -1,23 +1,23 @@
 interface messageEventType {
   key: number
-  name: string
+  user: User
   room: string
   msg: string
 }
 
 interface kickEventType {
   key: number
-  name: string
+  userId: number
   room: string
 }
 
 interface messageItem {
-  name: string
+  user: User
   body: JSX.Element
 }
 
 interface muteUserList {
-  muteUserId: string
-  mutedUserId: string
+  muteUserId: number
+  mutedUserId: number
   mute_until: Date
 }
