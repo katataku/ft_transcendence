@@ -19,7 +19,7 @@ export class ChatMuteUserService {
     return rows;
   }
 
-  async getListOne(muteUserId: string): Promise<ChatMuteUserDto[]> {
+  async getListOne(muteUserId: number): Promise<ChatMuteUserDto[]> {
     const rows: ChatMuteUser[] = await this.chatMuteRepository.find({
       where: {
         muteUserId: muteUserId,

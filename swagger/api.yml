@@ -225,7 +225,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/chat-mute-user'
+              $ref: '#/components/schemas/chat-mute-user-pk'
       responses:
         200:
           description: 成功
@@ -240,7 +240,7 @@ paths:
           name: muteUserId
           required: true
           schema:
-            type: string
+            type: number
       responses:
         200:
           description: 成功
@@ -319,8 +319,8 @@ components:
           type: string
           example: Tom Brady
         created_by:
-          type: string
-          example: Tom Brady
+          type: number
+          example: 1
         isPublic:
           type: boolean
           example: true
@@ -331,8 +331,8 @@ components:
           type: string
           example: Tom Brady
         created_by:
-          type: string
-          example: Tom Brady
+          type: number
+          example: 1
         isPublic:
           type: boolean
           example: true
@@ -340,11 +340,20 @@ components:
       type: object
       properties:
         muteUserId:
-          type: string
-          example: Tom Brady mute
+          type: number
+          example: 1
         mutedUserId:
-          type: string
-          example: Tom Brady muted
-        muteUntil:
+          type: number
+          example: 2
+        mute_until:
           type: timestamp
           example: "2024-01-31T14:59:00.000Z"
+    chat-mute-user-pk:
+      type: object
+      properties:
+        muteUserId:
+          type: number
+          example: 1
+        mutedUserId:
+          type: number
+          example: 2
