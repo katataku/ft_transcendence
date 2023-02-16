@@ -188,35 +188,36 @@ export function Chat(): ReactElement {
   }
 
   const makeItem = (item: messageEventType): messageItem => {
+    // 暫定的にいらすとやのURLを設定している。
+    // 将来的にはプロフィール画像の設定されている42CDNのURLを設定する。
+    const imageURL: string =
+      'https://1.bp.blogspot.com/-SWOiphrHWnI/XWS5x7MYwHI/AAAAAAABUXA/i_PRL_Atr08ayl9sZy9-x0uoY4zV2d5xwCLcBGAs/s1600/pose_dance_ukareru_man.png'
     const outerClassName: string =
       name === item.name ? 'line__right' : 'line__left'
     const innerClassName: string =
       name === item.name ? 'line__right-text' : 'line__left-text'
-    const buttonObject: JSX.Element =
+    const imageObject: JSX.Element =
       name === item.name ? (
         <></>
       ) : (
-        <>
-          <button
+        <figure>
+          <img
+            src={imageURL}
             onClick={() => {
               setTargetUser(item.name)
               setShowModal(true)
             }}
-          >
-            user setting
-          </button>
-        </>
+          />
+        </figure>
       )
 
     return {
       name: item.name,
       body: (
         <div className={outerClassName} key={item.key}>
+          {imageObject}
           <div className={innerClassName}>
-            <div className="name">
-              {buttonObject}
-              {item.name}
-            </div>
+            <div className="name">{item.name}</div>
             <div className="text">{item.msg}</div>
           </div>
         </div>
