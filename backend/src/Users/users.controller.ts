@@ -22,7 +22,7 @@ export class UsersController {
   }
 
   @Post('friends')
-  requsetFriend(@Body() body: FriendRequestDto) {
+  requestFriend(@Body() body: FriendRequestDto) {
     this.service.requestFriendship(body);
   }
 
