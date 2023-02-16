@@ -37,20 +37,20 @@ export class UsersService {
   }
 
   async updateUser(id: number, data: UserUpdateReqDto): Promise<UserGetDto> {
-    const target = await this.findUser(id)
-    target.name = data.name
-    target.password = SHA256(data.password).toString()
-    await this.usersRepository.save(target)
-    return this.getUserById(id)
+    const target = await this.findUser(id);
+    target.name = data.name;
+    target.password = SHA256(data.password).toString();
+    await this.usersRepository.save(target);
+    return this.getUserById(id);
   }
 
   async deleteUser(id: number): Promise<string> {
-    const target = await this.findUser(id)
-    return (this.usersRepository.remove(target)) ? 'OK' : '...'
+    const target = await this.findUser(id);
+    return this.usersRepository.remove(target) ? 'OK' : '...';
   }
 
   async getUserById(id: number): Promise<UserGetDto> {
-    const data = await this.findUser(id)
+    const data = await this.findUser(id);
     const res: UserGetDto = {
       id: data.id,
       name: data.name,
@@ -59,11 +59,11 @@ export class UsersService {
   }
 
   async findUser(id: number): Promise<User> {
-    const user = await this.usersRepository.findOne({where: {id: id}})
+    const user = await this.usersRepository.findOne({ where: { id: id } });
     if (user == null) {
-      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND)
+      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
     }
-    return user
+    return user;
   }
 
   async requestFriendship(data: FriendRequestDto): Promise<void> {
