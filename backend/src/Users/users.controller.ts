@@ -6,6 +6,7 @@ import {
   UserCreateResDto,
   UserGetDto,
 } from 'src/common/dto/users.dto';
+import { UserGetParam } from 'src/common/params/user.params';
 
 @Controller('user')
 export class UsersController {
@@ -17,8 +18,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  getUserById(@Param('id') param: string): Promise<UserGetDto> {
-    return this.service.getUserById(Number(param));
+  getUserById(@Param() param: UserGetParam): Promise<UserGetDto> {
+    return this.service.getUserById(param.id);
   }
 
   @Post('friends')
@@ -27,14 +28,14 @@ export class UsersController {
   }
 
   @Get('friends/:id')
-  getFriendsById(@Param('id') param: string): Promise<UserGetDto[]> {
-    return this.service.getFriendsById(Number(param));
+  getFriendsById(@Param() param: UserGetParam): Promise<UserGetDto[]> {
+    return this.service.getFriendsById(param.id);
   }
 
   @Get('friends/pending/:id')
-  getPendingFriends(@Param('id') param: string): Promise<UserGetDto[]> {
+  getPendingFriends(@Param() param: UserGetParam): Promise<UserGetDto[]> {
     Logger.log(param);
-    const list = this.service.getPendingFriends(Number(param));
+    const list = this.service.getPendingFriends(param.id);
     return list;
   }
 }

@@ -37,10 +37,9 @@ export class UsersService {
   }
 
   async getUserById(id: number): Promise<UserGetDto> {
-    this.validateParamId(id);
     const data = await this.usersRepository.findOne({ where: { id: id } });
     if (data == null) {
-      throw new HttpException('User Not Found.', HttpStatus.NO_CONTENT);
+      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
     }
 
     const res: UserGetDto = {
@@ -77,7 +76,6 @@ export class UsersService {
   }
 
   async getPendingFriends(id: number): Promise<UserGetDto[]> {
-    this.validateParamId(id);
     const pendingList = await this.pendingRepository.find();
     const res: UserGetDto[] = [];
     const pendings = pendingList.filter((pending) => pending.to == id);
@@ -89,7 +87,6 @@ export class UsersService {
   }
 
   async getFriendsById(id: number): Promise<UserGetDto[]> {
-    this.validateParamId(id);
     const user = await this.getUserById(id);
     const friendships: Friendship[] = await this.friendshipRepository.find();
     const res: UserGetDto[] = [];
@@ -101,11 +98,5 @@ export class UsersService {
       }
     }
     return res;
-  }
-
-  validateParamId(id: number): void {
-    if (isNaN(id)) {
-      throw new HttpException('Invalid Parameter.', HttpStatus.BAD_REQUEST);
-    }
   }
 }
