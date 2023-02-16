@@ -8,6 +8,6 @@ interface ChatListState {
 }
 
 interface User {
-  id: number;
-  name: string;
+  id: number
+  name: string
 }
