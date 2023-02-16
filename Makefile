@@ -41,3 +41,15 @@ prune:
 lint:
 	cd ./frontend && npm run lint && npm run format
 	cd ./backend && npm run lint && npm run format
+
+.PHONY:create
+create:
+	docker exec -it back npm run typeorm:create
+
+.PHONY:migrate
+migrate:
+	docker exec -it back npm run typeorm:run
+
+.PHONY:revert
+revert:
+	docker exec -it back npm run typeorm:revert
