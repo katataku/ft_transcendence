@@ -10,6 +10,8 @@ interface IBall {
 
 interface IPaddle {
   pos: Vector2
+  id: UPlayer
+  score: number
 }
 
 interface IScore {

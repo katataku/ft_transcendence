@@ -7,7 +7,13 @@ import React, {
 } from 'react'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
-// import axios from 'axios'
+import io from 'socket.io-client'
+import axios from 'axios'
+
+const ServerURL: string = process.env.REACT_APP_BACKEND_WEBSOCKET_BASE_URL ?? ''
+const socket = io(ServerURL + '/game')
+
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
 const gameWinWid: number = 800
 const gameWinHght: number = 500
@@ -22,13 +28,17 @@ const initBall: IBall = {
   vel: { x: -1, y: 0.5 }
 }
 const initLeftPaddle: IPaddle = {
-  pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 }
+  pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 },
+  id: 'left',
+  score: 0
 }
 const initRightPaddle: IPaddle = {
   pos: {
     x: gameWinWid - (gameWinWid / 20 + paddleSize.x),
     y: gameWinHght / 2 - paddleSize.y / 2
-  }
+  },
+  id: 'right',
+  score: 0
 }
 const deepCpInitBall = (): IBall => {
   return JSON.parse(JSON.stringify(initBall)) // deep copy of Object
@@ -36,6 +46,9 @@ const deepCpInitBall = (): IBall => {
 const winningScore = 3
 
 let keydown = ''
+
+let clientBall: IBall
+let clientPlayerPaddle: Map<string, IPaddle>
 
 function Paddle(props: { paddle: IPaddle }): ReactElement {
   return (
@@ -198,21 +211,46 @@ function Match(): ReactElement {
     score.current.rightScore < winningScore
   )
 
+  if (isMatchSet) {
+    socket.emit('matchSet')
+  }
+
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number, deltaTime: number) => {
-    const newLeftPaddle = updatePaddle(leftPaddle)
-    const newRightPaddle = updatePaddle(rightPaddle)
-    const newBall = updateBall(
-      ball,
-      deltaTime,
-      speed.current,
-      newLeftPaddle,
-      newRightPaddle,
-      incrementScore.current
-    )
-    setLeftPaddle(newLeftPaddle)
-    setRightPaddle(newRightPaddle)
-    setBall(newBall)
+    // const newLeftPaddle = updatePaddle(leftPaddle)
+    // const newRightPaddle = updatePaddle(rightPaddle)
+    // const newBall = updateBall(
+    //   ball,
+    //   deltaTime,
+    //   speed.current,
+    //   newLeftPaddle,
+    //   newRightPaddle,
+    //   incrementScore.current
+    // )
+    if (clientPlayerPaddle !== undefined) {
+      //   console.log('clientPlayerPaddl')
+      //   console.log(clientPlayerPaddle)
+
+      //   const lastFrameTime = Date.now()
+      const myPaddle = clientPlayerPaddle.get(socket.id)
+      if (myPaddle !== undefined) {
+        const newMyPaddle = updatePaddle(myPaddle)
+        clientPlayerPaddle.set(socket.id, newMyPaddle)
+        socket.emit('serverUpdatePaddle', newMyPaddle)
+      }
+      //   console.log(Date.now() - lastFrameTime)
+
+      clientPlayerPaddle.forEach((value) => {
+        if (value.id === 'left') {
+          setLeftPaddle(value)
+          //   score.current.leftScore = value.score
+        } else if (value.id === 'right') {
+          setRightPaddle(value)
+          //   score.current.rightScore = value.score
+        }
+      })
+    }
+    if (clientBall !== undefined) setBall(clientBall)
     setTicks(time)
   }, isMatchSet)
 
@@ -279,7 +317,33 @@ export function Game(): ReactElement {
   )
 }
 
+socket.on('updateBall', (serverBall: IBall) => {
+  //   if (clientBall === undefined) {
+  //     clientBall = serverBall
+  //   } else {
+  //     clientBall.setPosition(serverBall.x, serverBall.y)
+  //   }
+  clientBall = serverBall
+})
+
+socket.on('updatePaddle', (playerPaddle: Map<string, IPaddle>) => {
+  const mapPlayerPaddle = new Map(Object.entries(playerPaddle))
+  if (clientPlayerPaddle === undefined) clientPlayerPaddle = mapPlayerPaddle
+  else {
+    mapPlayerPaddle.forEach((value, key) => {
+      if (key !== socket.id) clientPlayerPaddle.set(key, value)
+    })
+  }
+
+  //   console.log(clientPlayerPaddle)
+})
+
 function req(): void {
   // const res = await axios.get('http://localhost:3001/api')
   // console.log(res.data)
 }
+
+// setInterval(() => {
+//   if (clientPlayerPaddle.has(socket.id))
+//     socket.emit('serverUpdatePaddle', Object.fromEntries(clientPlayerPaddle))
+// }, 1000 / 60)
