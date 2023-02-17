@@ -9,6 +9,7 @@ import * as dotenv from 'dotenv';
 import { ChatMuteUser } from '../entities/chatMuteUser.entity';
 import { ChatRoom } from 'src/entities/chatRoom.entity';
 import { ChatRoomModule } from 'src/chatRoom';
+import { GameModule } from '../game';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ const options: PostgresConnectionOptions = {
     ChatMuteUserModule,
     ChatModule,
     ChatRoomModule,
+    GameModule,
   ],
 })
 export class AppModule {}
