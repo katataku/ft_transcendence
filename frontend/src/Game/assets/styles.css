@@ -1,13 +1,17 @@
 :root {
-  --wid: 800px;
-  --height: 500px;
-}
-#page {
-
+  --wid: 1000px;
+  --height: 600px;
 }
 
 #header {
+  color: black;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  overflow: hidden;
+}
 
+#buttonPos {
+  margin-top: 25px;
 }
 
 #match {
@@ -18,8 +22,9 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -26%);
   font-family: 'Courier New', monospace;
+  overflow: hidden;
 }
 
 #leftScore {
@@ -28,7 +33,7 @@
   float: left;
   left: 40%;
   top: -95%;
-  font-size: 50px;
+  font-size: 4em;
 }
 
 #rightScore {
@@ -37,7 +42,15 @@
   float: right;
   right: 40%;
   top: -95%;
-  font-size: 50px;
+  font-size: 4em;
+}
+
+#countDown {
+  position: relative;
+  top: -65%;
+  color: white;
+  font-size: 6em;
+  font-weight: bolder;
 }
 
 #leftResult {
@@ -62,10 +75,9 @@
   border-radius: 100px;
 }
 
-#powerup {
-  position: relative;
-  color: black;
-  top: -105%;
+#centerCol {
+  text-align-last: center;
+  margin-top: 0.5%;
 }
 
 #boardDiv {

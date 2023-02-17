@@ -5,7 +5,7 @@ interface messageEventType {
   msg: string
 }
 
-interface banEventType {
+interface kickEventType {
   key: number
   name: string
   room: string
@@ -19,4 +19,5 @@ interface messageItem {
 interface muteUserList {
   muteUserId: string
   mutedUserId: string
+  mute_until: Date
 }

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { messageEventDto } from './dto/chat.dto';
+import { messageEventDto } from '../common/dto/chat.dto';
 
 @WebSocketGateway(3002, { cors: { origin: '*' } })
 export class ChatGateway {
@@ -37,13 +37,13 @@ export class ChatGateway {
     return data;
   }
 
-  @SubscribeMessage('banNotification')
-  handleBanNotification(
+  @SubscribeMessage('kickNotification')
+  handleKickNotification(
     @MessageBody() data: string,
     @ConnectedSocket() _client: Socket,
   ): void {
-    this.logger.log(`banNotification`);
-    this.server.emit('banNotification', data);
+    this.logger.log(`kickNotification`);
+    this.server.emit('kickNotification', data);
   }
 
   afterInit(_server: Server) {

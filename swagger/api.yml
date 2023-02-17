@@ -9,10 +9,13 @@ servers:
 tags:
   - name: health
     description: ヘルスチェック
+  - name: user
+    description: ユーザー
   - name: chatRoom
     description: チャットルーム
   - name:  chat-mute-user
     description: チャット機能でのミュートユーザ情報
+
 paths:
   /health:
     get:
@@ -22,15 +25,111 @@ paths:
       description: ヘルスチェック
       responses:
         200:
-          description: 成功例
+          description: 成功
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  health:
-                    type: string
-                    example: OK
+                $ref: '#/components/schemas/health'
+
+  /user:
+    post:
+      tags:
+        - user
+      summary: user
+      description: ユーザーの作成
+      requestBody:
+        description: create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_create_req'
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_create_res'
+
+  /user/{userID}:
+    get:
+      tags:
+        - user
+      summary: get user by ID
+      description: IDを指定してuser情報を取得
+      parameters:
+        - name: userID
+          required: true
+          description: id
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_get_res'
+
+  /user/friends/{userID}:
+    get:
+      tags:
+        - user
+      summary: get friends
+      description: パラメータ(userID)のフレンドを取得
+      parameters:
+        - name: userID
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/friends_get_res'
+
+  /user/friends:
+    post:
+      tags:
+        - user
+      summary: request or accept friendship
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/friends_post_req'
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/friends_post_req'
+
+  /user/friends/pending/{userID}:
+    get:
+      tags:
+        - user
+      summary: get pending list
+      description: パラメータ(userID)のフレンド待機リストを取得
+      parameters:
+        - name: userID
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/friends_get_res'
+
   /chatroom:
     get:
       tags:
@@ -90,7 +189,7 @@ paths:
       tags:
         - chat-mute-user
       summary: get chat-mute-user
-      description: チャット機能でのミュートユーザ情報覧を取得
+      description: チャット機能でのミュートユーザ情報一覧を取得
       responses:
         200:
           description: 成功
@@ -100,8 +199,116 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/chat-mute-user'
+    post:
+      summary: update mute
+      tags:
+        - chat-mute-user
+      description: チャット機能でのミュートユーザ情報を更新
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat-mute-user'
+      responses:
+        201:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chat-mute-user'
+    delete:
+      summary: update mute
+      tags:
+        - chat-mute-user
+      description: チャット機能でのミュートユーザ情報を削除
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat-mute-user'
+      responses:
+        200:
+          description: 成功
+  /chat-mute-user/{muteUserId}:
+    get:
+      tags:
+        - chat-mute-user
+      summary: get mute for the specified user
+      description: チャット機能でのミュートユーザ情報の取得
+      parameters:
+        - in: path
+          name: muteUserId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chat-mute-user'
+
 components:
   schemas:
+    health:
+      type: object
+      properties:
+        health:
+          type: string
+          example: OK
+
+    user_create_req:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Tom Brady
+        password:
+          type: string
+          example: password
+
+    user_create_res:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+
+    user_get_res:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Tom Brady
+  
+    friends_get_res:
+      type: array
+      items:
+        type: object
+        properties:
+          id:
+            type: integer
+            example: 1
+          name:
+            type: string
+            example: Nick Foles
+    
+    friends_post_req:
+      type: object
+      properties:
+        from:
+          type: integer
+          example: 1
+        to:
+          type: integer
+          example: 2
+
     chat_room_res:
       type: object
       properties:
@@ -138,3 +345,6 @@ components:
         mutedUserId:
           type: string
           example: Tom Brady muted
+        muteUntil:
+          type: timestamp
+          example: "2024-01-31T14:59:00.000Z"

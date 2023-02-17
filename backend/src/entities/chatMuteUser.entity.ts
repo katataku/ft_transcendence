@@ -1,6 +1,6 @@
-import { Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'chat_mute_user' })
 export class ChatMuteUser {
   //TODO(takkatao): ユーザプロフィールとの連携が取れ次第、ユーザIDに変更する。現状はname(string)を使用。
   @PrimaryColumn()
@@ -9,4 +9,7 @@ export class ChatMuteUser {
   //TODO(takkatao): ユーザプロフィールとの連携が取れ次第、ユーザIDに変更する。現状はname(string)を使用。
   @PrimaryColumn()
   mutedUserId: string;
+
+  @Column()
+  mute_until: Date;
 }

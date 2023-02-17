@@ -1,10 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, PrimaryColumn } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'health' })
 export class HealthCheck {
-  @PrimaryGeneratedColumn()
-  id: number;
-
-  @Column()
-  health: string;
+  @PrimaryColumn({ name: 'health' })
+  health!: string;
 }
