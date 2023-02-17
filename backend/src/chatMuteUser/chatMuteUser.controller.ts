@@ -15,7 +15,7 @@ export class ChatMuteUserController {
   }
 
   @Get(':muteUser')
-  getOne(@Param('muteUser') muteUser: string): Promise<ChatMuteUserDto[]> {
+  getOne(@Param('muteUser') muteUser: number): Promise<ChatMuteUserDto[]> {
     return this.service.getListOne(muteUser);
   }
 

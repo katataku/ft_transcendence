@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { User } from './users.entity';
 
 @Entity()
 export class ChatRoom {
@@ -8,8 +15,9 @@ export class ChatRoom {
   @Column()
   name: string;
 
-  @Column()
-  created_by: string;
+  @ManyToOne(() => User)
+  @JoinColumn({ name: 'created_by' })
+  created_by: number;
 
   @Column()
   isPublic: boolean;
