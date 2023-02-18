@@ -9,22 +9,28 @@ import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { IBall, IPaddle, UPlayer, Vector2 } from './dto/game.dto';
 
-const gameWinWid = 800;
-const gameWinHght = 500;
+const gameWinWid = 1000;
+const gameWinHght = 600;
 const ballPx = 20;
+// const winningScore = 3;
+
 const paddleSize: Vector2 = {
   x: 8,
   y: 100,
 };
+
 const initBall: IBall = {
   pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 - ballPx / 2 },
   vel: { x: -1, y: 0.5 },
 };
+
 const initLeftPaddle: IPaddle = {
   pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 },
   id: 'left',
   score: 0,
+  ready: false,
 };
+
 const initRightPaddle: IPaddle = {
   pos: {
     x: gameWinWid - (gameWinWid / 20 + paddleSize.x),
@@ -32,11 +38,12 @@ const initRightPaddle: IPaddle = {
   },
   id: 'right',
   score: 0,
+  ready: false,
 };
+
 const deepCpInitBall = (): IBall => {
   return JSON.parse(JSON.stringify(initBall)); // deep copy of Object
 };
-const winningScore = 3;
 
 let serverBall: IBall = undefined;
 
@@ -144,17 +151,6 @@ export class GameGateway {
     return ball;
   }
 
-  @SubscribeMessage('serverUpdatePaddle')
-  handleUpdatePaddle(@MessageBody() newPaddle: IPaddle): void {
-    if (newPaddle.id === 'left') playerPaddle.set(leftPlayerId, newPaddle);
-    else playerPaddle.set(rightPlayerId, newPaddle);
-  }
-
-  //   @SubscribeMessage('matchSet')
-  //   matchSet(): void {
-  //     clearInterval(this.intervalId);
-  //   }
-
   private logger: Logger = new Logger('GameGateway');
 
   afterInit(_server: Server) {
@@ -193,7 +189,6 @@ export class GameGateway {
           playerPaddle.get(leftPlayerId),
           playerPaddle.get(rightPlayerId),
         );
-        console.log(playerPaddle);
 
         // クライアントにデータを送信する
         this.server.emit('updateBall', serverBall);
@@ -201,14 +196,61 @@ export class GameGateway {
       }, 1000 / 60);
     } else if (playerPaddle.size > 1) {
       console.log('too many players, bye');
-      return false;
     }
-
-    return { event: 'message', data: 'hello' };
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client disconnected: ${client.id}`);
     clearInterval(this.intervalId);
+  }
+
+  @SubscribeMessage('serverUpdatePaddle')
+  handleUpdatePaddle(
+    @MessageBody() data: { newPaddle: IPaddle; isReady: boolean },
+  ): void {
+    // console.log(`serverUpdatePaddle data.isReady: ${data.isReady}`);
+    data.newPaddle.ready = data.isReady;
+    if (data.newPaddle.id === 'left')
+      playerPaddle.set(leftPlayerId, data.newPaddle);
+    else playerPaddle.set(rightPlayerId, data.newPaddle);
+  }
+
+  @SubscribeMessage('updatePlayerReady')
+  handleUpdatePlayerReady(@MessageBody() playerID: UPlayer): void {
+    if (playerID === 'left') {
+      playerPaddle.get(leftPlayerId).ready = true;
+      this.server.emit('updateOtherPlayerButton', 'left');
+    } else {
+      playerPaddle.get(rightPlayerId).ready = true;
+      this.server.emit('updateOtherPlayerButton', 'right');
+    }
+    if (
+      playerPaddle.get(leftPlayerId).ready &&
+      playerPaddle.get(rightPlayerId).ready
+    )
+      console.log('game ready!');
+  }
+
+  //   @SubscribeMessage('matchSet')
+  //   matchSet(): void {
+  //     clearInterval(this.intervalId);
+  //   }
+
+  @SubscribeMessage('giveMeInfo')
+  newClient(@ConnectedSocket() client: Socket): void {
+    if (leftPlayerId !== undefined && rightPlayerId !== undefined) {
+      console.log("socket.on('newClient')");
+      console.log(playerPaddle.get(leftPlayerId).ready ? 'L true' : 'L false');
+      console.log(
+        playerPaddle.get(rightPlayerId).ready ? 'Right true' : 'Right false',
+      );
+
+      this.server
+        .to(client.id)
+        .emit('updateReady', playerPaddle.get(leftPlayerId).ready, 'left');
+      this.server
+        .to(client.id)
+        .emit('updateReady', playerPaddle.get(rightPlayerId).ready, 'right');
+    }
   }
 }

@@ -13,9 +13,10 @@ export interface IBall {
 }
 
 export interface IPaddle {
-  pos: Vector2;
   id: UPlayer;
+  pos: Vector2;
   score: number;
+  ready: boolean;
 }
 
 export interface IScore {
@@ -24,3 +25,12 @@ export interface IScore {
 }
 
 export type UPlayer = 'left' | 'right';
+
+interface IPlayer {
+  id: UPlayer;
+  name: string;
+  wins: number;
+  losses: number;
+  isReady: boolean;
+  paddle: IPaddle;
+}

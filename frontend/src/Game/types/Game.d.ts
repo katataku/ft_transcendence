@@ -9,8 +9,8 @@ interface IBall {
 }
 
 interface IPaddle {
-  pos: Vector2
   id: UPlayer
+  pos: Vector2
   score: number
 }
 
@@ -22,7 +22,7 @@ interface IScore {
 type UPlayer = 'left' | 'right'
 
 interface IPlayer {
-  id: number
+  id: UPlayer
   name: string
   wins: number
   losses: number
