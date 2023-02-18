@@ -7,7 +7,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { IBall, IPaddle, UPlayer, Vector2 } from './dto/game.dto';
+import { IBall, IPaddle, IPlayer, UPlayer, Vector2 } from './types/game';
 
 const gameWinWid = 1000;
 const gameWinHght = 600;
@@ -28,7 +28,6 @@ const initLeftPaddle: IPaddle = {
   pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 },
   id: 'left',
   score: 0,
-  ready: false,
 };
 
 const initRightPaddle: IPaddle = {
@@ -38,6 +37,21 @@ const initRightPaddle: IPaddle = {
   },
   id: 'right',
   score: 0,
+};
+
+const initLeftProfile: IPlayer = {
+  id: 'left',
+  name: 'Player1',
+  wins: 3,
+  losses: 7,
+  ready: false,
+};
+
+const initRightProfile: IPlayer = {
+  id: 'right',
+  name: 'Player2',
+  wins: 13,
+  losses: 17,
   ready: false,
 };
 
@@ -50,19 +64,14 @@ let serverBall: IBall = undefined;
 let leftPlayerId: string;
 let rightPlayerId: string;
 
-const playerPaddle: Map<string, IPaddle> = new Map<string, IPaddle>();
-// const playerPaddle: { [clientId: string]: IPaddle } = {};
-
-// websocketGateway
+const playersPaddle: Map<string, IPaddle> = new Map<string, IPaddle>();
+const playersProfile: Map<string, IPlayer> = new Map<string, IPlayer>();
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
-  @WebSocketServer()
-  server: Server;
+  // ballの処理↓
 
-  intervalId: NodeJS.Timeout;
-
-  calculateTilt(relativePosBall: number): number {
+  private calculateTilt(relativePosBall: number): number {
     const absValFromPaddle = Math.abs(relativePosBall);
     let x = 0;
     /*
@@ -86,7 +95,7 @@ export class GameGateway {
     return relativePosBall < 0 ? -x : x;
   }
 
-  handlePaddleCollision(ball: IBall, paddle: IPaddle): void {
+  private handlePaddleCollision(ball: IBall, paddle: IPaddle): void {
     const compositeVelocity = Math.sqrt(ball.vel.x ** 2 + ball.vel.y ** 2);
     ball.vel.y = this.calculateTilt(
       // ボールがパドルの何%で衝突したのか)
@@ -99,7 +108,7 @@ export class GameGateway {
         : -Math.sqrt(compositeVelocity ** 2 - ball.vel.y ** 2);
   }
 
-  isHitPaddle(ball: IBall, paddle: IPaddle): boolean {
+  private isHitPaddle(ball: IBall, paddle: IPaddle): boolean {
     return (
       paddle.pos.x <= ball.pos.x + ballPx &&
       ball.pos.x <= paddle.pos.x + paddleSize.x &&
@@ -108,7 +117,7 @@ export class GameGateway {
     );
   }
 
-  updateBall(
+  private updateBall(
     ball: IBall,
     deltaTime: number,
     speed: number,
@@ -151,6 +160,11 @@ export class GameGateway {
     return ball;
   }
 
+  // ballの処理↑
+
+  @WebSocketServer()
+  private server: Server;
+  private intervalId: NodeJS.Timeout;
   private logger: Logger = new Logger('GameGateway');
 
   afterInit(_server: Server) {
@@ -158,44 +172,46 @@ export class GameGateway {
     this.logger.log('初期化しました。');
   }
 
-  handleConnection(client: Socket, ..._args: any[]) {
+  private loop() {
+    let lastFrameTime = Date.now();
+    this.intervalId = setInterval(() => {
+      const currentTime = Date.now();
+      const deltaTime = (currentTime - lastFrameTime) / 1000;
+      lastFrameTime = currentTime;
+      serverBall = this.updateBall(
+        serverBall,
+        deltaTime,
+        400,
+        playersPaddle.get(leftPlayerId),
+        playersPaddle.get(rightPlayerId),
+      );
+
+      // クライアントにデータを送信する
+      this.server.emit('updateBall', serverBall);
+      this.server.emit('updatePaddle', Object.fromEntries(playersPaddle));
+    }, 1000 / 60);
+  }
+
+  handleConnection(@ConnectedSocket() client: Socket) {
     //クライアント接続時
     this.logger.log(`Client connected: ${client.id}`);
-    if (playerPaddle.size === 0) {
-      console.log('first player joined');
+    if (playersPaddle.size === 0) {
+      this.logger.log('first player joined');
       //creating player 1
-      playerPaddle.set(client.id, initLeftPaddle);
+      playersPaddle.set(client.id, initLeftPaddle);
+      playersProfile.set(client.id, initLeftProfile);
       leftPlayerId = client.id;
-    } else if (playerPaddle.size === 1) {
-      console.log('second player joined');
+    } else if (playersPaddle.size === 1) {
+      this.logger.log('second player joined');
       //creating player 2
-      playerPaddle.set(client.id, initRightPaddle);
+      playersPaddle.set(client.id, initRightPaddle);
+      playersProfile.set(client.id, initRightProfile);
       rightPlayerId = client.id;
-      console.log(playerPaddle);
-      this.server.emit('updatePaddle', Object.fromEntries(playerPaddle));
+      this.server.emit('updatePaddle', Object.fromEntries(playersPaddle));
       serverBall = deepCpInitBall();
-
-      let lastFrameTime = Date.now();
-      this.intervalId = setInterval(() => {
-        const currentTime = Date.now();
-        const deltaTime = (currentTime - lastFrameTime) / 1000;
-        // console.log(deltaTime);
-        lastFrameTime = currentTime;
-        // ゲームの状態を更新する処理
-        serverBall = this.updateBall(
-          serverBall,
-          deltaTime,
-          400,
-          playerPaddle.get(leftPlayerId),
-          playerPaddle.get(rightPlayerId),
-        );
-
-        // クライアントにデータを送信する
-        this.server.emit('updateBall', serverBall);
-        this.server.emit('updatePaddle', Object.fromEntries(playerPaddle));
-      }, 1000 / 60);
-    } else if (playerPaddle.size > 1) {
-      console.log('too many players, bye');
+      this.loop();
+    } else if (playersPaddle.size > 1) {
+      this.logger.log('too many players, bye');
     }
   }
 
@@ -204,53 +220,33 @@ export class GameGateway {
     clearInterval(this.intervalId);
   }
 
-  @SubscribeMessage('serverUpdatePaddle')
-  handleUpdatePaddle(
-    @MessageBody() data: { newPaddle: IPaddle; isReady: boolean },
-  ): void {
-    // console.log(`serverUpdatePaddle data.isReady: ${data.isReady}`);
-    data.newPaddle.ready = data.isReady;
-    if (data.newPaddle.id === 'left')
-      playerPaddle.set(leftPlayerId, data.newPaddle);
-    else playerPaddle.set(rightPlayerId, data.newPaddle);
+  @SubscribeMessage('updatePaddle')
+  handleUpdatePaddle(@MessageBody() newPaddle: IPaddle): void {
+    if (newPaddle.id === 'left') playersPaddle.set(leftPlayerId, newPaddle);
+    else playersPaddle.set(rightPlayerId, newPaddle);
   }
-
+  //updatereadybutton
   @SubscribeMessage('updatePlayerReady')
   handleUpdatePlayerReady(@MessageBody() playerID: UPlayer): void {
-    if (playerID === 'left') {
-      playerPaddle.get(leftPlayerId).ready = true;
-      this.server.emit('updateOtherPlayerButton', 'left');
-    } else {
-      playerPaddle.get(rightPlayerId).ready = true;
-      this.server.emit('updateOtherPlayerButton', 'right');
-    }
+    playersProfile.get(
+      playerID === 'left' ? leftPlayerId : rightPlayerId,
+    ).ready = true;
+
+    this.server.emit('updateConnections', Object.fromEntries(playersProfile));
+
     if (
-      playerPaddle.get(leftPlayerId).ready &&
-      playerPaddle.get(rightPlayerId).ready
+      playersProfile.get(leftPlayerId).ready &&
+      playersProfile.get(rightPlayerId).ready
     )
       console.log('game ready!');
   }
 
-  //   @SubscribeMessage('matchSet')
-  //   matchSet(): void {
-  //     clearInterval(this.intervalId);
-  //   }
-
-  @SubscribeMessage('giveMeInfo')
-  newClient(@ConnectedSocket() client: Socket): void {
+  @SubscribeMessage('updateConnections')
+  handleUpdateConnections(@ConnectedSocket() client: Socket): void {
     if (leftPlayerId !== undefined && rightPlayerId !== undefined) {
-      console.log("socket.on('newClient')");
-      console.log(playerPaddle.get(leftPlayerId).ready ? 'L true' : 'L false');
-      console.log(
-        playerPaddle.get(rightPlayerId).ready ? 'Right true' : 'Right false',
-      );
-
       this.server
         .to(client.id)
-        .emit('updateReady', playerPaddle.get(leftPlayerId).ready, 'left');
-      this.server
-        .to(client.id)
-        .emit('updateReady', playerPaddle.get(rightPlayerId).ready, 'right');
+        .emit('updateConnections', Object.fromEntries(playersProfile));
     }
   }
 }

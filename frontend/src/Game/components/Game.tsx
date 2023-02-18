@@ -61,7 +61,8 @@ const deepCpInitBall = (): IBall => {
 }
 
 let clientBall: IBall
-let clientPlayerPaddle: Map<string, IPaddle>
+let clientPlayersPaddle: Map<string, IPaddle>
+let clientPlayersProfile: Map<string, IPlayer>
 
 let leftID: string
 let rightID: string
@@ -97,95 +98,6 @@ function Ball(props: { ball: IBall }): ReactElement {
       id="ball"
     />
   )
-}
-
-function calculateTilt(relativePosBall: number): number {
-  const absValFromPaddle = Math.abs(relativePosBall)
-  let x = 0
-  /*
-    paddleの半分から80%だったら
-    paddleの半分から60%だったら...
-    xは大きくなれば傾きも大きくなる
-  */
-  if (absValFromPaddle >= 0.9) {
-    x = 0.8
-  } else if (absValFromPaddle >= 0.8) {
-    x = 0.6
-  } else if (absValFromPaddle >= 0.6) {
-    x = 0.4
-  } else if (absValFromPaddle >= 0.4) {
-    x = 0.3
-  } else if (absValFromPaddle >= 0.2) {
-    x = 0.2
-  } else {
-    x = absValFromPaddle
-  }
-  return relativePosBall < 0 ? -x : x
-}
-
-function handlePaddleCollision(ball: IBall, paddle: IPaddle): void {
-  const compositeVelocity = Math.sqrt(ball.vel.x ** 2 + ball.vel.y ** 2)
-  ball.vel.y = calculateTilt(
-    // ボールがパドルの何%で衝突したのか)
-    (ball.pos.y + ballPx / 2 - (paddle.pos.y + paddleSize.y / 2)) /
-      (paddleSize.y / 2)
-  )
-  ball.vel.x =
-    ball.vel.x < 0
-      ? Math.sqrt(compositeVelocity ** 2 - ball.vel.y ** 2)
-      : -Math.sqrt(compositeVelocity ** 2 - ball.vel.y ** 2)
-}
-
-function isHitPaddle(ball: IBall, paddle: IPaddle): boolean {
-  return (
-    paddle.pos.x <= ball.pos.x + ballPx &&
-    ball.pos.x <= paddle.pos.x + paddleSize.x &&
-    paddle.pos.y <= ball.pos.y + ballPx &&
-    ball.pos.y <= paddle.pos.y + paddleSize.y
-  )
-}
-
-function updateBall(
-  ball: IBall,
-  deltaTime: number,
-  speed: number,
-  leftPaddle: IPaddle,
-  rightPaddle: IPaddle,
-  incrementScore: (player: UPlayer) => void
-): IBall {
-  ball.pos.x += ball.vel.x * deltaTime * speed
-  ball.pos.y += ball.vel.y * deltaTime * speed
-  if (ball.pos.y <= 0 && ball.vel.y < 0) {
-    ball.vel.y *= -1
-  } else if (ball.pos.y >= gameWinHght - ballPx && ball.vel.y > 0) {
-    ball.vel.y *= -1
-  } else if (
-    // goal hit
-    ball.pos.x <= 0 ||
-    ball.pos.x >= gameWinWid - ballPx
-  ) {
-    if (ball.vel.x < 0) {
-      incrementScore('right')
-    } else {
-      incrementScore('left')
-    }
-    ball.pos = deepCpInitBall().pos
-    ball.vel = deepCpInitBall().vel
-    ball.vel.x *= -1
-  } else if (
-    // left paddle hit
-    ball.vel.x < 0 &&
-    isHitPaddle(ball, leftPaddle)
-  ) {
-    handlePaddleCollision(ball, leftPaddle)
-  } else if (
-    // right paddle hit
-    ball.vel.x > 0 &&
-    isHitPaddle(ball, rightPaddle)
-  ) {
-    handlePaddleCollision(ball, rightPaddle)
-  }
-  return ball
 }
 
 function updatePaddle(paddle: IPaddle): IPaddle {
@@ -309,31 +221,19 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
   useAnimationFrame((time: number, deltaTime: number) => {
     if (status.current === EStatus.play) {
       if (clientBall !== undefined) setBall(clientBall)
-      if (clientPlayerPaddle !== undefined) {
-        const myPaddle = clientPlayerPaddle.get(selfID)
+      if (clientPlayersPaddle !== undefined) {
+        const myPaddle = clientPlayersPaddle.get(selfID)
         if (myPaddle !== undefined) {
           const newMyPaddle = updatePaddle(myPaddle)
-          clientPlayerPaddle.set(selfID, newMyPaddle)
-          //   socket.emit('serverUpdatePaddle', newMyPaddle)
-          if (selfID === leftID)
-            socket.emit('serverUpdatePaddle', {
-              newPaddle: newMyPaddle,
-              isReady: true
-            })
-          else
-            socket.emit('serverUpdatePaddle', {
-              newPaddle: newMyPaddle,
-              isReady: true
-            })
+          clientPlayersPaddle.set(selfID, newMyPaddle)
+          socket.emit('updatePaddle', newMyPaddle)
         }
 
-        clientPlayerPaddle.forEach((value) => {
+        clientPlayersPaddle.forEach((value) => {
           if (value.id === 'left') {
             setLeftPaddle(value)
-            //   score.current.leftScore = value.score
           } else if (value.id === 'right') {
             setRightPaddle(value)
-            //   score.current.rightScore = value.score
           }
         })
       }
@@ -378,31 +278,7 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
     }
   }
 
-  socket.on('updateOtherPlayerButton', (otherPlayerID: UPlayer) => {
-    if (props.player.id === otherPlayerID && button === grayButton) {
-      setButton(greenButton)
-      props.setPlayer({ ...props.player, ready: true })
-    }
-  })
-
-  //   socket.on('updateReady', (isReady: boolean, otherPlayerID: UPlayer) => {
-  //     console.log("socket.on('updateReady'")
-  //     console.log(
-  //       `otherPlayerID: ${otherPlayerID}, isReady: ${isReady ? 'true' : 'false'}`
-  //     )
-
-  //     if (props.player.id === otherPlayerID && isReady && button === grayButton) {
-  //       setButton(greenButton)
-  //       props.setPlayer({ ...props.player, ready: true })
-  //     }
-  //   })
-
-  console.log(button === grayButton ? 'true' : 'false')
-  console.log(props.player.ready ? 'R true' : 'R false')
-  if (button === grayButton && props.player.ready) {
-    console.log('givemeinfo setbutton')
-    setButton(greenButton)
-  }
+  if (button === grayButton && props.player.ready) setButton(greenButton)
 
   return (
     <button type="button" id="buttonPos" className={button} onClick={setReady}>
@@ -431,7 +307,7 @@ function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
 
 function Matching(props: { setPlayerList: Setter }): ReactElement {
   function findMatch(): void {
-    props.setPlayerList(clientPlayerPaddle)
+    props.setPlayerList(clientPlayersPaddle)
   }
 
   return (
@@ -458,9 +334,7 @@ export function Game(): ReactElement {
     ready: false
   })
   const [playerList, setPlayerList] =
-    useState<Map<string, IPaddle>>(clientPlayerPaddle)
-
-  console.log('Game Component')
+    useState<Map<string, IPaddle>>(clientPlayersPaddle)
 
   useEffect(() => {
     const handleOnKeyDown = (e: KeyboardEvent): void => {
@@ -472,20 +346,20 @@ export function Game(): ReactElement {
     window.addEventListener('keydown', handleOnKeyDown)
     window.addEventListener('keyup', handleOnKeyUp)
 
-    console.log('game component, useeffect')
-    socket.emit('giveMeInfo')
+    socket.emit('updateConnections')
   }, [])
 
-  socket.on('updateReady', (isReady: boolean, otherPlayerID: UPlayer) => {
-    console.log(isReady ? 'isReady : true' : 'isReady : false')
-    if (otherPlayerID === 'left') setP1({ ...p1, ready: isReady })
-    else if (otherPlayerID === 'right') setP2({ ...p2, ready: isReady })
-  })
-
-  //   console.log(playerList)
-
-  //   socket.emit('newClient')
-  //   console.log("socket.emit('newClient')")
+  socket.on(
+    'updateConnections',
+    (serverPlayersProfile: Map<string, IPlayer>) => {
+      // とりあえずreadyだけ
+      clientPlayersProfile = new Map(Object.entries(serverPlayersProfile))
+      const p1Profile = clientPlayersProfile.get(leftID)
+      const p2Profile = clientPlayersProfile.get(rightID)
+      if (p1Profile !== undefined) setP1({ ...p1, ready: p1Profile.ready })
+      if (p2Profile !== undefined) setP2({ ...p2, ready: p2Profile.ready })
+    }
+  )
 
   return playerList === undefined ? (
     <Matching setPlayerList={setPlayerList} />
@@ -504,27 +378,19 @@ export function Game(): ReactElement {
 
 // 接続時
 socket.on('connect', () => {
-  console.log('socket connect')
   selfID = socket.id
-  // emit 情報くれ
 })
 
-socket.on('updateConnections', (players) => {})
-
 socket.on('updateBall', (serverBall: IBall) => {
-  //   if (clientBall === undefined) {
-  //     clientBall = serverBall
-  //   } else {
-  //     clientBall.setPosition(serverBall.x, serverBall.y)
-  //   }
   clientBall = serverBall
 })
 
 socket.on('updatePaddle', (playerPaddle: Map<string, IPaddle>) => {
   const mapPlayerPaddle = new Map(Object.entries(playerPaddle))
-  if (clientPlayerPaddle === undefined) {
-    clientPlayerPaddle = mapPlayerPaddle
-    clientPlayerPaddle.forEach((value, key) => {
+  if (clientPlayersPaddle === undefined) {
+    // paddleの初期化
+    clientPlayersPaddle = mapPlayerPaddle
+    clientPlayersPaddle.forEach((value, key) => {
       if (value.id === 'left') {
         leftID = key
       } else if (value.id === 'right') {
@@ -532,16 +398,14 @@ socket.on('updatePaddle', (playerPaddle: Map<string, IPaddle>) => {
       }
     })
   } else {
-    clientPlayerPaddle = new Map(clientPlayerPaddle)
+    // new Mapで新しい参照にしないと、useStateが更新されないため
+    clientPlayersPaddle = new Map(clientPlayersPaddle)
     mapPlayerPaddle.forEach((value: IPaddle, key: string) => {
       if (key !== selfID) {
-        clientPlayerPaddle.set(key, value)
-        //  value.ready
+        clientPlayersPaddle.set(key, value)
       }
     })
   }
-
-  //   console.log(clientPlayerPaddle)
 })
 
 function req(): void {

@@ -3,10 +3,6 @@ export interface Vector2 {
   y: number;
 }
 
-// export interface ballDto {
-//   pos: Vector2;
-//   vel: Vector2;
-// }
 export interface IBall {
   pos: Vector2;
   vel: Vector2;
@@ -16,7 +12,6 @@ export interface IPaddle {
   id: UPlayer;
   pos: Vector2;
   score: number;
-  ready: boolean;
 }
 
 export interface IScore {
@@ -26,11 +21,10 @@ export interface IScore {
 
 export type UPlayer = 'left' | 'right';
 
-interface IPlayer {
+export interface IPlayer {
   id: UPlayer;
   name: string;
   wins: number;
   losses: number;
-  isReady: boolean;
-  paddle: IPaddle;
+  ready: boolean;
 }
