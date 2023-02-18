@@ -6,7 +6,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
-import {useLocation} from "react-router-dom";
+import { useLocation } from 'react-router-dom'
 type Ref = React.MutableRefObject<any>
 type Setter = React.Dispatch<React.SetStateAction<any>>
 // import axios from 'axios'

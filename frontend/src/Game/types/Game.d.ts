@@ -28,6 +28,6 @@ interface IPlayer {
 }
 
 interface IMatch {
-  p1: IPlayer,
+  p1: IPlayer
   p2: IPlayer
 }
