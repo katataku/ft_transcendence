@@ -14,6 +14,9 @@ export function App(): ReactElement {
         </Link>
       </p>
       <p>
+        <Link to="MatchList">Move to MatchList</Link>
+      </p>
+      <p>
         <Link to="Game">Move to Game</Link>
       </p>
       <p>

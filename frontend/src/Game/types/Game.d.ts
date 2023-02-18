@@ -26,3 +26,8 @@ interface IPlayer {
   losses: number
   ready: boolean
 }
+
+interface IMatch {
+  p1: IPlayer,
+  p2: IPlayer
+}
