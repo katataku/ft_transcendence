@@ -1,11 +1,20 @@
-import {type JSXElementConstructor, type ReactElement, useState} from 'react'
-import ListGroup from 'react-bootstrap/ListGroup';
+import { type ReactElement } from 'react'
+import {useLocation, useNavigate} from 'react-router-dom'
+import ListGroup from 'react-bootstrap/ListGroup'
 
 function listMatches(matchList: IMatch[]): ReactElement[] {
+  const navigate = useNavigate()
+  const user = useLocation().state
+
   return (
     matchList.map((match): ReactElement => {
+      const key = match.p1.name + match.p2.name
       return (
-        <ListGroup.Item key="idk" id="centerCol" action onClick={log}>
+        <ListGroup.Item
+          key={key}
+          id="centerCol"
+          action onClick={() => {navigate("/Game/", {state: user})}}
+        >
           {match.p1.name} vs. {match.p2.name}
         </ListGroup.Item>
         )

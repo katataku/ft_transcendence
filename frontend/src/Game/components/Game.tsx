@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
+import {useLocation} from "react-router-dom";
 type Ref = React.MutableRefObject<any>
 type Setter = React.Dispatch<React.SetStateAction<any>>
 // import axios from 'axios'
@@ -333,9 +334,10 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
+  const user = useLocation().state
 
   function setReady(): void {
-    if (button === grayButton) {
+    if (props.player.name === user.name && button === grayButton) {
       setButton(greenButton)
       props.setPlayer({ ...props.player, ready: true })
     }
