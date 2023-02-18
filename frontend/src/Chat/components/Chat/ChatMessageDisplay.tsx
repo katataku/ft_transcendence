@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import '../assets/styles.css'
 import { type ReactElement } from 'react'
 import axios from 'axios'
 import { Button } from 'react-bootstrap'

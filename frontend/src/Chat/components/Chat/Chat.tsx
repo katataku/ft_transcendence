@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import '../assets/styles.css'
+import '../../assets/styles.css'
 import io from 'socket.io-client'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { type ReactElement } from 'react'
