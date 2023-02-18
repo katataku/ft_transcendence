@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import '../assets/styles.css'
 import io from 'socket.io-client'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { type ReactElement } from 'react'
 import axios from 'axios'
-import { Button, Modal } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
+import { ChatModal } from './ChatModal'
 
 const ServerURL: string = process.env.REACT_APP_BACKEND_WEBSOCKET_BASE_URL ?? ''
 const socket = io(ServerURL)
@@ -68,48 +69,6 @@ const MessageSending = (props: { user: User; room: string }): ReactElement => {
       >
         send
       </button>
-    </>
-  )
-}
-
-const UserSettingModal = (props: {
-  showModal: boolean
-  targetUser: User
-  handleModalClose: () => void
-  handleKickButtonClick: () => void
-  handleMuteButtonClick: ({ muteSec }: { muteSec: number }) => void
-}): ReactElement => {
-  return (
-    <>
-      <Modal show={props.showModal} onHide={props.handleModalClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>{props.targetUser.name}</Modal.Title>
-        </Modal.Header>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={props.handleModalClose}>
-            Close
-          </Button>
-          <Button variant="primary" onClick={props.handleKickButtonClick}>
-            Kick
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              props.handleMuteButtonClick({ muteSec: 0 })
-            }}
-          >
-            Mute
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              props.handleMuteButtonClick({ muteSec: 10 })
-            }}
-          >
-            Mute 10sec
-          </Button>
-        </Modal.Footer>
-      </Modal>
     </>
   )
 }
@@ -272,13 +231,13 @@ export function Chat(): ReactElement {
   return (
     <>
       <div className="Chat">
-        <UserSettingModal
+        <ChatModal
           showModal={showModal}
           targetUser={targetUser}
           handleModalClose={handleModalClose}
           handleKickButtonClick={handleKickButtonClick}
           handleMuteButtonClick={handleMuteButtonClick}
-        ></UserSettingModal>
+        ></ChatModal>
         <h1>Chat Page</h1>
         <StateInfo></StateInfo>
         <MessageDisplay
