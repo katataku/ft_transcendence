@@ -271,20 +271,16 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
 
   function setReady(): void {
     let isPlayer: boolean
-    if (props.player.id === 'left') isPlayer = leftID === selfID
+    if (props.player.side === 'left') isPlayer = leftID === selfID
     else isPlayer = rightID === selfID
-    if (isPlayer && button === grayButton) {
+    if (isPlayer && button === grayButton && props.player.name === user.name) {
       setButton(greenButton)
       props.setPlayer({ ...props.player, ready: true })
-      socket.emit('updatePlayerReady', props.player.id)
+      socket.emit('updatePlayerReady', props.player.side)
     }
   }
 
-  if (
-    button === grayButton &&
-    props.player.ready &&
-    props.player.name === user.name
-  )
+  if (button === grayButton && props.player.ready)
     setButton(greenButton)
 
   return (
@@ -298,7 +294,7 @@ function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   return (
     <Col>
       <div className="display-1">
-        {props.player.id === 'left' ? leftID.slice(0, 7) : rightID.slice(0, 7)}
+        {props.player.side === 'left' ? leftID.slice(0, 7) : rightID.slice(0, 7)}
       </div>
       <div className="border">
         <h2>Match History</h2>
@@ -327,15 +323,17 @@ function Matching(props: { setPlayerList: Setter }): ReactElement {
 
 export function Game(): ReactElement {
   const [p1, setP1] = useState<IPlayer>({
-    id: 'left',
+    id: 1,
     name: 'Player1',
+    side: 'left',
     wins: 3,
     losses: 7,
     ready: false
   })
   const [p2, setP2] = useState<IPlayer>({
-    id: 'right',
+    id: 2,
     name: 'Player2',
+    side: 'right',
     wins: 13,
     losses: 17,
     ready: false

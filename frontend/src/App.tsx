@@ -6,14 +6,13 @@ import Button from 'react-bootstrap/Button'
 
 export function App(): ReactElement {
   const ChatListState: ChatListState = { kicked: false }
-  const [user, setUser] = useState<IPlayer>({
-    id: 'left',
+  const [user, setUser] = useState<User>({
+    id: 1,
     name: '',
-    wins: 3,
-    losses: 7,
-    ready: false
   })
 
+  // プロフィル/チャット->ゲーム をナビゲートされる人のユーザー情報は必要があります
+  // 下の<Link to="Game" state={user}>のようでできます
   return (
     <div className="App">
       <button onClick={req}>req</button>
@@ -37,7 +36,7 @@ export function App(): ReactElement {
         </Link>
       </p>
       <p>
-        <Link to="MatchList" state={user}>
+        <Link to="MatchList">
           Move to MatchList
         </Link>
       </p>
