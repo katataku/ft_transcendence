@@ -292,17 +292,17 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
 function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   return (
     <Col>
-      <div className="display-1">
+      <div className="display-2">
         {props.player.side === 'left'
           ? leftID.slice(0, 7)
           : rightID.slice(0, 7)}
       </div>
       <div className="border">
-        <h2>Match History</h2>
-        <h4>
+        <h3>Match History</h3>
+        <h5>
           wins:<span className="text-success">{props.player.wins} </span>
           losses:<span className="text-danger">{props.player.losses}</span>
-        </h4>
+        </h5>
       </div>
       <Ready player={props.player} setPlayer={props.setPlayer} />
     </Col>
