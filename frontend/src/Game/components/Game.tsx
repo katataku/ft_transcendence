@@ -246,7 +246,7 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
     <Col id="centerCol">
       <SpeedPU speed={speed} />
       <div id="match">
-        <div id="boardDiv"/>
+        <div id="boardDiv" />
         <div id="leftScore">{score.current.left}</div>
         <div id="rightScore">{score.current.right}</div>
         <div id="countDown">
@@ -280,7 +280,12 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
     }
   }
 
-  if (button === grayButton && props.player.ready && props.player.name === user.name) setButton(greenButton)
+  if (
+    button === grayButton &&
+    props.player.ready &&
+    props.player.name === user.name
+  )
+    setButton(greenButton)
 
   return (
     <button type="button" id="buttonPos" className={button} onClick={setReady}>
