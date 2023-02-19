@@ -1,6 +1,10 @@
 export interface messageEventDto {
   key: number;
-  name: string;
+  user: User;
   room: string;
   msg: string;
+}
+interface User {
+  id: number;
+  name: string;
 }

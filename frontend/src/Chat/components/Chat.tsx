@@ -23,7 +23,7 @@ const MessageDisplay = (props: {
       <div className="line__container">
         <div className="line__contents">
           {props.itemList
-            .filter((value) => !mutedUserStringList.includes(value.name))
+            .filter((value) => !mutedUserStringList.includes(value.user.id))
             .map((value) => value.body)}
         </div>
       </div>
@@ -31,17 +31,14 @@ const MessageDisplay = (props: {
   )
 }
 
-const MessageSending = (props: {
-  name: string
-  room: string
-}): ReactElement => {
+const MessageSending = (props: { user: User; room: string }): ReactElement => {
   const [message, setMessage] = useState<string>('')
   const clickSendMessage = (msg: string): void => {
     console.log('clicked')
 
     const obj: messageEventType = {
       key: Date.now(),
-      name: props.name,
+      user: props.user,
       room: props.room,
       msg
     }
@@ -77,7 +74,7 @@ const MessageSending = (props: {
 
 const UserSettingModal = (props: {
   showModal: boolean
-  targetUser: string
+  targetUser: User
   handleModalClose: () => void
   handleKickButtonClick: () => void
   handleMuteButtonClick: ({ muteSec }: { muteSec: number }) => void
@@ -86,7 +83,7 @@ const UserSettingModal = (props: {
     <>
       <Modal show={props.showModal} onHide={props.handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>{props.targetUser}</Modal.Title>
+          <Modal.Title>{props.targetUser.name}</Modal.Title>
         </Modal.Header>
         <Modal.Footer>
           <Button variant="secondary" onClick={props.handleModalClose}>
@@ -121,15 +118,15 @@ export function Chat(): ReactElement {
   const [itemList, setItemList] = useState<messageItem[]>([])
   const [mutedUserList, setMutedUserList] = useState<muteUserList[]>([])
   const [showModal, setShowModal] = useState(false)
-  const [targetUser, setTargetUser] = useState<string>('')
+  const [targetUser, setTargetUser] = useState<User>({ id: 0, name: '' })
 
-  const { room, name }: ChatState = useLocation().state
+  const { room, user }: ChatState = useLocation().state
   const navigate = useNavigate()
 
   const updateMuteList = (): void => {
     const now = new Date()
     axios
-      .get('/chat-mute-user/' + name)
+      .get('/chat-mute-user/' + String(user.id))
       .then((response) => {
         setMutedUserList(
           response.data
@@ -159,8 +156,8 @@ export function Chat(): ReactElement {
     }
 
     const newMuteUser: muteUserList = {
-      muteUserId: name,
-      mutedUserId: targetUser,
+      muteUserId: user.id,
+      mutedUserId: targetUser.id,
       mute_until: ts
     }
 
@@ -180,7 +177,7 @@ export function Chat(): ReactElement {
   const handleKickButtonClick = (): void => {
     const sendMsg: kickEventType = {
       key: Date.now(),
-      name: targetUser,
+      userId: targetUser.id,
       room
     }
     socket.emit('kickNotification', sendMsg)
@@ -193,18 +190,18 @@ export function Chat(): ReactElement {
     const imageURL: string =
       'https://1.bp.blogspot.com/-SWOiphrHWnI/XWS5x7MYwHI/AAAAAAABUXA/i_PRL_Atr08ayl9sZy9-x0uoY4zV2d5xwCLcBGAs/s1600/pose_dance_ukareru_man.png'
     const outerClassName: string =
-      name === item.name ? 'line__right' : 'line__left'
+      user.id === item.user.id ? 'line__right' : 'line__left'
     const innerClassName: string =
-      name === item.name ? 'line__right-text' : 'line__left-text'
+      user.id === item.user.id ? 'line__right-text' : 'line__left-text'
     const imageObject: JSX.Element =
-      name === item.name ? (
+      user.id === item.user.id ? (
         <></>
       ) : (
         <figure>
           <img
             src={imageURL}
             onClick={() => {
-              setTargetUser(item.name)
+              setTargetUser(item.user)
               setShowModal(true)
             }}
           />
@@ -212,12 +209,12 @@ export function Chat(): ReactElement {
       )
 
     return {
-      name: item.name,
+      user: item.user,
       body: (
         <div className={outerClassName} key={item.key}>
           {imageObject}
           <div className={innerClassName}>
-            <div className="name">{item.name}</div>
+            <div className="name">{item.user.name}</div>
             <div className="text">{item.msg}</div>
           </div>
         </div>
@@ -239,7 +236,7 @@ export function Chat(): ReactElement {
   const handleKickEvent = (item: kickEventType): void => {
     console.log('kick received:' + JSON.stringify(item))
     const ChatListState: ChatListState = { kicked: true }
-    if (item.room === room && item.name === name) {
+    if (item.room === room && item.userId === user.id) {
       navigate('/chatlist', { state: ChatListState })
     }
   }
@@ -265,7 +262,7 @@ export function Chat(): ReactElement {
     const mutedUserStringList = mutedUserList.map((value) => value.mutedUserId)
     return (
       <>
-        <p>user name: {name}</p>
+        <p>user name: {user.name}</p>
         <p>room: {room}</p>
         <p>muted user: {mutedUserStringList.join(', ')}</p>
       </>
@@ -288,7 +285,7 @@ export function Chat(): ReactElement {
           itemList={itemList}
           mutedUserList={mutedUserList}
         ></MessageDisplay>
-        <MessageSending name={name} room={room}></MessageSending>
+        <MessageSending user={user} room={room}></MessageSending>
         <Button variant="primary" onClick={updateMuteList}>
           update MuteList
         </Button>

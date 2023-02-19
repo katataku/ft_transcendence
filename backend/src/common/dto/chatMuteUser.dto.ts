@@ -1,10 +1,19 @@
+import { IsNumber } from 'class-validator';
+
 export class ChatMuteUserDto {
-  muteUserId: string;
-  mutedUserId: string;
+  @IsNumber()
+  muteUserId: number;
+
+  @IsNumber()
+  mutedUserId: number;
+
   mute_until: Date;
 }
 
 export class ChatMuteUserPKDto {
-  muteUserId: string;
-  mutedUserId: string;
+  @IsNumber()
+  muteUserId: number;
+
+  @IsNumber()
+  mutedUserId: number;
 }
