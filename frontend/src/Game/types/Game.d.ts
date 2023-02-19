@@ -32,4 +32,7 @@ interface IPlayer {
 interface IMatch {
   p1: IPlayer
   p2: IPlayer
+/*  winner: IPlayer
+  start: number
+  end: number */
 }

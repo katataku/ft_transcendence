@@ -7,7 +7,7 @@ import Button from 'react-bootstrap/Button'
 export function App(): ReactElement {
   const ChatListState: ChatListState = { kicked: false }
   const [user, setUser] = useState<IPlayer>({
-    id: 1,
+    id: 'left',
     name: '',
     wins: 3,
     losses: 7,
