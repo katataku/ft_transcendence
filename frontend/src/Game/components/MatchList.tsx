@@ -14,7 +14,7 @@ function listMatches(matchList: IMatch[]): ReactElement[] {
         action
         onClick={() => {
           // マッチリスト->ゲーム をナビゲートされる人のユーザー情報は必要ないです
-          navigate('/Game/', { state: {id: '', name: ''} })
+          navigate('/Game/', { state: { id: '', name: '' } })
         }}
       >
         {match.p1.name} vs. {match.p2.name}

@@ -8,7 +8,7 @@ export function App(): ReactElement {
   const ChatListState: ChatListState = { kicked: false }
   const [user, setUser] = useState<User>({
     id: 1,
-    name: '',
+    name: ''
   })
 
   // プロフィル/チャット->ゲーム をナビゲートされる人のユーザー情報は必要があります
@@ -36,9 +36,7 @@ export function App(): ReactElement {
         </Link>
       </p>
       <p>
-        <Link to="MatchList">
-          Move to MatchList
-        </Link>
+        <Link to="MatchList">Move to MatchList</Link>
       </p>
       <p>
         <Link to="Game" state={user}>

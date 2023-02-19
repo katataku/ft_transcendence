@@ -280,8 +280,7 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
     }
   }
 
-  if (button === grayButton && props.player.ready)
-    setButton(greenButton)
+  if (button === grayButton && props.player.ready) setButton(greenButton)
 
   return (
     <button type="button" id="buttonPos" className={button} onClick={setReady}>
@@ -294,7 +293,9 @@ function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   return (
     <Col>
       <div className="display-1">
-        {props.player.side === 'left' ? leftID.slice(0, 7) : rightID.slice(0, 7)}
+        {props.player.side === 'left'
+          ? leftID.slice(0, 7)
+          : rightID.slice(0, 7)}
       </div>
       <div className="border">
         <h2>Match History</h2>
