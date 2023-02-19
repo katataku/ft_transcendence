@@ -24,7 +24,7 @@ function listMatches(matchList: IMatch[]): ReactElement[] {
 }
 
 export function MatchList(): ReactElement {
-  // === ページにリストを表示するためだけのもです === //
+  // === ページにリストを表示するためだけのものです === //
   const p1: IPlayer = {
     id: 1,
     name: 'Player1',
@@ -43,7 +43,7 @@ export function MatchList(): ReactElement {
     { p1: p4, p2: p1 },
     { p1: p3, p2: p3 }
   ]
-  // === ページにリストを表示するためだけのもです === //
+  // === ページにリストを表示するためだけのものです === //
 
   // TODO: Jade - ERDからゲームテーブルを実装する。
   //  ゲームロジックのテーブルは'Game'を使っているので、
