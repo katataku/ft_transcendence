@@ -218,7 +218,7 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
   }
 
   //   そのcallbackはupdateGame()のような関数です
-  useAnimationFrame((time: number, deltaTime: number) => {
+  useAnimationFrame((time: number) => {
     if (status.current === EStatus.play) {
       if (clientBall !== undefined) setBall(clientBall)
       if (clientPlayersPaddle !== undefined) {
@@ -407,8 +407,3 @@ socket.on('updatePaddle', (playerPaddle: Map<string, IPaddle>) => {
     })
   }
 })
-
-function req(): void {
-  // const res = await axios.get('http://localhost:3001/api')
-  // console.log(res.data)
-}

@@ -225,7 +225,7 @@ export class GameGateway {
     if (newPaddle.id === 'left') playersPaddle.set(leftPlayerId, newPaddle);
     else playersPaddle.set(rightPlayerId, newPaddle);
   }
-  //updatereadybutton
+
   @SubscribeMessage('updatePlayerReady')
   handleUpdatePlayerReady(@MessageBody() playerID: UPlayer): void {
     playersProfile.get(
@@ -238,7 +238,7 @@ export class GameGateway {
       playersProfile.get(leftPlayerId).ready &&
       playersProfile.get(rightPlayerId).ready
     )
-      console.log('game ready!');
+      this.logger.log('game ready!');
   }
 
   @SubscribeMessage('updateConnections')
