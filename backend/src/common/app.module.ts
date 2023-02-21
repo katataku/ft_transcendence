@@ -7,12 +7,13 @@ import { ChatModule } from '../chat';
 import { ChatMuteUserModule } from '../chatMuteUser';
 import * as dotenv from 'dotenv';
 import { ChatMuteUser } from '../entities/chatMuteUser.entity';
-import { UsersModule } from 'src/users';
+import { UsersModule } from 'src/Users';
 import { Friendship, User, PendingFriendship } from 'src/entities/users.entity';
 import { ChatRoom } from 'src/entities/chatRoom.entity';
 import { ChatRoomModule } from 'src/chatRoom';
 import { ChatRoomMembers } from 'src/entities/chatRoomMembers.entity';
 import { ChatRoomMembersModule } from 'src/chatRoomMembers';
+import { GameModule } from '../game';
 
 dotenv.config();
 
@@ -45,6 +46,7 @@ const options: PostgresConnectionOptions = {
     UsersModule,
     ChatRoomModule,
     ChatRoomMembersModule,
+    GameModule,
   ],
 })
 export class AppModule {}
