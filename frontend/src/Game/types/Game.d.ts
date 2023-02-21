@@ -27,4 +27,5 @@ interface IPlayer {
   wins: number
   losses: number
   ready: boolean
+//   paddle: IPaddle
 }

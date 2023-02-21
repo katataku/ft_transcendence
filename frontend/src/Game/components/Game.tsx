@@ -21,6 +21,7 @@ const gameWinHght: number = 600
 const ballPx: number = 20
 const paddleSpeed: number = 10
 const winningScore = 3
+let gtimer: number = 0
 let keydown = ''
 
 enum EStatus {
@@ -122,13 +123,14 @@ function Result(props: { score: IScore }): ReactElement {
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function SpeedPU(props: { speed: Ref }): ReactElement {
+function SpeedPU(props: { speed: Ref; status: Ref }): ReactElement {
   const [title, setTitle] = useState<string>('Difficulty')
 
   const modifySpeed = (
     op: string | null,
     e: React.SyntheticEvent<unknown>
   ): void => {
+    if (props.status.current !== EStatus.none || selfID !== leftID) return
     switch (op) {
       case 'easy':
         props.speed.current = 400
@@ -143,7 +145,24 @@ function SpeedPU(props: { speed: Ref }): ReactElement {
         setTitle('Hard')
         break
     }
+    socket.emit('updateSpeed', props.speed.current)
   }
+
+  useEffect(() => {
+    socket.on('updateSpeed', (serverSpeed: number) => {
+      switch (serverSpeed) {
+        case 400:
+          setTitle('Easy')
+          break
+        case 600:
+          setTitle('Medium')
+          break
+        case 800:
+          setTitle('Hard')
+          break
+      }
+    })
+  }, [])
 
   return (
     <DropdownButton
@@ -163,19 +182,40 @@ function CountDown(props: { ticks: number; status: Ref }): ReactElement {
   const oneSecond = useRef<number>(0)
   const prevTicks = useRef<number>(0)
   const timer = useRef<number>(4)
+  // let timer: number = 0
+  const didLogRef = useRef<boolean>(false)
 
-  oneSecond.current += props.ticks - prevTicks.current
-  prevTicks.current = props.ticks
+  //   oneSecond.current += props.ticks - prevTicks.current
+  //   prevTicks.current = props.ticks
 
-  if (oneSecond.current >= 1000) {
-    oneSecond.current = 0
-    timer.current--
-  }
-  if (timer.current === 0) {
-    props.status.current = EStatus.play
-  }
+  //   if (oneSecond.current >= 1000) {
+  //     oneSecond.current = 0
+  //     timer.current--
+  //   }
+  //   if (timer.current === 0) {
+  //     props.status.current = EStatus.play
+  //   }
+  // console.log('countDown')
+  // useEffect(() => {
+  //   if (!didLogRef.current) {
+  //     console.log('useEffect')
+  //     didLogRef.current = true
+  //     socket.on('updateCountDown', (seconds: number) => {
+  //       console.log(`updateCountDown: ${seconds}`)
+  //       timer = seconds
+  //     })
+  //   }
+  // }, [])
 
-  return <div>{timer.current !== 0 && timer.current}</div>
+  //   return <div>{timer.current !== 0 && timer.current}</div>
+  return <div>{gtimer !== 0 && gtimer}</div>
+}
+
+function updateScore(score: Ref): void {
+  const lp = clientPlayersPaddle.get(leftID)
+  const rp = clientPlayersPaddle.get(rightID)
+  if (lp !== undefined) score.current.left = lp.score
+  if (rp !== undefined) score.current.right = rp.score
 }
 
 function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
@@ -195,31 +235,26 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
       score.current.right++
     }
   })
+  const didLogRef = useRef<boolean>(false)
 
   if (props.p1.ready && props.p2.ready && status.current === EStatus.none) {
     status.current = EStatus.ready
   }
 
-  if (status.current === EStatus.pause) {
-    if (waitTime.current === 0) {
-      waitTime.current = ticks + 900
-    }
-    if (ticks >= waitTime.current) {
-      waitTime.current = 0
-      status.current = EStatus.play
-    }
-  }
+  //   if (status.current === EStatus.pause) {
+  //     if (waitTime.current === 0) {
+  //       waitTime.current = ticks + 900
+  //     }
+  //     if (ticks >= waitTime.current) {
+  //       waitTime.current = 0
+  //       status.current = EStatus.play
+  //     }
+  //   }
 
-  if (
-    score.current.left === winningScore ||
-    score.current.right === winningScore
-  ) {
-    status.current = EStatus.set
-  }
-
+  updateScore(score)
   //   そのcallbackはupdateGame()のような関数です
   useAnimationFrame((time: number) => {
-    if (status.current === EStatus.play) {
+    if (status.current === EStatus.play || status.current === EStatus.pause) {
       if (clientBall !== undefined) setBall(clientBall)
       if (clientPlayersPaddle !== undefined) {
         const myPaddle = clientPlayersPaddle.get(selfID)
@@ -241,9 +276,26 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
     setTicks(time)
   }, status.current === EStatus.set)
 
+  useEffect(() => {
+    if (!didLogRef.current) {
+      didLogRef.current = true
+      socket.on('matchSet', () => {
+        status.current = EStatus.set
+      })
+      socket.on('matchStart', () => {
+        status.current = EStatus.play
+      })
+      socket.on('matchPause', () => {
+        console.log('matchPause')
+
+        status.current = EStatus.pause
+      })
+    }
+  }, [])
+
   return (
     <Col id="centerCol">
-      <SpeedPU speed={speed} />
+      <SpeedPU speed={speed} status={status} />
       <div id="match">
         <div id="boardDiv"></div>
         <div id="leftScore">{score.current.left}</div>
@@ -401,9 +453,18 @@ socket.on('updatePaddle', (playerPaddle: Map<string, IPaddle>) => {
     // new Mapで新しい参照にしないと、useStateが更新されないため
     clientPlayersPaddle = new Map(clientPlayersPaddle)
     mapPlayerPaddle.forEach((value: IPaddle, key: string) => {
-      if (key !== selfID) {
-        clientPlayersPaddle.set(key, value)
+      const playerPaddle = clientPlayersPaddle.get(key)
+      if (playerPaddle !== undefined) {
+        if (key !== selfID) {
+          playerPaddle.pos = value.pos
+        }
+        playerPaddle.score = value.score
       }
     })
   }
+})
+
+socket.on('updateCountDown', (seconds: number) => {
+  console.log(`updateCountDown: ${seconds}`)
+  gtimer = seconds
 })
