@@ -12,7 +12,7 @@ const privateIconURL: string =
   'https://iconbox.fun/wp/wp-content/uploads/lock_24.png'
 
 const IsPublicIcon = (props: { room: ChatRoom }): JSX.Element => {
-  const isPublicIcon = props.room.isPublic ? (
+  const isPublicIcon = props.room.is_public ? (
     <></>
   ) : (
     <img src={privateIconURL} alt="new" width="20" height="20" />
