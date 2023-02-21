@@ -20,5 +20,5 @@ export class ChatRoom {
   created_by: number;
 
   @Column()
-  isPublic: boolean;
+  is_public: boolean;
 }
