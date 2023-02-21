@@ -1,7 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { type ReactElement } from 'react'
-import { Button } from 'react-bootstrap'
-import axios from 'axios'
+import { Badge, Button } from 'react-bootstrap'
 
 // フリー素材のアイコン。
 // ただし、LICENSEで再配布が禁止されているため、publicディレクトリに保存せずに、画像URLへ直接リンクする。
@@ -10,6 +9,21 @@ const _publicIconURL: string =
   'https://iconbox.fun/wp/wp-content/uploads/lock_open_24.png'
 const privateIconURL: string =
   'https://iconbox.fun/wp/wp-content/uploads/lock_24.png'
+
+// チャットルームのオーナーを示すアイコンを表示する。
+const OwnerIcon = (props: { room: ChatRoom; user: User }): JSX.Element => {
+  const isOwner: boolean = props.room.created_by_user_id === props.user.id
+  const icon: JSX.Element = isOwner ? (
+    <>
+      <Badge pill bg="info">
+        owner
+      </Badge>{' '}
+    </>
+  ) : (
+    <></>
+  )
+  return icon
+}
 
 const IsPublicIcon = (props: { room: ChatRoom }): JSX.Element => {
   const isPublicIcon = props.room.is_public ? (
@@ -38,32 +52,33 @@ const EnterButton = (props: { user: User; room: ChatRoom }): JSX.Element => {
   )
 }
 
-const DeleteRoomButton = (props: {
-  room: ChatRoom
-  updateChatRoomList: () => void
-}): JSX.Element => {
-  const handleDeleteRoom = (room: ChatRoom): void => {
-    axios
-      .delete('/chatRoom/' + String(room.id))
-      .then((_response) => {
-        props.updateChatRoomList()
-      })
-      .catch((reason) => {
-        alert('エラーです！')
-        console.log(reason)
-      })
-  }
+// チャットルームのオーナーのみ、チャットルームの設定を変更できる。
+// そのため、チャットルームのオーナーのみ、設定ボタンを表示する。
+// また、チャットルームのオーナーのみ、チャットルームを削除できる。
+// そのため、設定画面に削除ボタンを表示する。
+const SettingButton = (props: { room: ChatRoom; user: User }): JSX.Element => {
+  const room = props.room
+  const user = props.user
+  const navigate = useNavigate()
 
-  return (
-    <Button
-      variant="outline-danger"
-      onClick={() => {
-        handleDeleteRoom(props.room)
-      }}
-    >
-      delete room
-    </Button>
+  const isOwner: boolean = room.created_by_user_id === user.id
+  const icon: JSX.Element = isOwner ? (
+    <>
+      <Button
+        variant="info"
+        onClick={() => {
+          navigate('/chatroom', {
+            state: { room }
+          })
+        }}
+      >
+        settings
+      </Button>
+    </>
+  ) : (
+    <></>
   )
+  return icon
 }
 
 export const ChatListDisplay = (props: {
@@ -77,12 +92,10 @@ export const ChatListDisplay = (props: {
         return (
           <li key={index}>
             {room.name}
+            <OwnerIcon room={room} user={props.user}></OwnerIcon>
             <IsPublicIcon room={room}></IsPublicIcon>
             <EnterButton user={props.user} room={room}></EnterButton>
-            <DeleteRoomButton
-              room={room}
-              updateChatRoomList={props.updateChatRoomList}
-            ></DeleteRoomButton>
+            <SettingButton room={room} user={props.user}></SettingButton>
           </li>
         )
       })}
