@@ -22,7 +22,7 @@ interface IScore {
 type UPlayer = 'left' | 'right'
 
 interface IPlayer {
-  id: number
+  id: UPlayer
   name: string
   side: UPlayer
   wins: number

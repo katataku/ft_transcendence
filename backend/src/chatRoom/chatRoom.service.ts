@@ -24,7 +24,7 @@ export class ChatRoomService {
     const data = new ChatRoom();
     data.name = param.name;
     data.created_by = param.created_by;
-    data.isPublic = param.isPublic;
+    data.is_public = param.is_public;
     const ret = await this.chatRoomRepository.save(data);
     return ret;
   }
