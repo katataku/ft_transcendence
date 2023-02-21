@@ -324,7 +324,7 @@ function Matching(props: { setPlayerList: Setter }): ReactElement {
 
 export function Game(): ReactElement {
   const [p1, setP1] = useState<IPlayer>({
-    id: 'left',
+    id: 1,
     name: 'Player1',
     side: 'left',
     wins: 3,
@@ -332,7 +332,7 @@ export function Game(): ReactElement {
     ready: false
   })
   const [p2, setP2] = useState<IPlayer>({
-    id: 'right',
+    id: 2,
     name: 'Player2',
     side: 'right',
     wins: 13,
