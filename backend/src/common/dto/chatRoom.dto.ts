@@ -12,3 +12,8 @@ export interface ChatRoomReqDto {
   public_id: number;
   password?: string;
 }
+
+export interface ChatRoomAuthReqDto {
+  id: number;
+  password: string;
+}

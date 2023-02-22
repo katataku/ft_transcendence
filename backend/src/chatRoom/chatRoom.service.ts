@@ -4,7 +4,11 @@ import { SHA256 } from 'crypto-js';
 import { ChatRoom } from 'src/entities/chatRoom.entity';
 import { User } from 'src/entities/users.entity';
 import { Repository } from 'typeorm';
-import { ChatRoomReqDto, ChatRoomResDto } from '../common/dto/chatRoom.dto';
+import {
+  ChatRoomAuthReqDto,
+  ChatRoomReqDto,
+  ChatRoomResDto,
+} from '../common/dto/chatRoom.dto';
 
 @Injectable()
 export class ChatRoomService {
@@ -63,5 +67,29 @@ export class ChatRoomService {
       },
     });
     this.chatRoomRepository.remove(targetRoom);
+  }
+
+  async authChatRoom(data: ChatRoomAuthReqDto): Promise<boolean> {
+    const row: ChatRoom = await this.chatRoomRepository.findOne({
+      select: {
+        id: true,
+        password: true,
+      },
+      where: {
+        id: data.id,
+      },
+      order: {
+        id: 'ASC',
+      },
+    });
+    if (row.password) {
+      const passHash = SHA256(data.password).toString();
+      if (row.password === passHash) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return true;
   }
 }
