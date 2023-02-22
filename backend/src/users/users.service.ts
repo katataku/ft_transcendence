@@ -36,6 +36,15 @@ export class UsersService {
     return res;
   }
 
+  async getUsers(): Promise<UserGetDto[]> {
+    const users = await this.usersRepository.find()
+    let res: UserGetDto[] = []
+    for (let i=0; i < users.length; ++i) {
+      res.push(await this.getUserById(users[i].id))
+    }
+    return res;
+  }
+
   async getUserById(id: number): Promise<UserGetDto> {
     const data = await this.usersRepository.findOne({ where: { id: id } });
     if (data == null) {
