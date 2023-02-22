@@ -138,6 +138,8 @@ const SettingButton = (props: { room: ChatRoom; user: User }): JSX.Element => {
 }
 
 // チャットルームの一覧を表示する。
+// chatRoomMemberの情報を取得する。
+// 取得した情報をモジュール渡し、各コンポーネントにて出力の判断を行う。
 export const ChatListDisplay = (props: {
   user: User
   roomList: ChatRoom[]
