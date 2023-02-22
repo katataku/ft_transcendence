@@ -53,7 +53,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/user_create_res'
 
-  /users:
+  /user/users:
     get:
       tags:
         - user
