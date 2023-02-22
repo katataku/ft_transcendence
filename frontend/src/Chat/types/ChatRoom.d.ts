@@ -1,7 +1,5 @@
 interface ChatRoomMember {
-    chatRoomId: number;
-      userId: number;
-      isBanned: boolean;
-  }
-  
-
+  chatRoomId: number
+  userId: number
+  isBanned: boolean
+}

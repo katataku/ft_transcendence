@@ -7,7 +7,7 @@ interface ChatListState {
   kicked: boolean
 }
 
-interface ChatRoomState{
+interface ChatRoomState {
   room: ChatRoom
 }
 
