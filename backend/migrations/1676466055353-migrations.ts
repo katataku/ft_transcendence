@@ -21,7 +21,9 @@ export class migrations1676466055353 implements MigrationInterface {
       "SELECT id FROM users WHERE name = 'guest1' LIMIT 1",
     );
     await queryRunner.query(
-      `INSERT INTO public.chat_room(name, is_public,created_by) VALUES('room1',true,` +
+      `INSERT INTO public.chat_room(name, is_public, created_by, created_by_user_id) VALUES('room1',true,` +
+        users[0].id +
+        `,` +
         users[0].id +
         `)`,
     );

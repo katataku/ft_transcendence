@@ -364,10 +364,10 @@ components:
         name:
           type: string
           example: Tom Brady
-        created_by:
+        created_by_user_id:
           type: number
           example: 1
-        isPublic:
+        is_public:
           type: boolean
           example: true
     chat_room_req:
@@ -376,10 +376,10 @@ components:
         name:
           type: string
           example: Tom Brady
-        created_by:
+        created_by_user_id:
           type: number
           example: 1
-        isPublic:
+        is_public:
           type: boolean
           example: true
     chat-mute-user:

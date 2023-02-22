@@ -12,7 +12,7 @@ export class ChatRoomController {
   }
 
   @Post()
-  post(@Body() data): Promise<ChatRoomDto> {
+  post(@Body() data: ChatRoomDto): Promise<ChatRoomDto> {
     return this.service.createRoom(data);
   }
 

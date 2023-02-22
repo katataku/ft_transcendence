@@ -45,7 +45,7 @@ export const ChatListModal = (props: {
     const requestData: ChatRoom = {
       name: newRoomName,
       created_by: props.user.id,
-      isPublic
+      is_public: isPublic
     }
     axios
       .post<ChatRoom>('/chatRoom', requestData)
