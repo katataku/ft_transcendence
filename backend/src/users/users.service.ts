@@ -37,10 +37,10 @@ export class UsersService {
   }
 
   async getUsers(): Promise<UserGetDto[]> {
-    const users = await this.usersRepository.find()
-    let res: UserGetDto[] = []
-    for (let i=0; i < users.length; ++i) {
-      res.push(await this.getUserById(users[i].id))
+    const users = await this.usersRepository.find();
+    const res: UserGetDto[] = [];
+    for (let i = 0; i < users.length; ++i) {
+      res.push(await this.getUserById(users[i].id));
     }
     return res;
   }
