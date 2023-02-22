@@ -14,10 +14,15 @@ import {
   ChatRoomReqDto,
   ChatRoomResDto,
 } from '../common/dto/chatRoom.dto';
+import { ChatRoomMembersDto } from 'src/common/dto/chatRoomMembers.dto';
+import { ChatRoomMembersService } from 'src/chatRoomMembers/chatRoomMembers.service';
 
 @Controller('chatRoom')
 export class ChatRoomController {
-  constructor(private service: ChatRoomService) {}
+  constructor(
+    private service: ChatRoomService,
+    private chatRoomMembersService: ChatRoomMembersService,
+  ) {}
 
   @Get()
   get(): Promise<ChatRoomResDto[]> {
@@ -25,8 +30,17 @@ export class ChatRoomController {
   }
 
   @Post()
-  post(@Body() data: ChatRoomReqDto): Promise<ChatRoomResDto> {
-    return this.service.createRoom(data);
+  async post(@Body() data: ChatRoomReqDto): Promise<ChatRoomResDto> {
+    const result = await this.service.createRoom(data);
+    if (result) {
+      const chatRoomMembers = new ChatRoomMembersDto();
+      chatRoomMembers.chatRoomId = result.id;
+      chatRoomMembers.userId = data.created_by_user_id;
+      chatRoomMembers.isBanned = false;
+      this.chatRoomMembersService.createRoomMember(chatRoomMembers);
+    }
+
+    return result;
   }
 
   @Delete(':id')
