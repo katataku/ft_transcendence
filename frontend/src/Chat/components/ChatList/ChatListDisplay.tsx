@@ -55,10 +55,14 @@ const EnterButton = (props: { user: User; room: ChatRoom }): JSX.Element => {
   )
 }
 
-const JoinButton = (props: { user: User; room: ChatRoom }): JSX.Element => {
+const JoinButton = (props: {
+  user: User
+  room: ChatRoom
+  roomMembers: ChatRoomMember[]
+  updateChatRoomList: () => void
+}): JSX.Element => {
   const room = props.room
   const user = props.user
-  const [joinButton, setJoinButton] = useState<JSX.Element>(<></>)
 
   const handleJoinRoom = (): void => {
     const requestData: ChatRoomMember = {
@@ -68,44 +72,20 @@ const JoinButton = (props: { user: User; room: ChatRoom }): JSX.Element => {
     }
     axios
       .post<ChatRoom>('/chatRoomMembers', requestData)
-      .then((_response) => {})
+      .then((_response) => {
+        props.updateChatRoomList()
+      })
       .catch((reason) => {
         alert('エラーです！')
         console.log(reason)
       })
   }
 
-  useEffect(() => {
-    const joinButtonElement: JSX.Element = (
-      <Button
-        onClick={() => {
-          handleJoinRoom()
-        }}
-      >
-        Join
-      </Button>
-    )
+  const joinButtonElement: JSX.Element = (
+    <Button onClick={handleJoinRoom}>Join</Button>
+  )
 
-    axios
-      .get<ChatRoomMember[]>('/chatRoomMembers')
-      .then((response) => {
-        const isMember: boolean =
-          response.data
-            .filter((item) => item.chatRoomId === room.id)
-            .filter((item) => item.userId === user.id).length === 0
-        if (isMember) {
-          setJoinButton(joinButtonElement)
-        } else {
-          setJoinButton(<></>)
-        }
-      })
-      .catch((reason) => {
-        alert('エラーです！')
-        console.log(reason)
-      })
-  }, [room, user])
-
-  return joinButton
+  return props.roomMembers.length === 0 ? joinButtonElement : <></>
 }
 
 // チャットルームのオーナーのみ、チャットルームの設定を変更できる。
@@ -148,13 +128,36 @@ export const ChatListDisplay = (props: {
   return (
     <ul>
       {props.roomList.map((room, index) => {
+        const [roomMembers, setRoomMembers] = useState<ChatRoomMember[]>([])
+
+        useEffect(() => {
+          axios
+            .get<ChatRoomMember[]>('/chatRoomMembers')
+            .then((response) => {
+              setRoomMembers(
+                response.data
+                  .filter((item) => item.chatRoomId === room.id)
+                  .filter((item) => item.userId === props.user.id)
+              )
+            })
+            .catch((reason) => {
+              alert('エラーです！')
+              console.log(reason)
+            })
+        }, [room, props.user])
+
         return (
           <li key={index}>
             {room.name}
             <OwnerIcon room={room} user={props.user}></OwnerIcon>
             <IsPublicIcon room={room}></IsPublicIcon>
             <EnterButton user={props.user} room={room}></EnterButton>
-            <JoinButton user={props.user} room={room}></JoinButton>
+            <JoinButton
+              user={props.user}
+              room={room}
+              roomMembers={roomMembers}
+              updateChatRoomList={props.updateChatRoomList}
+            ></JoinButton>
             <SettingButton room={room} user={props.user}></SettingButton>
           </li>
         )
