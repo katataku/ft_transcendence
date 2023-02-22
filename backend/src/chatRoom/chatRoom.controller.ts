@@ -1,18 +1,18 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ChatRoomService } from './chatRoom.service';
-import { ChatRoomDto } from '../common/dto/chatRoom.dto';
+import { ChatRoomReqDto, ChatRoomResDto } from '../common/dto/chatRoom.dto';
 
 @Controller('chatRoom')
 export class ChatRoomController {
   constructor(private service: ChatRoomService) {}
 
   @Get()
-  get(): Promise<ChatRoomDto[]> {
+  get(): Promise<ChatRoomResDto[]> {
     return this.service.getList();
   }
 
   @Post()
-  post(@Body() data: ChatRoomDto): Promise<ChatRoomDto> {
+  post(@Body() data: ChatRoomReqDto): Promise<ChatRoomResDto> {
     return this.service.createRoom(data);
   }
 

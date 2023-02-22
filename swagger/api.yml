@@ -429,9 +429,9 @@ components:
         created_by_user_id:
           type: number
           example: 1
-        is_public:
-          type: boolean
-          example: true
+        public_id:
+          type: number
+          example: 1
     chat_room_req:
       type: object
       properties:
@@ -441,9 +441,9 @@ components:
         created_by_user_id:
           type: number
           example: 1
-        is_public:
-          type: boolean
-          example: true
+        public_id:
+          type: number
+          example: 1
     chat-mute-user:
       type: object
       properties:
