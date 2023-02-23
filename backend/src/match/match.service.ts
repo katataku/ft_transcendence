@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreatePlayerDto } from '../common/dto/player.dto';
+import { MatchDto } from '../common/dto/match.dto';
 
 @Injectable()
 export class PlayersService {}
