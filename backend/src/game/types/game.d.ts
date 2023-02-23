@@ -22,8 +22,9 @@ export interface IScore {
 export type UPlayer = 'left' | 'right';
 
 export interface IPlayer {
-  id: UPlayer;
+  id: number;
   name: string;
+  side: UPlayer;
   wins: number;
   losses: number;
   ready: boolean;

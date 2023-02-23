@@ -1,3 +1,4 @@
 import { Game } from './components/Game'
+import { MatchList } from './components/MatchList'
 
-export { Game }
+export { Game, MatchList }

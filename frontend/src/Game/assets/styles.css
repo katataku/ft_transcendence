@@ -11,7 +11,7 @@
 }
 
 #buttonPos {
-  margin-top: 25px;
+  margin-top: 5px;
 }
 
 #match {
@@ -22,7 +22,7 @@
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -26%);
+  transform: translate(-50%, -35%);
   font-family: 'Courier New', monospace;
   overflow: hidden;
 }
@@ -77,7 +77,6 @@
 
 #centerCol {
   text-align-last: center;
-  margin-top: 0.5%;
 }
 
 #boardDiv {

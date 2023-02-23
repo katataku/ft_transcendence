@@ -40,16 +40,18 @@ const initRightPaddle: IPaddle = {
 };
 
 const initLeftProfile: IPlayer = {
-  id: 'left',
+  id: 1,
   name: 'Player1',
+  side: 'left',
   wins: 3,
   losses: 7,
   ready: false,
 };
 
 const initRightProfile: IPlayer = {
-  id: 'right',
+  id: 2,
   name: 'Player2',
+  side: 'right',
   wins: 13,
   losses: 17,
   ready: false,

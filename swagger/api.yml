@@ -53,6 +53,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/user_create_res'
 
+  /user/users:
+    get:
+      tags:
+        - user
+      summary: 全ユーザーの取得
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users_get_res'
+
+
   /user/{userID}:
     get:
       tags:
@@ -69,6 +83,39 @@ paths:
       responses:
         200:
           description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_get_res'
+    delete:
+      tags:
+        - user
+      summary: delete user
+      parameters:
+        - name: userID
+          required: true
+          description: id
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+    post:
+      tags:
+        - user
+      summary: update user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/user_update_req'
+      responses:
+        200:
           content:
             application/json:
               schema:
@@ -323,6 +370,21 @@ components:
           type: integer
           example: 1
 
+    user_update_req:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Updated!!!
+        password:
+          type: string
+          example: update
+
+    users_get_res:
+      type: array
+      items:
+        $ref: '#/components/schemas/user_get_res'
+
     user_get_res:
       type: object
       properties:
@@ -364,10 +426,10 @@ components:
         name:
           type: string
           example: Tom Brady
-        created_by:
+        created_by_user_id:
           type: number
           example: 1
-        isPublic:
+        is_public:
           type: boolean
           example: true
     chat_room_req:
@@ -376,10 +438,10 @@ components:
         name:
           type: string
           example: Tom Brady
-        created_by:
+        created_by_user_id:
           type: number
           example: 1
-        isPublic:
+        is_public:
           type: boolean
           example: true
     chat-mute-user:
