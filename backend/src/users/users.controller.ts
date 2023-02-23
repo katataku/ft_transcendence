@@ -4,6 +4,7 @@ import {
   FriendRequestDto,
   UserCreateReqDto,
   UserCreateResDto,
+  UserUpdateReqDto,
   UserGetDto,
 } from 'src/common/dto/users.dto';
 import { UserGetParam } from 'src/common/params/user.params';
@@ -25,6 +26,11 @@ export class UsersController {
   @Get(':id')
   getUserById(@Param() param: UserGetParam): Promise<UserGetDto> {
     return this.service.getUserById(param.id);
+  }
+
+  @Post(':id')
+  updateUser(@Body() body: UserUpdateReqDto, @Param() param: UserGetParam): Promise<UserGetDto> {
+    return this.service.update(param.id, body)
   }
 
   @Post('friends')

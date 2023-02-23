@@ -19,6 +19,14 @@ export class UserGetDto {
   name: string;
 }
 
+export class UserUpdateReqDto {
+  @IsString()
+  name: string;
+
+  @IsString()
+  password: string;
+}
+
 export class FriendRequestDto {
   @IsNumberString()
   from: number;
