@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Logger, Param, Post, Delete } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Param,
+  Post,
+  Delete,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
   FriendRequestDto,
@@ -29,13 +37,16 @@ export class UsersController {
   }
 
   @Post(':id')
-  updateUser(@Body() body: UserUpdateReqDto, @Param() param: UserIdParam): Promise<UserGetDto> {
-    return this.service.updateUser(param.id, body)
+  updateUser(
+    @Body() body: UserUpdateReqDto,
+    @Param() param: UserIdParam,
+  ): Promise<UserGetDto> {
+    return this.service.updateUser(param.id, body);
   }
 
   @Delete(':id')
   deleteUser(@Param() param: UserIdParam): Promise<string> {
-    return this.service.deleteUser(param.id)
+    return this.service.deleteUser(param.id);
   }
 
   @Post('friends')
