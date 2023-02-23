@@ -17,7 +17,7 @@ export class ChatRoomMembersService {
   async getList(): Promise<ChatRoomMembersDto[]> {
     const rows: ChatRoomMembers[] = await this.chatRoomMembersRepository.find({
       order: {
-        chatRoomId: 'ASC',
+        userId: 'ASC',
       },
     });
     return rows;
