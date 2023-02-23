@@ -98,6 +98,13 @@ paths:
           in: path
           schema:
             type: integer
+      responses:
+        200:
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
     post:
       tags:
         - user
