@@ -10,4 +10,10 @@ export class Match {
 
   @Column({ name: 'p2' })
   p2!: number;
+
+  @Column({ name: 'winner' })
+  winner!: number;
+
+  @Column({ name: 'powerup' })
+  powerup!: boolean;
 }

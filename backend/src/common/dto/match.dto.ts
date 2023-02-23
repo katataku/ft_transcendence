@@ -1,7 +1,14 @@
+import { IsBoolean, IsNumber } from 'class-validator';
+
 export class MatchDto {
+  @IsNumber()
   id: number;
+  @IsNumber()
   p1: number;
+  @IsNumber()
   p2: number;
-  winner?: number;
-  powerup?: boolean;
+  @IsNumber()
+  winner: number;
+  @IsBoolean()
+  powerup: boolean;
 }

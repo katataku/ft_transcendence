@@ -10,4 +10,20 @@ export class MatchService {
     @InjectRepository(Match)
     private matchRepository: Repository<Match>,
   ) {}
+
+  async createMatch(match: MatchDto): Promise<void> {
+    await this.matchRepository.save(match);
+  }
+
+  async getMatches(): Promise<MatchDto[]> {
+    const res: MatchDto[] = await this.matchRepository.find();
+    return res;
+  }
+
+  async getMatchById(id: number): Promise<MatchDto> {
+    const res: MatchDto = await this.matchRepository.findOne({
+      where: { id: id },
+    });
+    return res;
+  }
 }
