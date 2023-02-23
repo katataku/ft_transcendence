@@ -87,6 +87,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/user_get_res'
+    delete:
+      tags:
+        - user
+      summary: delete user
+      parameters:
+        - name: userID
+          required: true
+          description: id
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+    post:
+      tags:
+        - user
+      summary: update user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/user_update_req'
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_get_res'
 
   /user/friends/{userID}:
     get:
@@ -336,6 +369,16 @@ components:
         id:
           type: integer
           example: 1
+
+    user_update_req:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Updated!!!
+        password:
+          type: string
+          example: update
 
     users_get_res:
       type: array

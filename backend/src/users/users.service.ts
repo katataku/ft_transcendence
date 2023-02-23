@@ -4,6 +4,7 @@ import {
   FriendRequestDto,
   UserCreateReqDto,
   UserCreateResDto,
+  UserUpdateReqDto,
   UserGetDto,
 } from 'src/common/dto/users.dto';
 import { Friendship, PendingFriendship, User } from '../entities/users.entity';
@@ -22,11 +23,10 @@ export class UsersService {
   ) {}
 
   async create(data: UserCreateReqDto): Promise<UserCreateResDto> {
-    const passHash = SHA256(data.password).toString();
     const obj: User = {
       id: null,
       name: data.name,
-      password: passHash,
+      password: SHA256(data.password).toString(),
       createdAt: new Date(),
     };
     const saved = await this.usersRepository.save(obj);
@@ -56,6 +56,25 @@ export class UsersService {
       name: data.name,
     };
     return res;
+  }
+
+  async updateUser(id: number, data: UserUpdateReqDto): Promise<UserGetDto> {
+    const target = await this.usersRepository.findOne({ where: { id: id } });
+    if (target == null) {
+      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
+    }
+    target.name = data.name;
+    target.password = SHA256(data.password).toString();
+    await this.usersRepository.save(target);
+    return this.getUserById(id);
+  }
+
+  async deleteUser(id: number): Promise<string> {
+    const target = await this.usersRepository.findOne({ where: { id: id } });
+    if (target == null) {
+      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
+    }
+    return this.usersRepository.remove(target) ? 'OK' : '...';
   }
 
   async requestFriendship(data: FriendRequestDto): Promise<void> {
