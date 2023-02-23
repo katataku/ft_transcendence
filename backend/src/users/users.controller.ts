@@ -17,6 +17,11 @@ export class UsersController {
     return this.service.create(body);
   }
 
+  @Get('users')
+  getUsers(): Promise<UserGetDto[]> {
+    return this.service.getUsers();
+  }
+
   @Get(':id')
   getUserById(@Param() param: UserGetParam): Promise<UserGetDto> {
     return this.service.getUserById(param.id);

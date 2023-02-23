@@ -1,7 +1,9 @@
-import { IsNumberString } from 'class-validator';
+import { IsNumberString, IsString } from 'class-validator';
 
 export class UserCreateReqDto {
+  @IsString()
   name: string;
+  @IsString()
   password: string;
 }
 
@@ -13,6 +15,7 @@ export class UserCreateResDto {
 export class UserGetDto {
   @IsNumberString()
   id: number;
+  @IsString()
   name: string;
 }
 
