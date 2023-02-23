@@ -1,9 +1,10 @@
 import { Controller, Post, Get, Put, Body, Param } from '@nestjs/common';
 import { MatchDto } from '../common/dto/match.dto';
+import { MatchService } from './match.service';
 
 @Controller('match')
 export class MatchController {
-  // constructor(private service: PlayersService) {}
+  constructor(private service: MatchService) {}
 
   @Post()
   createMatch(@Body() MatchDto: MatchDto): string {
