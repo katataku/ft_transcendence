@@ -1,13 +1,5 @@
-import {
-  Logger,
-  Controller,
-  Post,
-  Get,
-  Put,
-  Body,
-  Param,
-} from '@nestjs/common';
-import { MatchDto } from '../common/dto/match.dto';
+import { Controller, Post, Get, Body, Param } from '@nestjs/common';
+import { MatchDto, MatchResultDto } from '../common/dto/match.dto';
 import { MatchService } from './match.service';
 
 @Controller('match')
@@ -15,7 +7,7 @@ export class MatchController {
   constructor(private service: MatchService) {}
 
   @Post()
-  createMatch(@Body() match: MatchDto): Promise<void> {
+  createMatch(@Body() match: MatchDto): Promise<MatchDto> {
     return this.service.createMatch(match);
   }
 
@@ -29,16 +21,8 @@ export class MatchController {
     return this.service.getMatchById(id);
   }
 
-  /*  @Put(':id')
-  addWinner(
-    @Param('matchId') matchId: number,
-    @Param('userId') userId: number,
-  ): string {
-    return 'adds winner';
+  @Post('result/:id')
+  postMatchResult(@Body() result: MatchResultDto): Promise<void> {
+    return this.service.postMatchResult(result);
   }
-
-  @Put(':id')
-  addPowerup(@Param('matchId') matchId: number): string {
-    return 'adds powerup';
-  } */
 }

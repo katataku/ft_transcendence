@@ -347,6 +347,19 @@ paths:
         200:
           description: 成功
 
+  /match/matches:
+    get:
+      tags:
+        - match
+      summary: 全マッチの取得
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/matches_get'
+
   /match:
     post:
       tags:
@@ -362,20 +375,6 @@ paths:
       responses:
         200:
           description: 成功
-
-  /match/matches:
-    get:
-      tags:
-        - match
-      summary: 全マッチの取得
-      responses:
-        200:
-          description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/matches_get'
-
 
   /match/{matchID}:
     get:
@@ -397,6 +396,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/match_get'
+
+  /match/result/{matchID}:
+    post:
+      tags:
+        - match
+      summary: match result
+      description: マッチの結果
+      requestBody:
+        description: Post match results
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/match_result_post'
+      responses:
+        200:
+          description: 成功
 
 components:
   schemas:
@@ -546,7 +561,7 @@ components:
       properties:
         id:
           type: number
-          example: 1
+          example: 0
         p1:
           type: number
           example: 1
@@ -564,3 +579,16 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/match_get'
+
+    match_result_post:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        winner:
+          type: number
+          example: 1
+        powerup:
+          type: boolean
+          example: true

@@ -12,3 +12,12 @@ export class MatchDto {
   @IsBoolean()
   powerup: boolean;
 }
+
+export class MatchResultDto {
+  @IsNumber()
+  id: number;
+  @IsNumber()
+  winner: number;
+  @IsBoolean()
+  powerup: boolean;
+}
