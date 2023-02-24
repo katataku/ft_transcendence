@@ -22,7 +22,7 @@ export function App(): ReactElement {
   if (loggedIn) {
     return (
       <div className="App">
-        <p>ID  : {user.id}</p>
+        <p>ID : {user.id}</p>
         <p>NAME: {user.name}</p>
         <p>
           <Link to="chatlist" state={{ ChatListState }}>
@@ -38,11 +38,19 @@ export function App(): ReactElement {
           </Link>
         </p>
         <p>
-          <Button onClick={() => {setLoggedIn(false)}}>Log out</Button>
+          <Button
+            onClick={() => {
+              setLoggedIn(false)
+            }}
+          >
+            Log out
+          </Button>
         </p>
       </div>
     )
   } else {
-    return (<Resistration user={user} setUser={setUser} setLoggedIn={setLoggedIn}/>)
+    return (
+      <Resistration user={user} setUser={setUser} setLoggedIn={setLoggedIn} />
+    )
   }
 }
