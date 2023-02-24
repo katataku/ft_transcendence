@@ -25,18 +25,22 @@ export function Resistration(props: {
         onChange={(e) => {
           userName = e.target.value
         }}
-        />
+      />
       <Form.Control
         placeholder="Password"
         onChange={(e) => {
           password = e.target.value
         }}
-        />
+      />
       <Button
         onClick={() => {
-          createUser({name: userName, password: password}).then(res => {
-            props.setUser({ id: Number(res.data.id), name: userName })
-          }).catch(() => {/**/})
+          createUser({ name: userName, password })
+            .then((res) => {
+              props.setUser({ id: Number(res.data.id), name: userName })
+            })
+            .catch(() => {
+              /**/
+            })
           props.setLoggedIn(true)
         }}
       >
