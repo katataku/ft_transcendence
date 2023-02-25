@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState, type ReactElement } from 'react'
-import { Badge, Button } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import axios from 'axios'
+import { OwnerIcon } from '../utils/OwnerIcon'
+import { BannedIcon } from '../utils/BannedIcon'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
@@ -12,38 +14,6 @@ const _publicIconURL: string =
   'https://iconbox.fun/wp/wp-content/uploads/lock_open_24.png'
 const privateIconURL: string =
   'https://iconbox.fun/wp/wp-content/uploads/lock_24.png'
-
-const BannedIcon = (props: {
-  room: ChatRoom
-  user: User
-  isBanned: boolean
-}): JSX.Element => {
-  const icon: JSX.Element = props.isBanned ? (
-    <>
-      <Badge pill bg="danger">
-        banned
-      </Badge>{' '}
-    </>
-  ) : (
-    <></>
-  )
-  return icon
-}
-
-// チャットルームのオーナーを示すアイコンを表示する。
-const OwnerIcon = (props: { room: ChatRoom; user: User }): JSX.Element => {
-  const isOwner: boolean = props.room.created_by_user_id === props.user.id
-  const icon: JSX.Element = isOwner ? (
-    <>
-      <Badge pill bg="info">
-        owner
-      </Badge>{' '}
-    </>
-  ) : (
-    <></>
-  )
-  return icon
-}
 
 const PrivateIcon = (props: { room: ChatRoom }): JSX.Element => {
   const isPublicIcon =

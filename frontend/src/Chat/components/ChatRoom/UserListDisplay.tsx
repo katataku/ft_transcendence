@@ -1,5 +1,7 @@
 import { type ReactElement } from 'react'
-import { Badge, Button } from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
+import { BannedIcon } from '../utils/BannedIcon'
+import { OwnerIcon } from '../utils/OwnerIcon'
 import {
   deleteChatRoomMembersRequest,
   updateChatRoomMembersRequest
@@ -55,6 +57,9 @@ const BanButton = (props: {
   chatRoomMemberList: ChatRoomMember[]
   updateMemberList: () => void
 }): JSX.Element => {
+  const isOwner: boolean = props.room.created_by_user_id === props.member.id
+  if (isOwner) return <></>
+
   const isBanned = props.chatRoomMemberList.find(
     (item) =>
       item.userId === props.member.id && item.chatRoomId === props.room.id
@@ -62,7 +67,7 @@ const BanButton = (props: {
   if (isBanned === undefined) return <></>
   return isBanned ? (
     <>
-      <Badge bg="info">banned</Badge>
+      <BannedIcon room={props.room} user={props.member} isBanned={isBanned} />
       <BanOFFMemberButton {...props} member={props.member} />
     </>
   ) : (
@@ -77,6 +82,9 @@ const DeleteMemberButton = (props: {
   member: User
   updateMemberList: () => void
 }): JSX.Element => {
+  const isOwner: boolean = props.room.created_by_user_id === props.member.id
+  if (isOwner) return <></>
+
   return (
     <Button
       variant="outline-danger"
@@ -88,7 +96,7 @@ const DeleteMemberButton = (props: {
         deleteChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
     >
-      Delete User
+      Delete User from Room
     </Button>
   )
 }
@@ -105,6 +113,7 @@ export const UserListDisplay = (props: {
         return (
           <li key={index}>
             {member.name}
+            <OwnerIcon room={props.room} user={member}></OwnerIcon>
             <BanButton {...props} member={member} />
             <DeleteMemberButton {...props} member={member} />
           </li>
