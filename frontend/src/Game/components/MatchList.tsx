@@ -1,52 +1,68 @@
-import { type ReactElement } from 'react'
+import React, {type ReactElement, useEffect, useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import ListGroup from 'react-bootstrap/ListGroup'
+import axios from 'axios'
 
-function listMatches(matchList: MatchDto[]): ReactElement[] {
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
+
+function listMatches(matches: MatchDto[], users: User[]): ReactElement[] {
   const navigate = useNavigate()
 
-  return matchList.map((match): ReactElement => {
-    const key = match.p1 + match.p2
+  function findUserName(id: number): string {
+    const user = users.find(user => {
+      return user.id === id
+    })
+    return user === undefined ? '' : user.name
+  }
+
+  // まだ勝者が決まっていないマッチだけ表現
+  matches = matches.filter(match => match.winner === 0)
+
+  return matches.map((match): ReactElement => {
     return (
       <ListGroup.Item
-        key={key}
+        key={String(match.p1) + String(match.p2)}
         id="centerCol"
         action
         onClick={() => {
           // マッチリスト->ゲーム をナビゲートされる人のユーザー情報は必要ないです
-          navigate('/Game/', { state: { id: '', name: '' } })
+          navigate('/Game/', { state: { matchId: match.id, userId: '', userName: '' } })
         }}
       >
-        {match.p1} vs. {match.p2}
+        {findUserName(match.p1)} vs {findUserName(match.p2)}
       </ListGroup.Item>
     )
   })
 }
 
 export function MatchList(): ReactElement {
-  // === ページにリストを表示するためだけのものです === //
-  const p1: IPlayer = {
-    id: 1,
-    name: 'Player1',
-    side: 'left',
-    wins: 3,
-    losses: 7,
-    ready: false
-  }
-  const p2: IPlayer = { ...p1, name: 'Player2' }
-  const p3: IPlayer = { ...p1, name: 'Player3' }
-  const p4: IPlayer = { ...p1, name: 'Player4' }
+  const [matches, setMatches] = useState<MatchDto[]>([])
+  const [users, setUsers] = useState<User[]>([])
 
-  const matchList: MatchDto[] = [
-    { id: 1, p1: p1.id, p2: p2.id, winner: 0 },
-    { id: 2, p1: p3.id, p2: p4.id, winner: 0 },
-    { id: 3, p1: p4.id, p2: p1.id, winner: 0 },
-    { id: 4, p1: p3.id, p2: p3.id, winner: 0 }
-  ]
-  // === ページにリストを表示するためだけのものです === //
+  useEffect(()=>{
+    axios
+      .get<MatchDto[]>('/match/matches')
+      .then((response) => {
+        setMatches(response.data)
+      })
+      .catch((err) => {
+        alert(err)
+      })
 
-  // TODO: Jade - ERDからゲームテーブルを実装する。
-  //  ゲームロジックのテーブルは'Game'を使っているので、
-  //  データベースはMatchListと呼ぶことにします。
-  return <ListGroup>{listMatches(matchList)}</ListGroup>
+    axios
+      .get<User[]>('/user/users')
+      .then((response) => {
+        setUsers(response.data)
+      })
+      .catch((err) => {
+        alert(err)
+      })
+  }, [])
+
+  return (
+    <>
+      <h1 id="centerCol">Ongoing Matches</h1>
+      <ListGroup>{listMatches(matches, users)}</ListGroup>
+    </>
+  )
 }
