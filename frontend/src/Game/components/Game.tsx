@@ -6,6 +6,7 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
+import { useLocation } from 'react-router-dom'
 import io from 'socket.io-client'
 import axios from 'axios'
 import {
@@ -260,9 +261,14 @@ function Ready(props: { player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
+  const user = useLocation().state
 
   function setReady(): void {
-    if (props.player.socketID === selfID && button === grayButton) {
+    if (
+      props.player.socketID === selfID &&
+      button === grayButton &&
+      props.player.name === user.name
+    ) {
       setButton(greenButton)
       props.player.ready = true
       socket.emit('updatePlayerReady', props.player.socketID)
@@ -283,11 +289,11 @@ function Player(props: { player: IPlayer }): ReactElement {
     <Col>
       <div className="display-1">{props.player.name.slice(0, 7)}</div>
       <div className="border">
-        <h2>Match History</h2>
-        <h4>
+        <h3>Match History</h3>
+        <h5>
           wins:<span className="text-success">{props.player.wins} </span>
           losses:<span className="text-danger">{props.player.losses}</span>
-        </h4>
+        </h5>
       </div>
       <Ready player={props.player} />
     </Col>

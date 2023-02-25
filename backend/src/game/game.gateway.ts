@@ -49,9 +49,10 @@ const deepCopy = (obj: object): any => {
 };
 
 const initLeftProfile: IPlayer = {
-  id: 'left',
+  id: 1,
   socketID: '',
   name: 'Player1',
+  side: 'left',
   wins: 3,
   losses: 7,
   ready: false,
@@ -60,9 +61,10 @@ const initLeftProfile: IPlayer = {
 };
 
 const initRightProfile: IPlayer = {
-  id: 'right',
+  id: 2,
   socketID: '',
   name: 'Player2',
+  side: 'right',
   wins: 13,
   losses: 17,
   ready: false,

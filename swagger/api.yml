@@ -53,6 +53,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/user_create_res'
 
+  /user/users:
+    get:
+      tags:
+        - user
+      summary: 全ユーザーの取得
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/users_get_res'
+
+
   /user/{userID}:
     get:
       tags:
@@ -69,6 +83,39 @@ paths:
       responses:
         200:
           description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_get_res'
+    delete:
+      tags:
+        - user
+      summary: delete user
+      parameters:
+        - name: userID
+          required: true
+          description: id
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
+    post:
+      tags:
+        - user
+      summary: update user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/user_update_req'
+      responses:
+        200:
           content:
             application/json:
               schema:
@@ -186,6 +233,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/chat_room_res'
+  /chatroom/auth:
+    post:
+      tags:
+        - chatRoom
+      summary: auth protected chatRoom
+      description: chatRoomへのパスワード認証
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat_room_auth_req'
+      responses:
+        201:
+          description: 成功
+        401:
+          description: 認証失敗
   /chat-mute-user:
     get:
       tags:
@@ -323,6 +386,21 @@ components:
           type: integer
           example: 1
 
+    user_update_req:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Updated!!!
+        password:
+          type: string
+          example: update
+
+    users_get_res:
+      type: array
+      items:
+        $ref: '#/components/schemas/user_get_res'
+
     user_get_res:
       type: object
       properties:
@@ -364,24 +442,33 @@ components:
         name:
           type: string
           example: Tom Brady
-        created_by:
+        created_by_user_id:
           type: number
           example: 1
-        isPublic:
-          type: boolean
-          example: true
+        public_id:
+          type: number
+          example: 1
     chat_room_req:
       type: object
       properties:
         name:
           type: string
           example: Tom Brady
-        created_by:
+        created_by_user_id:
           type: number
           example: 1
-        isPublic:
-          type: boolean
-          example: true
+        public_id:
+          type: number
+          example: 1
+    chat_room_auth_req:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        password:
+          type: string
+          example: "password"
     chat-mute-user:
       type: object
       properties:

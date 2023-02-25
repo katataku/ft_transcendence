@@ -3,7 +3,7 @@ import { useState, type ReactElement } from 'react'
 import { Button, Dropdown, DropdownButton, Modal } from 'react-bootstrap'
 
 const PublicSelectDropdownButton = (props: {
-  setIsPublic: React.Dispatch<React.SetStateAction<boolean>>
+  setPublicId: React.Dispatch<React.SetStateAction<publicIdType>>
 }): ReactElement => {
   const [title, setTitle] = useState<string>('public')
 
@@ -19,10 +19,10 @@ const PublicSelectDropdownButton = (props: {
         setTitle(op ?? 'select')
         switch (op) {
           case 'public':
-            props.setIsPublic(true)
+            props.setPublicId('public')
             break
           case 'private':
-            props.setIsPublic(false)
+            props.setPublicId('private')
             break
         }
       }}
@@ -39,13 +39,22 @@ export const ChatListModal = (props: {
   handleModalClose: () => void
 }): ReactElement => {
   const [newRoomName, setNewRoomName] = useState<string>('')
-  const [isPublic, setIsPublic] = useState<boolean>(true)
+  const [publicId, setPublicId] = useState<publicIdType>('public')
+
+  const publicIdNumberTable = {
+    public: 1,
+    private: 2,
+    protected: 3,
+    DM: 4
+  }
 
   const handleCreateRoom = (): void => {
-    const requestData: ChatRoom = {
+    const publicIdNumber: number = publicIdNumberTable[publicId]
+    const requestData: ChatRoomReqDto = {
       name: newRoomName,
       created_by: props.user.id,
-      isPublic
+      created_by_user_id: props.user.id,
+      public_id: publicIdNumber
     }
     axios
       .post<ChatRoom>('/chatRoom', requestData)
@@ -76,7 +85,7 @@ export const ChatListModal = (props: {
               }}
             />
             <PublicSelectDropdownButton
-              setIsPublic={setIsPublic}
+              setPublicId={setPublicId}
             ></PublicSelectDropdownButton>
           </>
         </Modal.Body>
