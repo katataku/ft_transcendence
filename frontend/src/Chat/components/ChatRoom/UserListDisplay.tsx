@@ -67,7 +67,7 @@ const BanButton = (props: {
   if (isBanned === undefined) return <></>
   return isBanned ? (
     <>
-      <BannedIcon room={props.room} user={props.member} isBanned={isBanned} />
+      <BannedIcon isBanned={isBanned} />
       <BanOFFMemberButton {...props} member={props.member} />
     </>
   ) : (

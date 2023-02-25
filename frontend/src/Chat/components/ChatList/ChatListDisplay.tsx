@@ -160,11 +160,7 @@ export const ChatListDisplay = (props: {
         return (
           <li key={index}>
             {room.name}
-            <BannedIcon
-              room={room}
-              user={props.user}
-              isBanned={isBanned}
-            ></BannedIcon>
+            <BannedIcon isBanned={isBanned}></BannedIcon>
             <OwnerIcon room={room} user={props.user}></OwnerIcon>
             <PrivateIcon room={room}></PrivateIcon>
             <EnterButton
