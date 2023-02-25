@@ -13,9 +13,9 @@ export class ChatRoomMembers {
   @Column()
   isBanned: boolean;
 
-  @ManyToOne(() => ChatRoom)
+  @ManyToOne(() => ChatRoom, { onDelete: 'CASCADE' })
   chatRoom: ChatRoom;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 }
