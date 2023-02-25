@@ -22,6 +22,8 @@ export class migrations1676466055353 implements MigrationInterface {
     await queryRunner.query(this.makeInsertUserSQL('guest2', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest3', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest4', passHash));
+    await queryRunner.query(this.makeInsertUserSQL('guest5', passHash));
+    await queryRunner.query(this.makeInsertUserSQL('guest6', passHash));
     await queryRunner.query(this.makeInsertMatchSQL(1, 2));
     await queryRunner.query(this.makeInsertMatchSQL(3, 4));
     await queryRunner.query(this.makeInsertMatchSQL(5, 6));
@@ -47,6 +49,8 @@ export class migrations1676466055353 implements MigrationInterface {
     await queryRunner.query(`DELETE from public.users WHERE name = 'guest2';`);
     await queryRunner.query(`DELETE from public.users WHERE name = 'guest3';`);
     await queryRunner.query(`DELETE from public.users WHERE name = 'guest4';`);
+    await queryRunner.query(`DELETE from public.users WHERE name = 'guest5';`);
+    await queryRunner.query(`DELETE from public.users WHERE name = 'guest6';`);
     await queryRunner.query(`DELETE from public.match WHERE p1 = 1;`);
     await queryRunner.query(`DELETE from public.match WHERE p1 = 3;`);
     await queryRunner.query(`DELETE from public.match WHERE p1 = 5;`);
