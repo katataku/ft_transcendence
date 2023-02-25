@@ -13,6 +13,23 @@ const _publicIconURL: string =
 const privateIconURL: string =
   'https://iconbox.fun/wp/wp-content/uploads/lock_24.png'
 
+const BannedIcon = (props: {
+  room: ChatRoom
+  user: User
+  isBanned: boolean
+}): JSX.Element => {
+  const icon: JSX.Element = props.isBanned ? (
+    <>
+      <Badge pill bg="danger">
+        banned
+      </Badge>{' '}
+    </>
+  ) : (
+    <></>
+  )
+  return icon
+}
+
 // チャットルームのオーナーを示すアイコンを表示する。
 const OwnerIcon = (props: { room: ChatRoom; user: User }): JSX.Element => {
   const isOwner: boolean = props.room.created_by_user_id === props.user.id
@@ -45,6 +62,7 @@ const EnterButton = (props: {
   user: User
   room: ChatRoom
   roomMembers: ChatRoomMember[]
+  isBanned: boolean
 }): JSX.Element => {
   const navigate = useNavigate()
   const room = props.room
@@ -62,7 +80,9 @@ const EnterButton = (props: {
     </Button>
   )
 
-  return props.roomMembers.length > 0 ? enterButtonElement : <></>
+  const isShow: boolean = props.roomMembers.length > 0 && !props.isBanned
+
+  return isShow ? enterButtonElement : <></>
 }
 
 // チャットルームに参加するためのボタンを表示する。
@@ -99,7 +119,9 @@ const JoinButton = (props: {
     </Button>
   )
 
-  return props.roomMembers.length === 0 ? joinButtonElement : <></>
+  const isShow: boolean = props.roomMembers.length === 0 && room.public_id === 1
+
+  return isShow ? joinButtonElement : <></>
 }
 
 // チャットルームのオーナーのみ、チャットルームの設定を変更できる。
@@ -158,15 +180,28 @@ export const ChatListDisplay = (props: {
         const roomMembers: ChatRoomMember[] = roomMembersAll
           .filter((item) => item.chatRoomId === room.id)
           .filter((item) => item.userId === props.user.id)
+
+        const isBanned: boolean =
+          roomMembers.find(
+            (item) =>
+              item.userId === props.user.id && item.chatRoomId === room.id
+          )?.isBanned ?? false
+
         return (
           <li key={index}>
             {room.name}
+            <BannedIcon
+              room={room}
+              user={props.user}
+              isBanned={isBanned}
+            ></BannedIcon>
             <OwnerIcon room={room} user={props.user}></OwnerIcon>
             <PrivateIcon room={room}></PrivateIcon>
             <EnterButton
               user={props.user}
               room={room}
               roomMembers={roomMembers}
+              isBanned={isBanned}
             ></EnterButton>
             <JoinButton
               user={props.user}
