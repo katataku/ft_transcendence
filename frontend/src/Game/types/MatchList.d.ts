@@ -3,5 +3,4 @@ interface MatchDto {
   p1: number
   p2: number
   winner: number
-  powerup: boolean
 }

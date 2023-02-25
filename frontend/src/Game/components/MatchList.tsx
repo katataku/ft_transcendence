@@ -38,10 +38,10 @@ export function MatchList(): ReactElement {
   const p4: IPlayer = { ...p1, name: 'Player4' }
 
   const matchList: MatchDto[] = [
-    { id: 1, p1: p1.id, p2: p2.id },
-    { id: 2, p1: p3.id, p2: p4.id },
-    { id: 3, p1: p4.id, p2: p1.id },
-    { id: 4, p1: p3.id, p2: p3.id }
+    { id: 1, p1: p1.id, p2: p2.id, winner: 0 },
+    { id: 2, p1: p3.id, p2: p4.id, winner: 0 },
+    { id: 3, p1: p4.id, p2: p1.id, winner: 0 },
+    { id: 4, p1: p3.id, p2: p3.id, winner: 0 }
   ]
   // === ページにリストを表示するためだけのものです === //
 

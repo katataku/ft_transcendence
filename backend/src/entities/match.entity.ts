@@ -13,7 +13,4 @@ export class Match {
 
   @Column({ name: 'winner' })
   winner!: number;
-
-  @Column({ name: 'powerup' })
-  powerup!: boolean;
 }

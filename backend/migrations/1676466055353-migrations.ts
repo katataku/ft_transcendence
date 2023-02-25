@@ -10,11 +10,7 @@ export class migrations1676466055353 implements MigrationInterface {
     `');`;
 
   makeInsertMatchSQL = (p1: number, p2: number) =>
-    `INSERT INTO public.match(p1, p2, winner, powerup) VALUES(` +
-    p1 +
-    `,` +
-    p2 +
-    `, 0, false)`;
+    `INSERT INTO public.match(p1, p2, winner) VALUES(` + p1 + `,` + p2 + `,0)`;
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     const passHash = SHA256('password').toString();

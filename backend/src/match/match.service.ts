@@ -28,7 +28,6 @@ export class MatchService {
   async postMatchResult(result: MatchResultDto): Promise<void> {
     const match: MatchDto = await this.getMatchById(result.id);
     match.winner = result.winner;
-    match.powerup = result.powerup;
     await this.matchRepository.save(match);
   }
 }

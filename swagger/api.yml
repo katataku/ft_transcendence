@@ -571,9 +571,6 @@ components:
         winner:
           type: number
           example: 1
-        powerup:
-          type: boolean
-          example: true
 
     matches_get:
       type: array
@@ -589,6 +586,3 @@ components:
         winner:
           type: number
           example: 1
-        powerup:
-          type: boolean
-          example: true
