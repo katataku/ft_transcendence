@@ -40,10 +40,10 @@ export enum EStatus {
 }
 
 export interface IMatch {
-  id: number;
-  leftPlayer: IPlayer;
-  rightPlayer: IPlayer;
-  ball: IBall;
-  speed: number;
-  status: EStatus;
+  id: number
+  leftPlayer: IPlayer
+  rightPlayer: IPlayer
+  ball: IBall
+  speed: number
+  status: EStatus
 }
