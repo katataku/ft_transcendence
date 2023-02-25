@@ -273,7 +273,11 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
     let isPlayer: boolean
     if (props.player.side === 'left') isPlayer = leftID === selfID
     else isPlayer = rightID === selfID
-    if (isPlayer && button === grayButton && props.player.name === matchState.userName) {
+    if (
+      isPlayer &&
+      button === grayButton &&
+      props.player.name === matchState.userName
+    ) {
       setButton(greenButton)
       props.setPlayer({ ...props.player, ready: true })
       socket.emit('updatePlayerReady', props.player.side)

@@ -39,7 +39,10 @@ export function App(): ReactElement {
         <Link to="MatchList">Move to MatchList</Link>
       </p>
       <p>
-        <Link to="Game" state={{matchId: 0, userId: user.id, userName: user.name}}>
+        <Link
+          to="Game"
+          state={{ matchId: 0, userId: user.id, userName: user.name }}
+        >
           Move to Game
         </Link>
       </p>

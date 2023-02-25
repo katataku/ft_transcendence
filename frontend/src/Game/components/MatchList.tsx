@@ -1,4 +1,4 @@
-import React, {type ReactElement, useEffect, useState} from 'react'
+import React, { type ReactElement, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ListGroup from 'react-bootstrap/ListGroup'
 import axios from 'axios'
@@ -9,14 +9,14 @@ function listMatches(matches: MatchDto[], users: User[]): ReactElement[] {
   const navigate = useNavigate()
 
   function findUserName(id: number): string {
-    const user = users.find(user => {
+    const user = users.find((user) => {
       return user.id === id
     })
     return user === undefined ? '' : user.name
   }
 
   // まだ勝者が決まっていないマッチだけ表現
-  matches = matches.filter(match => match.winner === 0)
+  matches = matches.filter((match) => match.winner === 0)
 
   return matches.map((match): ReactElement => {
     return (
@@ -26,7 +26,9 @@ function listMatches(matches: MatchDto[], users: User[]): ReactElement[] {
         action
         onClick={() => {
           // マッチリスト->ゲーム をナビゲートされる人のユーザー情報は必要ないです
-          navigate('/Game/', { state: { matchId: match.id, userId: '', userName: '' } })
+          navigate('/Game/', {
+            state: { matchId: match.id, userId: '', userName: '' }
+          })
         }}
       >
         {findUserName(match.p1)} vs {findUserName(match.p2)}
@@ -39,7 +41,7 @@ export function MatchList(): ReactElement {
   const [matches, setMatches] = useState<MatchDto[]>([])
   const [users, setUsers] = useState<User[]>([])
 
-  useEffect(()=>{
+  useEffect(() => {
     axios
       .get<MatchDto[]>('/match/matches')
       .then((response) => {
