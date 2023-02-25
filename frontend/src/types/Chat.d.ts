@@ -10,8 +10,3 @@ interface ChatListState {
 interface ChatRoomState {
   room: ChatRoom
 }
-
-interface User {
-  id: number
-  name: string
-}
