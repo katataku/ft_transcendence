@@ -8,5 +8,6 @@ import { ChatRoomMembersService } from './chatRoomMembers.service';
   imports: [TypeOrmModule.forFeature([ChatRoomMembers])],
   controllers: [ChatRoomMembersController],
   providers: [ChatRoomMembersService],
+  exports: [ChatRoomMembersService],
 })
 export class ChatRoomMembersModule {}
