@@ -571,6 +571,9 @@ components:
         isBanned:
           type: boolean
           example: false
+        isAdministrator:
+          type: boolean
+          example: false
     chatRoomMemberPK:
       type: object
       properties:

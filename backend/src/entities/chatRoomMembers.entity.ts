@@ -13,6 +13,9 @@ export class ChatRoomMembers {
   @Column()
   isBanned: boolean;
 
+  @Column()
+  isAdministrator: boolean;
+
   @ManyToOne(() => ChatRoom, { onDelete: 'CASCADE' })
   chatRoom: ChatRoom;
 
