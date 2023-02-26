@@ -18,7 +18,7 @@ const socket = io(ServerURL + '/game')
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
 const gameWinWid: number = 1000
-const gameWinHght: number = 600
+const gameWinHght: number = 500
 const ballPx: number = 20
 const paddleSpeed: number = 10
 const winningScore = 3
@@ -292,17 +292,17 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
 function Player(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   return (
     <Col>
-      <div className="display-2">
+      <div className="display-4">
         {props.player.side === 'left'
           ? leftID.slice(0, 7)
           : rightID.slice(0, 7)}
       </div>
       <div className="border">
-        <h3>Match History</h3>
-        <h5>
+        <h4>Match History</h4>
+        <h6>
           wins:<span className="text-success">{props.player.wins} </span>
           losses:<span className="text-danger">{props.player.losses}</span>
-        </h5>
+        </h6>
       </div>
       <Ready player={props.player} setPlayer={props.setPlayer} />
     </Col>
