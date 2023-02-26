@@ -3,7 +3,7 @@ import { Button, Modal } from 'react-bootstrap'
 import {
   getAllUsersRequest,
   updateChatRoomMembersRequest
-} from './requestUtils'
+} from '../utils/requestUtils'
 
 const AddButton = (props: {
   room: ChatRoom
