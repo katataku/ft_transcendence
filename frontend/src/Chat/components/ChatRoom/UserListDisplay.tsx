@@ -1,5 +1,6 @@
 import { type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
+import { AdminIcon } from '../utils/AdminIcon'
 import { BannedIcon } from '../utils/BannedIcon'
 import { OwnerIcon } from '../utils/OwnerIcon'
 import {
@@ -19,7 +20,8 @@ const BanMemberButton = (props: {
         const requestData: ChatRoomMember = {
           chatRoomId: props.room.id,
           userId: props.member.id,
-          isBanned: true
+          isBanned: true,
+          isAdministrator: false
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
@@ -41,7 +43,8 @@ const BanOFFMemberButton = (props: {
         const requestData: ChatRoomMember = {
           chatRoomId: props.room.id,
           userId: props.member.id,
-          isBanned: false
+          isBanned: false,
+          isAdministrator: false
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
@@ -73,6 +76,78 @@ const BanButton = (props: {
   ) : (
     <>
       <BanMemberButton {...props} member={props.member} />
+    </>
+  )
+}
+
+const AdminMemberButton = (props: {
+  room: ChatRoom
+  member: User
+  updateMemberList: () => void
+}): JSX.Element => {
+  return (
+    <Button
+      variant="outline-info"
+      onClick={() => {
+        const requestData: ChatRoomMember = {
+          chatRoomId: props.room.id,
+          userId: props.member.id,
+          isBanned: false,
+          isAdministrator: true
+        }
+        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+      }}
+    >
+      Admin
+    </Button>
+  )
+}
+
+const AdminOFFMemberButton = (props: {
+  room: ChatRoom
+  member: User
+  updateMemberList: () => void
+}): JSX.Element => {
+  return (
+    <Button
+      variant="outline-danger"
+      onClick={() => {
+        const requestData: ChatRoomMember = {
+          chatRoomId: props.room.id,
+          userId: props.member.id,
+          isBanned: false,
+          isAdministrator: false
+        }
+        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+      }}
+    >
+      Admin 解除
+    </Button>
+  )
+}
+
+const AdminButton = (props: {
+  room: ChatRoom
+  member: User
+  chatRoomMemberList: ChatRoomMember[]
+  updateMemberList: () => void
+}): JSX.Element => {
+  const isOwner: boolean = props.room.created_by_user_id === props.member.id
+  if (isOwner) return <></>
+
+  const isAdmin = props.chatRoomMemberList.find(
+    (item) =>
+      item.userId === props.member.id && item.chatRoomId === props.room.id
+  )?.isAdministrator
+  if (isAdmin === undefined) return <></>
+  return isAdmin ? (
+    <>
+      <AdminIcon isAdmin={isAdmin} />
+      <AdminOFFMemberButton {...props} member={props.member} />
+    </>
+  ) : (
+    <>
+      <AdminMemberButton {...props} member={props.member} />
     </>
   )
 }
@@ -115,6 +190,7 @@ export const UserListDisplay = (props: {
             {member.name}
             <OwnerIcon room={props.room} user={member}></OwnerIcon>
             <BanButton {...props} member={member} />
+            <AdminButton {...props} member={member} />
             <DeleteMemberButton {...props} member={member} />
           </li>
         )

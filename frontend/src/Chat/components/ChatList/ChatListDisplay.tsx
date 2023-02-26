@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap'
 import axios from 'axios'
 import { OwnerIcon } from '../utils/OwnerIcon'
 import { BannedIcon } from '../utils/BannedIcon'
+import { AdminIcon } from '../utils/AdminIcon'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
@@ -70,7 +71,8 @@ const JoinButton = (props: {
     const requestData: ChatRoomMember = {
       chatRoomId: room.id,
       userId: user.id,
-      isBanned: false
+      isBanned: false,
+      isAdministrator: false
     }
     axios
       .post<ChatRoom>('/chatRoomMembers', requestData)
@@ -98,13 +100,18 @@ const JoinButton = (props: {
 // そのため、チャットルームのオーナーのみ、設定ボタンを表示する。
 // また、チャットルームのオーナーのみ、チャットルームを削除できる。
 // そのため、設定画面に削除ボタンを表示する。
-const SettingButton = (props: { room: ChatRoom; user: User }): JSX.Element => {
+const SettingButton = (props: {
+  room: ChatRoom
+  user: User
+  isAdmin: boolean
+}): JSX.Element => {
   const room = props.room
   const user = props.user
   const navigate = useNavigate()
 
   const isOwner: boolean = room.created_by_user_id === user.id
-  const icon: JSX.Element = isOwner ? (
+  const isShow = isOwner || props.isAdmin
+  const icon: JSX.Element = isShow ? (
     <>
       <Button
         variant="outline-info"
@@ -157,11 +164,17 @@ export const ChatListDisplay = (props: {
               item.userId === props.user.id && item.chatRoomId === room.id
           )?.isBanned ?? false
 
+        const isAdmin =
+          roomMembers.find(
+            (item) =>
+              item.userId === props.user.id && item.chatRoomId === room.id
+          )?.isAdministrator ?? false
         return (
           <li key={index}>
             {room.name}
             <BannedIcon isBanned={isBanned}></BannedIcon>
             <OwnerIcon room={room} user={props.user}></OwnerIcon>
+            <AdminIcon isAdmin={isAdmin}></AdminIcon>
             <PrivateIcon room={room}></PrivateIcon>
             <EnterButton
               user={props.user}
@@ -175,7 +188,11 @@ export const ChatListDisplay = (props: {
               roomMembers={roomMembers}
               updateChatRoomList={props.updateChatRoomList}
             ></JoinButton>
-            <SettingButton room={room} user={props.user}></SettingButton>
+            <SettingButton
+              room={room}
+              user={props.user}
+              isAdmin={isAdmin}
+            ></SettingButton>
           </li>
         )
       })}

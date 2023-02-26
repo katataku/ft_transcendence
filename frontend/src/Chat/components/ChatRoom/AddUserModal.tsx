@@ -14,7 +14,8 @@ const AddButton = (props: {
     const requestData: ChatRoomMember = {
       chatRoomId: props.room.id,
       userId: props.member.id,
-      isBanned: false
+      isBanned: false,
+      isAdministrator: false
     }
     updateChatRoomMembersRequest(requestData, props.updateMemberList)
   }
