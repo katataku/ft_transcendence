@@ -28,12 +28,14 @@ const OwnerIcon = (props: { room: ChatRoom; user: User }): JSX.Element => {
   return icon
 }
 
-const IsPublicIcon = (props: { room: ChatRoom }): JSX.Element => {
-  const isPublicIcon = props.room.is_public ? (
-    <></>
-  ) : (
-    <img src={privateIconURL} alt="new" width="20" height="20" />
-  )
+const PrivateIcon = (props: { room: ChatRoom }): JSX.Element => {
+  const isPublicIcon =
+    props.room.public_id === 2 ? (
+      <img src={privateIconURL} alt="new" width="20" height="20" />
+    ) : (
+      <></>
+    )
+
   return isPublicIcon
 }
 
@@ -160,7 +162,7 @@ export const ChatListDisplay = (props: {
           <li key={index}>
             {room.name}
             <OwnerIcon room={room} user={props.user}></OwnerIcon>
-            <IsPublicIcon room={room}></IsPublicIcon>
+            <PrivateIcon room={room}></PrivateIcon>
             <EnterButton
               user={props.user}
               room={room}

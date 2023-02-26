@@ -9,6 +9,9 @@ export class ChatRoomMembersDto {
 
   @IsBoolean()
   isBanned: boolean;
+
+  @IsBoolean()
+  isAdministrator: boolean;
 }
 
 export class ChatRoomMembersPKDto {

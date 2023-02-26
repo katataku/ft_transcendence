@@ -30,6 +30,7 @@ export class ChatRoomMembersService {
     data.chatRoomId = param.chatRoomId;
     data.userId = param.userId;
     data.isBanned = param.isBanned;
+    data.isAdministrator = param.isAdministrator;
     const ret = await this.chatRoomMembersRepository.save(data);
     return ret;
   }

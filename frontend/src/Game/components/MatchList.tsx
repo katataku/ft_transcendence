@@ -19,6 +19,7 @@ function listMatches(matches: MatchDto[], users: User[]): ReactElement[] {
   matches = matches.filter((match) => match.winner === 0)
 
   return matches.map((match): ReactElement => {
+
     return (
       <ListGroup.Item
         key={String(match.p1) + String(match.p2)}

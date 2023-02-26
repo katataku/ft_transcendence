@@ -235,6 +235,22 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/chat_room_res'
+  /chatroom/auth:
+    post:
+      tags:
+        - chatRoom
+      summary: auth protected chatRoom
+      description: chatRoomへのパスワード認証
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat_room_auth_req'
+      responses:
+        201:
+          description: 成功
+        401:
+          description: 認証失敗
   /chat-mute-user:
     get:
       tags:
@@ -498,9 +514,9 @@ components:
         created_by_user_id:
           type: number
           example: 1
-        is_public:
-          type: boolean
-          example: true
+        public_id:
+          type: number
+          example: 1
     chat_room_req:
       type: object
       properties:
@@ -510,9 +526,18 @@ components:
         created_by_user_id:
           type: number
           example: 1
-        is_public:
-          type: boolean
-          example: true
+        public_id:
+          type: number
+          example: 1
+    chat_room_auth_req:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        password:
+          type: string
+          example: "password"
     chat-mute-user:
       type: object
       properties:
@@ -544,6 +569,9 @@ components:
           type: number
           example: 1
         isBanned:
+          type: boolean
+          example: false
+        isAdministrator:
           type: boolean
           example: false
     chatRoomMemberPK:
