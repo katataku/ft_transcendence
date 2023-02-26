@@ -37,6 +37,7 @@ const paddleSize: Vector2 = {
 }
 
 let selfID: string
+let selfName: string
 
 function Paddles(props: {
   leftSocketID: string
@@ -261,13 +262,13 @@ function Ready(props: { player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
-  const user = useLocation().state
+  const matchState = useLocation().state
 
   function setReady(): void {
     if (
       props.player.socketID === selfID &&
       button === grayButton &&
-      props.player.name === user.name
+      selfName === matchState.userName
     ) {
       setButton(greenButton)
       props.player.ready = true
@@ -314,6 +315,9 @@ function Matching(): ReactElement {
 }
 
 export function Game(): ReactElement {
+  const matchState = useLocation().state
+  console.log(matchState)
+
   const [match, setMatch] = useState<IMatch | undefined>(undefined)
 
   useEffect(() => {
@@ -328,7 +332,7 @@ export function Game(): ReactElement {
     socket.on('updateConnections', (serverMatch: IMatch) => {
       setMatch(serverMatch)
     })
-
+    selfName = matchState.userName
     socket.emit('updateConnections')
   }, [])
 
@@ -352,4 +356,5 @@ export function Game(): ReactElement {
 // 接続時
 socket.on('connect', () => {
   selfID = socket.id
+  console.log(`selfID: ${selfID}`)
 })

@@ -17,6 +17,8 @@ tags:
     description: チャット機能でのミュートユーザ情報
   - name: chatRoomMembers
     description: チャットルームの参加者情報
+  - name: match
+    description: 進行中のマッチリスト
 
 paths:
   /health:
@@ -360,6 +362,73 @@ paths:
       responses:
         200:
           description: 成功
+
+  /match/matches:
+    get:
+      tags:
+        - match
+      summary: 全マッチの取得
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/matches_get'
+
+  /match:
+    post:
+      tags:
+        - match
+      summary: match
+      description: マッチの作成
+      requestBody:
+        description: create a new match
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/match_get'
+      responses:
+        200:
+          description: 成功
+
+  /match/{matchID}:
+    get:
+      tags:
+        - match
+      summary: get match by ID
+      description: IDを指定してmatch情報を取得
+      parameters:
+        - name: matchID
+          required: true
+          description: id
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/match_get'
+
+  /match/result/{matchID}:
+    post:
+      tags:
+        - match
+      summary: match result
+      description: マッチの結果
+      requestBody:
+        description: Post match results
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/match_result_post'
+      responses:
+        200:
+          description: 成功
+
 components:
   schemas:
     health:
@@ -502,6 +571,9 @@ components:
         isBanned:
           type: boolean
           example: false
+        isAdministrator:
+          type: boolean
+          example: false
     chatRoomMemberPK:
       type: object
       properties:
@@ -509,5 +581,36 @@ components:
           type: number
           example: 1
         userId:
+          type: number
+          example: 1
+
+    match_get:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 0
+        p1:
+          type: number
+          example: 1
+        p2:
+          type: number
+          example: 1
+        winner:
+          type: number
+          example: 1
+
+    matches_get:
+      type: array
+      items:
+        $ref: '#/components/schemas/match_get'
+
+    match_result_post:
+      type: object
+      properties:
+        id:
+          type: number
+          example: 1
+        winner:
           type: number
           example: 1
