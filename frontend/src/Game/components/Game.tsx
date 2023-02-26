@@ -267,13 +267,17 @@ function Ready(props: { player: IPlayer; setPlayer: Setter }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
-  const user = useLocation().state
+  const matchState = useLocation().state
 
   function setReady(): void {
     let isPlayer: boolean
     if (props.player.side === 'left') isPlayer = leftID === selfID
     else isPlayer = rightID === selfID
-    if (isPlayer && button === grayButton && props.player.name === user.name) {
+    if (
+      isPlayer &&
+      button === grayButton &&
+      props.player.name === matchState.userName
+    ) {
       setButton(greenButton)
       props.setPlayer({ ...props.player, ready: true })
       socket.emit('updatePlayerReady', props.player.side)
@@ -323,6 +327,9 @@ function Matching(props: { setPlayerList: Setter }): ReactElement {
 }
 
 export function Game(): ReactElement {
+  const matchState = useLocation().state
+  console.log(matchState)
+
   const [p1, setP1] = useState<IPlayer>({
     id: 1,
     name: 'Player1',
