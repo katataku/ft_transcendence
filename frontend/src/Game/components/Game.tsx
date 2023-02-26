@@ -128,7 +128,7 @@ function SpeedPU(props: { speed: Ref }): ReactElement {
 
   const modifySpeed = (
     op: string | null,
-    e: React.SyntheticEvent<unknown>
+    _e: React.SyntheticEvent<unknown>
   ): void => {
     switch (op) {
       case 'easy':
@@ -188,14 +188,6 @@ function Match(props: { p1: IPlayer; p2: IPlayer }): ReactElement {
   const score = useRef<IScore>({ left: 0, right: 0 })
   const status = useRef<number>(EStatus.none)
   const speed = useRef<number>(400)
-  const incrementScore = useRef<(player: UPlayer) => void>((player) => {
-    status.current = EStatus.pause
-    if (player === 'left') {
-      score.current.left++
-    } else if (player === 'right') {
-      score.current.right++
-    }
-  })
 
   if (props.p1.ready && props.p2.ready && status.current === EStatus.none) {
     status.current = EStatus.ready
