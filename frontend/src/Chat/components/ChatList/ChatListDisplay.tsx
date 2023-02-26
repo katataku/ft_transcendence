@@ -154,6 +154,9 @@ export const ChatListDisplay = (props: {
   return (
     <ul>
       {props.roomList.map((room, index) => {
+        // チャットルームに参加しているかどうかを判断する。
+        // 参加している場合、参加しているユーザーの情報を取得する。
+        // 参加していない場合、空の配列を取得する。
         const roomMembers: ChatRoomMember[] = roomMembersAll
           .filter((item) => item.chatRoomId === room.id)
           .filter((item) => item.userId === props.user.id)
