@@ -5,6 +5,7 @@ import axios from 'axios'
 import { OwnerIcon } from '../utils/OwnerIcon'
 import { BannedIcon } from '../utils/BannedIcon'
 import { AdminIcon } from '../utils/AdminIcon'
+import { isAdmin, isBanned, isOwner } from '../utils/userStatusUtils'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
@@ -109,8 +110,7 @@ const SettingButton = (props: {
   const user = props.user
   const navigate = useNavigate()
 
-  const isOwner: boolean = room.created_by_user_id === user.id
-  const isShow = isOwner || props.isAdmin
+  const isShow = isOwner(user, room) || props.isAdmin
   const icon: JSX.Element = isShow ? (
     <>
       <Button
@@ -158,29 +158,21 @@ export const ChatListDisplay = (props: {
           .filter((item) => item.chatRoomId === room.id)
           .filter((item) => item.userId === props.user.id)
 
-        const isBanned: boolean =
-          roomMembers.find(
-            (item) =>
-              item.userId === props.user.id && item.chatRoomId === room.id
-          )?.isBanned ?? false
+        const isBannedBool: boolean = isBanned(props.user, room, roomMembersAll)
+        const isAdminBool: boolean = isAdmin(props.user, room, roomMembersAll)
 
-        const isAdmin =
-          roomMembers.find(
-            (item) =>
-              item.userId === props.user.id && item.chatRoomId === room.id
-          )?.isAdministrator ?? false
         return (
           <li key={index}>
             {room.name}
-            <BannedIcon isBanned={isBanned}></BannedIcon>
+            <BannedIcon isBanned={isBannedBool}></BannedIcon>
             <OwnerIcon room={room} user={props.user}></OwnerIcon>
-            <AdminIcon isAdmin={isAdmin}></AdminIcon>
+            <AdminIcon isAdmin={isAdminBool}></AdminIcon>
             <PrivateIcon room={room}></PrivateIcon>
             <EnterButton
               user={props.user}
               room={room}
               roomMembers={roomMembers}
-              isBanned={isBanned}
+              isBanned={isBannedBool}
             ></EnterButton>
             <JoinButton
               user={props.user}
@@ -191,7 +183,7 @@ export const ChatListDisplay = (props: {
             <SettingButton
               room={room}
               user={props.user}
-              isAdmin={isAdmin}
+              isAdmin={isAdminBool}
             ></SettingButton>
           </li>
         )

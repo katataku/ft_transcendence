@@ -4,14 +4,14 @@ import { OwnerIcon } from '../utils/OwnerIcon'
 import { AdminButton } from './AdminButton'
 import { BanButton } from './BanButton'
 import { deleteChatRoomMembersRequest } from '../utils/requestUtils'
+import { isOwner } from '../utils/userStatusUtils'
 
 const DeleteMemberButton = (props: {
   room: ChatRoom
   member: User
   updateMemberList: () => void
 }): JSX.Element => {
-  const isOwner: boolean = props.room.created_by_user_id === props.member.id
-  if (isOwner) return <></>
+  if (isOwner(props.member, props.room)) return <></>
 
   return (
     <Button

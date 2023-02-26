@@ -1,6 +1,7 @@
 import { Button } from 'react-bootstrap'
 import { AdminIcon } from '../utils/AdminIcon'
 import { updateChatRoomMembersRequest } from '../utils/requestUtils'
+import { isAdmin, isOwner } from '../utils/userStatusUtils'
 
 const AdminMemberButton = (props: {
   room: ChatRoom
@@ -54,17 +55,17 @@ export const AdminButton = (props: {
   chatRoomMemberList: ChatRoomMember[]
   updateMemberList: () => void
 }): JSX.Element => {
-  const isOwner: boolean = props.room.created_by_user_id === props.member.id
-  if (isOwner) return <></>
+  if (isOwner(props.member, props.room)) return <></>
 
-  const isAdmin = props.chatRoomMemberList.find(
-    (item) =>
-      item.userId === props.member.id && item.chatRoomId === props.room.id
-  )?.isAdministrator
-  if (isAdmin === undefined) return <></>
-  return isAdmin ? (
+  const isAdminBool: boolean = isAdmin(
+    props.member,
+    props.room,
+    props.chatRoomMemberList
+  )
+
+  return isAdminBool ? (
     <>
-      <AdminIcon isAdmin={isAdmin} />
+      <AdminIcon isAdmin={isAdminBool} />
       <AdminOFFMemberButton {...props} member={props.member} />
     </>
   ) : (
