@@ -1,31 +1,30 @@
-import axios from 'axios'
 import { useEffect, useState, type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AddUserButton } from './AddUserButton'
+import {
+  deleteChatRoomRequest,
+  getChatRoomMembersRequest,
+  getUserRequest
+} from './requestUtils'
 import { UserListDisplay } from './UserListDisplay'
 
 const DeleteRoomButton = (props: { room: ChatRoom }): JSX.Element => {
   const navigate = useNavigate()
   const chatListState: ChatListState = { kicked: false }
-  const handleDeleteRoom = (room: ChatRoom): void => {
-    axios
-      .delete('/chatRoom/' + String(room.id))
-      .then((_response) => {})
-      .catch((reason) => {
-        alert('エラーです！')
-        console.log(reason)
-      })
-  }
 
   return (
     <Button
       variant="outline-danger"
       onClick={() => {
-        handleDeleteRoom(props.room)
-        navigate('/chatlist', {
-          state: { chatListState }
-        })
+        deleteChatRoomRequest(props.room)
+        // 100ms後に更新する
+        // 削除した直後に更新すると、削除したルームが表示されてしまうため。。。
+        setTimeout(() => {
+          navigate('/chatlist', {
+            state: { chatListState }
+          })
+        }, 100)
       }}
     >
       delete room
@@ -36,46 +35,61 @@ const DeleteRoomButton = (props: { room: ChatRoom }): JSX.Element => {
 // チャットルームに所属しているユーザーのリストを管理する。
 export function ChatRoom(): ReactElement {
   const { room } = useLocation().state
+  const [chatRoomMembersList, setChatRoomMembersList] = useState<
+    ChatRoomMember[]
+  >([])
   const [userList, setUserList] = useState<User[]>([])
 
   // チャットルームに所属しているユーザーのリストを取得する。
   const updateMemberList = (): void => {
     setUserList([])
-    axios
-      .get<ChatRoomMember[]>('/chatRoomMembers')
-      .then((response) => {
-        response.data.map(async (value: ChatRoomMember) => {
-          const requestPath = '/user/' + String(value.userId)
-          await axios
-            .get<User>(requestPath)
-            .then((response) => {
-              setUserList(
-                (userList) =>
-                  [...userList, response.data].filter(
-                    (element, index, arr) =>
-                      arr.map((value) => value.id).indexOf(element.id) === index
-                  ) // 重複削除
-              )
-            })
-            .catch(() => {
-              alert(requestPath + ' リクエストエラーです！')
-            })
-        })
+    chatRoomMembersList.map(async (value: ChatRoomMember) => {
+      getUserRequest(value.userId, (data) => {
+        setUserList(
+          (userList) =>
+            [...userList, data]
+              .sort((a, b) => a.id - b.id)
+              .filter(
+                (element, index, arr) =>
+                  arr.map((value) => value.id).indexOf(element.id) === index
+              ) // 重複削除
+        )
       })
-      .catch(() => {
-        alert('/chatRoomMembers リクエストエラーです！')
-      })
+    })
+  }
+
+  // chatRoomMembersListを更新する。
+  const updateChatRoomMembersList = (): void => {
+    setChatRoomMembersList([])
+    getChatRoomMembersRequest((data) => {
+      setChatRoomMembersList(
+        data.filter((value) => value.chatRoomId === room.id)
+      )
+    })
   }
 
   useEffect(() => {
     updateMemberList()
+  }, [chatRoomMembersList])
+
+  useEffect(() => {
+    updateChatRoomMembersList()
   }, [])
 
   return (
     <>
       ChatRoom: {room.name}
-      <UserListDisplay userList={userList}></UserListDisplay>
-      <AddUserButton updateMemberList={updateMemberList}></AddUserButton>
+      <UserListDisplay
+        room={room}
+        userList={userList}
+        chatRoomMemberList={chatRoomMembersList}
+        updateMemberList={updateChatRoomMembersList}
+      ></UserListDisplay>
+      <AddUserButton
+        room={room}
+        updateMemberList={updateChatRoomMembersList}
+        userList={userList}
+      ></AddUserButton>
       <DeleteRoomButton room={room}></DeleteRoomButton>
     </>
   )
