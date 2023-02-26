@@ -1,12 +1,12 @@
 import { type ReactElement } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import ListGroup from 'react-bootstrap/ListGroup'
 
-function listMatches(matchList: IMatch[]): ReactElement[] {
+function listMatches(matchList: MatchDto[]): ReactElement[] {
   const navigate = useNavigate()
 
   return matchList.map((match): ReactElement => {
-    const key = match.p1.name + match.p2.name
+    const key = match.p1 + match.p2
     return (
       <ListGroup.Item
         key={key}
@@ -17,7 +17,7 @@ function listMatches(matchList: IMatch[]): ReactElement[] {
           navigate('/Game/', { state: { id: '', name: '' } })
         }}
       >
-        {match.p1.name} vs. {match.p2.name}
+        {match.p1} vs. {match.p2}
       </ListGroup.Item>
     )
   })
@@ -37,11 +37,11 @@ export function MatchList(): ReactElement {
   const p3: IPlayer = { ...p1, name: 'Player3' }
   const p4: IPlayer = { ...p1, name: 'Player4' }
 
-  const matchList: IMatch[] = [
-    { p1, p2 },
-    { p1: p3, p2: p4 },
-    { p1: p4, p2: p1 },
-    { p1: p3, p2: p3 }
+  const matchList: MatchDto[] = [
+    { id: 1, p1: p1.id, p2: p2.id, winner: 0 },
+    { id: 2, p1: p3.id, p2: p4.id, winner: 0 },
+    { id: 3, p1: p4.id, p2: p1.id, winner: 0 },
+    { id: 4, p1: p3.id, p2: p3.id, winner: 0 }
   ]
   // === ページにリストを表示するためだけのものです === //
 

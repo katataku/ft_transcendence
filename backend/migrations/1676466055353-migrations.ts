@@ -9,12 +9,20 @@ export class migrations1676466055353 implements MigrationInterface {
     pass +
     `');`;
 
+  makeInsertMatchSQL = (p1: number, p2: number) =>
+    `INSERT INTO public.match(p1, p2, winner) VALUES(` + p1 + `,` + p2 + `,0)`;
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     const passHash = SHA256('password').toString();
     await queryRunner.query(this.makeInsertUserSQL('guest1', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest2', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest3', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest4', passHash));
+    await queryRunner.query(this.makeInsertUserSQL('guest5', passHash));
+    await queryRunner.query(this.makeInsertUserSQL('guest6', passHash));
+    await queryRunner.query(this.makeInsertMatchSQL(1, 2));
+    await queryRunner.query(this.makeInsertMatchSQL(3, 4));
+    await queryRunner.query(this.makeInsertMatchSQL(5, 6));
     await queryRunner.commitTransaction();
     await queryRunner.startTransaction();
     const users = await queryRunner.query(
@@ -37,5 +45,10 @@ export class migrations1676466055353 implements MigrationInterface {
     await queryRunner.query(`DELETE from public.users WHERE name = 'guest2';`);
     await queryRunner.query(`DELETE from public.users WHERE name = 'guest3';`);
     await queryRunner.query(`DELETE from public.users WHERE name = 'guest4';`);
+    await queryRunner.query(`DELETE from public.users WHERE name = 'guest5';`);
+    await queryRunner.query(`DELETE from public.users WHERE name = 'guest6';`);
+    await queryRunner.query(`DELETE from public.match WHERE p1 = 1;`);
+    await queryRunner.query(`DELETE from public.match WHERE p1 = 3;`);
+    await queryRunner.query(`DELETE from public.match WHERE p1 = 5;`);
   }
 }
