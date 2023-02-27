@@ -1,3 +1,4 @@
+import { publicIdType } from 'src/common/dto/chatRoom.dto';
 import {
   Column,
   Entity,
@@ -24,9 +25,10 @@ export class ChatRoom {
   @Column()
   created_by_user_id: number;
 
-  //1:public/2:private/3:protected/4:DM
+  // チャットルームの種別
+  // Postgresではstringとして保存される。
   @Column()
-  public_id: number;
+  public_id: publicIdType;
 
   @Column({ nullable: true })
   password: string;

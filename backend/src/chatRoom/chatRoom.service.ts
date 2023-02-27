@@ -8,7 +8,6 @@ import {
   ChatRoomAuthReqDto,
   ChatRoomReqDto,
   ChatRoomResDto,
-  publicIdType,
 } from '../common/dto/chatRoom.dto';
 
 @Injectable()
@@ -20,35 +19,6 @@ export class ChatRoomService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
-
-  publicIdType2Number(public_id: publicIdType): number {
-    switch (public_id) {
-      case 'public':
-        return 1;
-
-      case 'private':
-        return 2;
-
-      case 'protected':
-        return 3;
-
-      case 'DM':
-        return 4;
-    }
-  }
-
-  number2publicIdType(public_id: number): publicIdType {
-    switch (public_id) {
-      case 1:
-        return 'public';
-      case 2:
-        return 'private';
-      case 3:
-        return 'protected';
-      case 4:
-        return 'DM';
-    }
-  }
 
   async getList(): Promise<ChatRoomResDto[]> {
     const rows: ChatRoom[] = await this.chatRoomRepository.find({
@@ -64,7 +34,7 @@ export class ChatRoomService {
     });
 
     const response: ChatRoomResDto[] = rows.map((item) => {
-      return { ...item, public_id: this.number2publicIdType(item.public_id) };
+      return { ...item, public_id: item.public_id };
     });
     return response;
   }
@@ -80,7 +50,7 @@ export class ChatRoomService {
     data.name = param.name;
     data.created_by = created_by;
     data.created_by_user_id = param.created_by_user_id;
-    data.public_id = this.publicIdType2Number(param.public_id);
+    data.public_id = param.public_id;
     if (param.password) {
       const passHash = SHA256(param.password).toString();
       data.password = passHash;
@@ -90,7 +60,7 @@ export class ChatRoomService {
       id: ret.id,
       name: ret.name,
       created_by_user_id: ret.created_by_user_id,
-      public_id: this.number2publicIdType(ret.public_id),
+      public_id: ret.public_id,
     };
   }
 
