@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios'
 
 export function createMatch(
   match: MatchDto,
@@ -14,9 +14,7 @@ export function createMatch(
     })
 }
 
-export function getMatches(
-  callback: (matches: MatchDto[]) => void
-): void {
+export function getMatches(callback: (matches: MatchDto[]) => void): void {
   axios
     .get<MatchDto[]>('/match/matches')
     .then((response) => {

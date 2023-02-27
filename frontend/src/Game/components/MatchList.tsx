@@ -1,7 +1,7 @@
 import React, { type ReactElement, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getMatches } from '../../utils/matchAxios';
-import { getAllUsersRequest } from '../../Chat/components/utils/requestUtils';
+import { getMatches } from '../../utils/matchAxios'
+import { getAllUsersRequest } from '../../Chat/components/utils/requestUtils'
 import ListGroup from 'react-bootstrap/ListGroup'
 import axios from 'axios'
 
