@@ -170,16 +170,18 @@ function SpeedPU(props: { leftID: string; status: EStatus }): ReactElement {
   }, [title])
 
   return (
-    <DropdownButton
-      id="dropdown-basic-button"
-      variant="info"
-      title={title}
-      onSelect={modifySpeed}
-    >
-      <Dropdown.Item eventKey="easy">Easy</Dropdown.Item>
-      <Dropdown.Item eventKey="medium">Medium</Dropdown.Item>
-      <Dropdown.Item eventKey="hard">Hard</Dropdown.Item>
-    </DropdownButton>
+    <div id="buttonPos">
+      <DropdownButton
+        id="dropdown-basic-button"
+        variant="info"
+        title={title}
+        onSelect={modifySpeed}
+      >
+        <Dropdown.Item eventKey="easy">Easy</Dropdown.Item>
+        <Dropdown.Item eventKey="medium">Medium</Dropdown.Item>
+        <Dropdown.Item eventKey="hard">Hard</Dropdown.Item>
+      </DropdownButton>
+    </div>
   )
 }
 
@@ -268,7 +270,6 @@ function Ready(props: { player: IPlayer }): ReactElement {
       button === grayButton &&
       selfName === matchState.userName
     ) {
-      setButton(greenButton)
       socket.emit('updatePlayerReady', props.player.socketID)
     }
   }
@@ -276,7 +277,7 @@ function Ready(props: { player: IPlayer }): ReactElement {
   if (button === grayButton && props.player.ready) setButton(greenButton)
 
   return (
-    <button type="button" id="buttonPos" className={button} onClick={setReady}>
+    <button type="button" className={button} onClick={setReady}>
       Ready
     </button>
   )
@@ -285,7 +286,10 @@ function Ready(props: { player: IPlayer }): ReactElement {
 function Player(props: { player: IPlayer }): ReactElement {
   return (
     <Col>
-      <div className="display-4">{props.player.name.slice(0, 7)}</div>
+      <div className="display-4">
+        {props.player.name.slice(0, 7)}&emsp;
+        <Ready player={props.player} />
+      </div>
       <div className="border">
         <h4>Match History</h4>
         <h6>
@@ -293,7 +297,6 @@ function Player(props: { player: IPlayer }): ReactElement {
           losses:<span className="text-danger">{props.player.losses}</span>
         </h6>
       </div>
-      <Ready player={props.player} />
     </Col>
   )
 }
