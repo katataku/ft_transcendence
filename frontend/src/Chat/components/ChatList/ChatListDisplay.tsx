@@ -6,6 +6,7 @@ import { OwnerIcon } from '../utils/OwnerIcon'
 import { BannedIcon } from '../utils/BannedIcon'
 import { AdminIcon } from '../utils/AdminIcon'
 import { isAdmin, isBanned, isOwner } from '../utils/userStatusUtils'
+import { DeleteMemberButton } from '../utils/DeleteMemberButton'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
@@ -161,8 +162,21 @@ export const ChatListDisplay = (props: {
           .filter((item) => item.chatRoomId === room.id)
           .filter((item) => item.userId === props.user.id)
 
+        const isRoomMemberBool: boolean = roomMembers.length > 0
         const isBannedBool: boolean = isBanned(props.user, room, roomMembersAll)
         const isAdminBool: boolean = isAdmin(props.user, room, roomMembersAll)
+
+        const deleteButton: JSX.Element =
+          isRoomMemberBool && !isBannedBool ? (
+            <DeleteMemberButton
+              room={room}
+              member={props.user}
+              onClickCallback={props.updateChatRoomList}
+              msg={'Leave from the room'}
+            ></DeleteMemberButton>
+          ) : (
+            <></>
+          )
 
         return (
           <li key={index}>
@@ -183,6 +197,7 @@ export const ChatListDisplay = (props: {
               roomMembers={roomMembers}
               updateChatRoomList={props.updateChatRoomList}
             ></JoinButton>
+            {deleteButton}
             <SettingButton
               room={room}
               user={props.user}
