@@ -53,7 +53,7 @@ const JoinButton = (props: {
   const user = props.user
 
   // Privateルームの場合、参加ボタンを表示しない。
-  if (room.public_id === 2) return <></>
+  if (room.public_id === 'private') return <></>
 
   // roomMemberの場合、参加ボタンを表示しない。
   if (props.isRoomMember) return <></>
@@ -161,7 +161,7 @@ export const ChatListDisplay = (props: {
         return (
           <li key={index}>
             {room.name}
-            <PrivateIcon isPrivate={room.public_id === 2}></PrivateIcon>
+            <PrivateIcon isPrivate={room.public_id === 'private'}></PrivateIcon>
             <OwnerIcon isOwner={isOwnerBool}></OwnerIcon>
             <AdminIcon isAdmin={isAdminBool}></AdminIcon>
             <BannedIcon isBanned={isBannedBool}></BannedIcon>
