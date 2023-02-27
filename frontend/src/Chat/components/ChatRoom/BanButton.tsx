@@ -6,6 +6,8 @@ const BanMemberButton = (props: {
   room: ChatRoom
   member: User
   updateMemberList: () => void
+  ban_until: Date
+  msg: string
 }): JSX.Element => {
   return (
     <Button
@@ -14,13 +16,13 @@ const BanMemberButton = (props: {
         const requestData: ChatRoomMember = {
           chatRoomId: props.room.id,
           userId: props.member.id,
-          ban_until: new Date(2023, 12, 31, 23, 59, 0),
+          ban_until: props.ban_until,
           isAdministrator: false
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
     >
-      Ban
+      {props.msg}
     </Button>
   )
 }
@@ -56,13 +58,27 @@ export const BanButton = (props: {
 }): JSX.Element => {
   if (isOwner(props.member, props.room)) return <></>
 
+  // 10秒
+  const banSec = 10
+
   return props.isBanned ? (
     <>
       <BanOFFMemberButton {...props} member={props.member} />
     </>
   ) : (
     <>
-      <BanMemberButton {...props} member={props.member} />
+      <BanMemberButton
+        {...props}
+        member={props.member}
+        ban_until={new Date(2023, 12, 31, 23, 59, 0)}
+        msg="Ban"
+      />
+      <BanMemberButton
+        {...props}
+        member={props.member}
+        ban_until={new Date(Date.now() + banSec * 1000)}
+        msg="Ban 10sec"
+      />
     </>
   )
 }
