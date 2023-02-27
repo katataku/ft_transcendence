@@ -1,4 +1,4 @@
-import React, { type ReactElement, useState, useRef, useEffect } from 'react'
+import React, { type ReactElement, useState, useEffect } from 'react'
 import Dropdown from 'react-bootstrap/Dropdown'
 import DropdownButton from 'react-bootstrap/DropdownButton'
 import Container from 'react-bootstrap/Container'
@@ -18,8 +18,6 @@ import {
   type IScore,
   EStatus
 } from '../types/game.model'
-type Ref = React.MutableRefObject<any>
-type Setter = React.Dispatch<React.SetStateAction<any>>
 
 const ServerURL: string = process.env.REACT_APP_BACKEND_WEBSOCKET_BASE_URL ?? ''
 const socket = io(ServerURL + '/game')
@@ -355,5 +353,4 @@ export function Game(): ReactElement {
 // 接続時
 socket.on('connect', () => {
   selfID = socket.id
-  console.log(`selfID: ${selfID}`)
 })
