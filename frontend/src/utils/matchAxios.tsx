@@ -1,9 +1,14 @@
 import axios from "axios";
 
-export function createMatch(match: MatchDto): void {
+export function createMatch(
+  match: MatchDto,
+  callback: (id: number | undefined) => void
+): void {
   axios
     .post<MatchDto>('/match', match)
-    .then((_response) => {})
+    .then((response) => {
+      callback(response.data.id)
+    })
     .catch((err) => {
       alert(err)
     })
