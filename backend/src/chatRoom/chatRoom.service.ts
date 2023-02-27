@@ -33,10 +33,7 @@ export class ChatRoomService {
       },
     });
 
-    const response: ChatRoomResDto[] = rows.map((item) => {
-      return { ...item, public_id: item.public_id };
-    });
-    return response;
+    return rows;
   }
 
   async createRoom(param: ChatRoomReqDto): Promise<ChatRoomResDto> {
