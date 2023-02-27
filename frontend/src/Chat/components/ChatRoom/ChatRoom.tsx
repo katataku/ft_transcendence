@@ -6,7 +6,7 @@ import {
   deleteChatRoomRequest,
   getChatRoomMembersRequest,
   getUserRequest
-} from './requestUtils'
+} from '../utils/requestUtils'
 import { UserListDisplay } from './UserListDisplay'
 
 const DeleteRoomButton = (props: { room: ChatRoom }): JSX.Element => {
