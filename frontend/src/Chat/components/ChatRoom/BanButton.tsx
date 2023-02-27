@@ -1,5 +1,4 @@
 import { Button } from 'react-bootstrap'
-import { BannedIcon } from '../utils/BannedIcon'
 import { updateChatRoomMembersRequest } from '../utils/requestUtils'
 import { isOwner } from '../utils/userStatusUtils'
 
