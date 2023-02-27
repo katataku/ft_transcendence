@@ -14,10 +14,11 @@ export function isBanned(
   room: ChatRoom,
   chatRoomMemberList: ChatRoomMember[]
 ): boolean {
-  const isBanned = chatRoomMemberList.find(
+  const banUntil = chatRoomMemberList.find(
     (item) => item.userId === user.id && item.chatRoomId === room.id
-  )?.isBanned
-  return isBanned ?? false
+  )?.ban_until
+  if (banUntil === null || banUntil === undefined) return false
+  return banUntil.getTime() > new Date().getTime()
 }
 
 export function isOwner(user: User, room: ChatRoom): boolean {

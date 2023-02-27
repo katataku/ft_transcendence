@@ -14,7 +14,7 @@ const BanMemberButton = (props: {
         const requestData: ChatRoomMember = {
           chatRoomId: props.room.id,
           userId: props.member.id,
-          isBanned: true,
+          ban_until: new Date(2023, 12, 31, 23, 59, 0),
           isAdministrator: false
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
@@ -37,7 +37,7 @@ const BanOFFMemberButton = (props: {
         const requestData: ChatRoomMember = {
           chatRoomId: props.room.id,
           userId: props.member.id,
-          isBanned: false,
+          ban_until: undefined,
           isAdministrator: false
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)

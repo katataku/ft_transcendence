@@ -36,7 +36,7 @@ export class ChatRoomController {
       const chatRoomMembers = new ChatRoomMembersDto();
       chatRoomMembers.chatRoomId = result.id;
       chatRoomMembers.userId = data.created_by_user_id;
-      chatRoomMembers.isBanned = false;
+      chatRoomMembers.ban_until = undefined;
       chatRoomMembers.isAdministrator = true;
       this.chatRoomMembersService.createRoomMember(chatRoomMembers);
     }

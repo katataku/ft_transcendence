@@ -1,15 +1,16 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState, type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
-import axios from 'axios'
 import { OwnerIcon } from '../utils/OwnerIcon'
 import { BannedIcon } from '../utils/BannedIcon'
 import { AdminIcon } from '../utils/AdminIcon'
 import { isAdmin, isBanned, isOwner } from '../utils/userStatusUtils'
 import { DeleteMemberButton } from '../utils/DeleteMemberButton'
 import { PrivateIcon } from '../utils/privateIcon'
-
-axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
+import {
+  getChatRoomMembersRequest,
+  updateChatRoomMembersRequest
+} from '../utils/requestUtils'
 
 // チャットルームに入室するためのボタンを表示する。
 // roomMemberである場合、参加ボタンを表示する。
@@ -62,18 +63,9 @@ const JoinButton = (props: {
     const requestData: ChatRoomMember = {
       chatRoomId: room.id,
       userId: user.id,
-      isBanned: false,
       isAdministrator: false
     }
-    axios
-      .post<ChatRoom>('/chatRoomMembers', requestData)
-      .then((_response) => {
-        props.updateChatRoomList()
-      })
-      .catch((reason) => {
-        alert('エラーです！')
-        console.log(reason)
-      })
+    updateChatRoomMembersRequest(requestData, props.updateChatRoomList)
   }
 
   return (
@@ -122,15 +114,7 @@ export const ChatListDisplay = (props: {
 }): ReactElement => {
   const [roomMembersAll, setRoomMembersAll] = useState<ChatRoomMember[]>([])
   useEffect(() => {
-    axios
-      .get<ChatRoomMember[]>('/chatRoomMembers')
-      .then((response) => {
-        setRoomMembersAll(response.data)
-      })
-      .catch((reason) => {
-        alert('エラーです！')
-        console.log(reason)
-      })
+    getChatRoomMembersRequest(setRoomMembersAll)
   }, [props.roomList, props.user])
 
   return (

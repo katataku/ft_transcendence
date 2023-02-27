@@ -7,8 +7,7 @@ export class ChatRoomMembersDto {
   @IsNumber()
   userId: number;
 
-  @IsBoolean()
-  isBanned: boolean;
+  ban_until?: Date;
 
   @IsBoolean()
   isAdministrator: boolean;
