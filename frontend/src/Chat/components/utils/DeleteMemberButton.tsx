@@ -8,6 +8,7 @@ export const DeleteMemberButton = (props: {
   onClickCallback: () => void
   msg: string
 }): JSX.Element => {
+  // オーナーはメンバーから削除できない
   if (isOwner(props.member, props.room)) return <></>
 
   return (

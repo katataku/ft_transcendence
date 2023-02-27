@@ -1,12 +1,8 @@
 import { Badge } from 'react-bootstrap'
-import { isOwner } from './userStatusUtils'
 
 // チャットルームのオーナーを示すアイコンを表示する。
-export const OwnerIcon = (props: {
-  room: ChatRoom
-  user: User
-}): JSX.Element => {
-  const icon: JSX.Element = isOwner(props.user, props.room) ? (
+export const OwnerIcon = (props: { isOwner: boolean }): JSX.Element => {
+  const icon: JSX.Element = props.isOwner ? (
     <>
       <Badge pill bg="info">
         owner

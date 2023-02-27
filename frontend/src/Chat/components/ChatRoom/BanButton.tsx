@@ -1,7 +1,7 @@
 import { Button } from 'react-bootstrap'
 import { BannedIcon } from '../utils/BannedIcon'
 import { updateChatRoomMembersRequest } from '../utils/requestUtils'
-import { isBanned, isOwner } from '../utils/userStatusUtils'
+import { isOwner } from '../utils/userStatusUtils'
 
 const BanMemberButton = (props: {
   room: ChatRoom
@@ -52,20 +52,13 @@ const BanOFFMemberButton = (props: {
 export const BanButton = (props: {
   room: ChatRoom
   member: User
-  chatRoomMemberList: ChatRoomMember[]
+  isBanned: boolean
   updateMemberList: () => void
 }): JSX.Element => {
   if (isOwner(props.member, props.room)) return <></>
 
-  const isBannedBool = isBanned(
-    props.member,
-    props.room,
-    props.chatRoomMemberList
-  )
-
-  return isBannedBool ? (
+  return props.isBanned ? (
     <>
-      <BannedIcon isBanned={isBannedBool} />
       <BanOFFMemberButton {...props} member={props.member} />
     </>
   ) : (

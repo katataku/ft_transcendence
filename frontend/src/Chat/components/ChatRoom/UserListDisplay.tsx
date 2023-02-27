@@ -2,9 +2,10 @@ import { type ReactElement } from 'react'
 import { OwnerIcon } from '../utils/OwnerIcon'
 import { AdminButton } from './AdminButton'
 import { BanButton } from './BanButton'
-import { isAdmin } from '../utils/userStatusUtils'
+import { isAdmin, isBanned, isOwner } from '../utils/userStatusUtils'
 import { AdminIcon } from '../utils/AdminIcon'
 import { DeleteMemberButton } from '../utils/DeleteMemberButton'
+import { BannedIcon } from '../utils/BannedIcon'
 
 export const UserListDisplay = (props: {
   room: ChatRoom
@@ -16,15 +17,27 @@ export const UserListDisplay = (props: {
   return (
     <ul>
       {props.userList.map((member, index) => {
+        const isOwnerBool: boolean = isOwner(member, props.room)
+        const isAdminBool: boolean = isAdmin(
+          member,
+          props.room,
+          props.chatRoomMemberList
+        )
+
+        const isBannedBool: boolean = isBanned(
+          member,
+          props.room,
+          props.chatRoomMemberList
+        )
+
         return (
           <li key={index}>
             {member.name}
-            <OwnerIcon room={props.room} user={member}></OwnerIcon>
-            <AdminIcon
-              isAdmin={isAdmin(member, props.room, props.chatRoomMemberList)}
-            />
-            <BanButton {...props} member={member} />
-            <AdminButton {...props} member={member} />
+            <OwnerIcon isOwner={isOwnerBool}></OwnerIcon>
+            <AdminIcon isAdmin={isAdminBool} />
+            <BannedIcon isBanned={isBannedBool} />
+            <BanButton {...props} member={member} isBanned={isBannedBool} />
+            <AdminButton {...props} member={member} isAdmin={isAdminBool} />
             <DeleteMemberButton
               {...props}
               member={member}

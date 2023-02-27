@@ -7,41 +7,29 @@ import { BannedIcon } from '../utils/BannedIcon'
 import { AdminIcon } from '../utils/AdminIcon'
 import { isAdmin, isBanned, isOwner } from '../utils/userStatusUtils'
 import { DeleteMemberButton } from '../utils/DeleteMemberButton'
+import { PrivateIcon } from '../utils/privateIcon'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
-// フリー素材のアイコン。
-// ただし、LICENSEで再配布が禁止されているため、publicディレクトリに保存せずに、画像URLへ直接リンクする。
-// https://iconbox.fun/about/#LICENSE
-const _publicIconURL: string =
-  'https://iconbox.fun/wp/wp-content/uploads/lock_open_24.png'
-const privateIconURL: string =
-  'https://iconbox.fun/wp/wp-content/uploads/lock_24.png'
-
-const PrivateIcon = (props: { room: ChatRoom }): JSX.Element => {
-  const isPublicIcon =
-    props.room.public_id === 2 ? (
-      <img src={privateIconURL} alt="new" width="20" height="20" />
-    ) : (
-      <></>
-    )
-
-  return isPublicIcon
-}
-
 // チャットルームに入室するためのボタンを表示する。
-// roomMembersが空でない場合、参加ボタンを表示する。
+// roomMemberである場合、参加ボタンを表示する。
 const EnterButton = (props: {
   user: User
   room: ChatRoom
-  roomMembers: ChatRoomMember[]
+  isRoomMember: boolean
   isBanned: boolean
 }): JSX.Element => {
   const navigate = useNavigate()
   const room = props.room
   const user = props.user
 
-  const enterButtonElement: JSX.Element = (
+  // roomMemberでない場合、参加ボタンを表示しない。
+  if (!props.isRoomMember) return <></>
+
+  // Banされている場合、参加ボタンを表示しない。
+  if (props.isBanned) return <></>
+
+  return (
     <Button
       onClick={() => {
         navigate('/chat', {
@@ -52,22 +40,23 @@ const EnterButton = (props: {
       Enter
     </Button>
   )
-
-  const isShow: boolean = props.roomMembers.length > 0 && !props.isBanned
-
-  return isShow ? enterButtonElement : <></>
 }
 
 // チャットルームに参加するためのボタンを表示する。
-// roomMembersが空の場合、参加ボタンを表示する。
 const JoinButton = (props: {
   user: User
   room: ChatRoom
-  roomMembers: ChatRoomMember[]
+  isRoomMember: boolean
   updateChatRoomList: () => void
 }): JSX.Element => {
   const room = props.room
   const user = props.user
+
+  // Privateルームの場合、参加ボタンを表示しない。
+  if (room.public_id === 2) return <></>
+
+  // roomMemberの場合、参加ボタンを表示しない。
+  if (props.isRoomMember) return <></>
 
   const handleJoinRoom = (): void => {
     const requestData: ChatRoomMember = {
@@ -87,21 +76,14 @@ const JoinButton = (props: {
       })
   }
 
-  const joinButtonElement: JSX.Element = (
+  return (
     <Button variant="outline-primary" onClick={handleJoinRoom}>
       Join
     </Button>
   )
-
-  const isShow: boolean = props.roomMembers.length === 0 && room.public_id === 1
-
-  return isShow ? joinButtonElement : <></>
 }
 
-// チャットルームのオーナーのみ、チャットルームの設定を変更できる。
-// そのため、チャットルームのオーナーのみ、設定ボタンを表示する。
-// また、チャットルームのオーナーのみ、チャットルームを削除できる。
-// そのため、設定画面に削除ボタンを表示する。
+// チャットルームの設定ボタンを表示する。
 const SettingButton = (props: {
   room: ChatRoom
   user: User
@@ -111,8 +93,10 @@ const SettingButton = (props: {
   const user = props.user
   const navigate = useNavigate()
 
-  const isShow = isOwner(user, room) || props.isAdmin
-  const icon: JSX.Element = isShow ? (
+  // チャットルームのオーナー or 管理者でない場合、設定ボタンを表示しない。
+  if (!(isOwner(user, room) || props.isAdmin)) return <></>
+
+  return (
     <>
       <Button
         variant="outline-info"
@@ -125,10 +109,7 @@ const SettingButton = (props: {
         settings
       </Button>
     </>
-  ) : (
-    <></>
   )
-  return icon
 }
 
 // チャットルームの一覧を表示する。
@@ -156,15 +137,14 @@ export const ChatListDisplay = (props: {
     <ul>
       {props.roomList.map((room, index) => {
         // チャットルームに参加しているかどうかを判断する。
-        // 参加している場合、参加しているユーザーの情報を取得する。
-        // 参加していない場合、空の配列を取得する。
-        const roomMembers: ChatRoomMember[] = roomMembersAll
-          .filter((item) => item.chatRoomId === room.id)
-          .filter((item) => item.userId === props.user.id)
+        const isRoomMemberBool: boolean =
+          roomMembersAll
+            .filter((item) => item.chatRoomId === room.id)
+            .filter((item) => item.userId === props.user.id).length > 0
 
-        const isRoomMemberBool: boolean = roomMembers.length > 0
         const isBannedBool: boolean = isBanned(props.user, room, roomMembersAll)
         const isAdminBool: boolean = isAdmin(props.user, room, roomMembersAll)
+        const isOwnerBool: boolean = isOwner(props.user, room)
 
         const deleteButton: JSX.Element =
           isRoomMemberBool && !isBannedBool ? (
@@ -181,20 +161,20 @@ export const ChatListDisplay = (props: {
         return (
           <li key={index}>
             {room.name}
-            <BannedIcon isBanned={isBannedBool}></BannedIcon>
-            <OwnerIcon room={room} user={props.user}></OwnerIcon>
+            <PrivateIcon isPrivate={room.public_id === 2}></PrivateIcon>
+            <OwnerIcon isOwner={isOwnerBool}></OwnerIcon>
             <AdminIcon isAdmin={isAdminBool}></AdminIcon>
-            <PrivateIcon room={room}></PrivateIcon>
+            <BannedIcon isBanned={isBannedBool}></BannedIcon>
             <EnterButton
               user={props.user}
               room={room}
-              roomMembers={roomMembers}
+              isRoomMember={isRoomMemberBool}
               isBanned={isBannedBool}
             ></EnterButton>
             <JoinButton
               user={props.user}
               room={room}
-              roomMembers={roomMembers}
+              isRoomMember={isRoomMemberBool}
               updateChatRoomList={props.updateChatRoomList}
             ></JoinButton>
             {deleteButton}
