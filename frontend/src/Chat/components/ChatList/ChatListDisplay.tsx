@@ -117,7 +117,7 @@ const SettingButton = (props: {
         variant="outline-info"
         onClick={() => {
           navigate('/chatroom', {
-            state: { room }
+            state: { room, user }
           })
         }}
       >

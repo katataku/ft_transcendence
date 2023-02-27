@@ -8,6 +8,7 @@ import {
   getUserRequest
 } from '../utils/requestUtils'
 import { UserListDisplay } from './UserListDisplay'
+import { isOwner } from '../utils/userStatusUtils'
 
 const DeleteRoomButton = (props: { room: ChatRoom }): JSX.Element => {
   const navigate = useNavigate()
@@ -34,11 +35,13 @@ const DeleteRoomButton = (props: { room: ChatRoom }): JSX.Element => {
 
 // チャットルームに所属しているユーザーのリストを管理する。
 export function ChatRoom(): ReactElement {
-  const { room } = useLocation().state
+  const { room, user } = useLocation().state
   const [chatRoomMembersList, setChatRoomMembersList] = useState<
     ChatRoomMember[]
   >([])
   const [userList, setUserList] = useState<User[]>([])
+
+  const openAsOwner: boolean = isOwner(user, room)
 
   // チャットルームに所属しているユーザーのリストを取得する。
   const updateMemberList = (): void => {
@@ -84,6 +87,7 @@ export function ChatRoom(): ReactElement {
         userList={userList}
         chatRoomMemberList={chatRoomMembersList}
         updateMemberList={updateChatRoomMembersList}
+        openAsOwner={openAsOwner}
       ></UserListDisplay>
       <AddUserButton
         room={room}

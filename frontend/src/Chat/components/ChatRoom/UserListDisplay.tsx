@@ -4,7 +4,8 @@ import { OwnerIcon } from '../utils/OwnerIcon'
 import { AdminButton } from './AdminButton'
 import { BanButton } from './BanButton'
 import { deleteChatRoomMembersRequest } from '../utils/requestUtils'
-import { isOwner } from '../utils/userStatusUtils'
+import { isAdmin, isOwner } from '../utils/userStatusUtils'
+import { AdminIcon } from '../utils/AdminIcon'
 
 const DeleteMemberButton = (props: {
   room: ChatRoom
@@ -34,6 +35,7 @@ export const UserListDisplay = (props: {
   userList: User[]
   chatRoomMemberList: ChatRoomMember[]
   updateMemberList: () => void
+  openAsOwner: boolean
 }): ReactElement => {
   return (
     <ul>
@@ -42,6 +44,9 @@ export const UserListDisplay = (props: {
           <li key={index}>
             {member.name}
             <OwnerIcon room={props.room} user={member}></OwnerIcon>
+            <AdminIcon
+              isAdmin={isAdmin(member, props.room, props.chatRoomMemberList)}
+            />
             <BanButton {...props} member={member} />
             <AdminButton {...props} member={member} />
             <DeleteMemberButton {...props} member={member} />
