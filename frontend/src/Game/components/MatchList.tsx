@@ -1,5 +1,7 @@
 import React, { type ReactElement, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getMatches } from '../../utils/matchAxios';
+import { getAllUsersRequest } from '../../Chat/components/utils/requestUtils';
 import ListGroup from 'react-bootstrap/ListGroup'
 import axios from 'axios'
 
@@ -42,23 +44,8 @@ export function MatchList(): ReactElement {
   const [users, setUsers] = useState<User[]>([])
 
   useEffect(() => {
-    axios
-      .get<MatchDto[]>('/match/matches')
-      .then((response) => {
-        setMatches(response.data)
-      })
-      .catch((err) => {
-        alert(err)
-      })
-
-    axios
-      .get<User[]>('/user/users')
-      .then((response) => {
-        setUsers(response.data)
-      })
-      .catch((err) => {
-        alert(err)
-      })
+    getMatches(setMatches)
+    getAllUsersRequest(setUsers)
   }, [])
 
   return (

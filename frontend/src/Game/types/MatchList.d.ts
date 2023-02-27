@@ -4,3 +4,8 @@ interface MatchDto {
   p2: number
   winner: number
 }
+
+interface MatchResultDto {
+  id: number
+  winner: number
+}
