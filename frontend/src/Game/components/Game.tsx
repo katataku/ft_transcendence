@@ -271,7 +271,6 @@ function Ready(props: { player: IPlayer }): ReactElement {
       selfName === matchState.userName
     ) {
       setButton(greenButton)
-      props.player.ready = true
       socket.emit('updatePlayerReady', props.player.socketID)
     }
   }
