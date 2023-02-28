@@ -66,13 +66,12 @@ export const ChatListModal = (props: {
 
         <Modal.Body>
           <>
-            new room:
-            <input
-              type="text"
-              value={newRoomName}
+            <Form.Control
+              placeholder="New Room Name"
               onChange={(e) => {
                 setNewRoomName(e.target.value)
               }}
+              isInvalid={newRoomName === ''}
             />
             <PublicSelectDropdownButton
               setPublicId={setPublicId}
