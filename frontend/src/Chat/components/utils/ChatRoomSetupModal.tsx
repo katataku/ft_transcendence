@@ -1,6 +1,5 @@
-import { useState, type ReactElement } from 'react'
+import { type ReactElement, useState } from 'react'
 import { Button, Dropdown, DropdownButton, Form, Modal } from 'react-bootstrap'
-import { updateChatRoomRequest } from '../utils/requestUtils'
 
 const PublicSelectDropdownButton = (props: {
   setPublicId: React.Dispatch<React.SetStateAction<publicIdType>>
@@ -37,16 +36,21 @@ const PublicSelectDropdownButton = (props: {
   )
 }
 
-export const ChatListModal = (props: {
+export const ChatRoomSetupModal = (props: {
   user: User
-  showCreateRoomModal: boolean
+  showModal: boolean
   handleModalClose: () => void
+  submitButtonMessage: string
+  requestSendFunction: (
+    requestData: ChatRoomReqDto,
+    callback: () => void
+  ) => void
 }): ReactElement => {
   const [newRoomName, setNewRoomName] = useState<string>('')
   const [publicId, setPublicId] = useState<publicIdType>('public')
   const [password, setPassword] = useState<string>('')
 
-  const handleCreateRoom = (): void => {
+  const handleSubmitOnClick = (): void => {
     const requestData: ChatRoomReqDto = {
       name: newRoomName,
       created_by: props.user.id,
@@ -54,12 +58,12 @@ export const ChatListModal = (props: {
       public_id: publicId,
       password: publicId === 'protected' ? password : undefined
     }
-    updateChatRoomRequest(requestData, props.handleModalClose)
+    props.requestSendFunction(requestData, props.handleModalClose)
   }
 
   return (
     <>
-      <Modal show={props.showCreateRoomModal} onHide={props.handleModalClose}>
+      <Modal show={props.showModal} onHide={props.handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>create new Room</Modal.Title>
         </Modal.Header>
@@ -90,8 +94,12 @@ export const ChatListModal = (props: {
           <Button variant="secondary" onClick={props.handleModalClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleCreateRoom}>
-            Create
+          <Button
+            variant="primary"
+            onClick={handleSubmitOnClick}
+            disabled={publicId === 'protected' && password === ''}
+          >
+            {props.submitButtonMessage}
           </Button>
         </Modal.Footer>
       </Modal>

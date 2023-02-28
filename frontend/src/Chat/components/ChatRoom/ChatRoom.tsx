@@ -8,6 +8,7 @@ import {
 } from '../utils/requestUtils'
 import { UserListDisplay } from './UserListDisplay'
 import { isOwner } from '../utils/userStatusUtils'
+import { UpdateRoomButton } from './UpdateRoomButton'
 
 const DeleteRoomButton = (props: {
   user: User
@@ -73,6 +74,11 @@ export function ChatRoom(): ReactElement {
         chatRoomMemberList={chatRoomMembersList}
         updateMemberList={updateChatRoomMembersList}
       ></AddUserButton>
+      <UpdateRoomButton
+        user={user}
+        room={room}
+        updateMemberList={updateChatRoomMembersList}
+      ></UpdateRoomButton>
       <DeleteRoomButton user={user} room={room}></DeleteRoomButton>
     </>
   )

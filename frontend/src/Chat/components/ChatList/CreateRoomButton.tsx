@@ -1,6 +1,6 @@
 import { type ReactElement, useState } from 'react'
 import { Button } from 'react-bootstrap'
-import { ChatListModal } from './ChatListModal'
+import { CreateChatRoomModal } from './CreateChatRoomModal'
 
 export const CreateRoomButton = (props: {
   user: User
@@ -15,11 +15,11 @@ export const CreateRoomButton = (props: {
 
   return (
     <p>
-      <ChatListModal
+      <CreateChatRoomModal
         user={props.user}
-        showCreateRoomModal={showCreateRoomModal}
+        showModal={showCreateRoomModal}
         handleModalClose={handleModalClose}
-      ></ChatListModal>
+      ></CreateChatRoomModal>
       <Button
         onClick={() => {
           setShowCreateRoomModal(true)
