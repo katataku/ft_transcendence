@@ -144,6 +144,7 @@ function Result(props: { score: IScore }): ReactElement {
 function SpeedPU(props: { leftID: string; status: EStatus }): ReactElement {
   const [title, setTitle] = useState<string>('Difficulty')
 
+
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || selfID !== props.leftID) return
     switch (op) {
@@ -193,6 +194,7 @@ function CountDown(): ReactElement {
 
   return <div>{timer !== 0 && timer}</div>
 }
+
 
 function Score(props: { left: number; right: number }): ReactElement {
   const [scores, setScores] = useState<IScore>({
