@@ -111,3 +111,23 @@ export function deleteChatRoomMembersRequest(
       console.log(reason)
     })
 }
+
+export function chatRoomAuthRequest(
+  requestData: ChatRoomAuthReqDto,
+  callback: () => void
+): void {
+  axios
+    .post('/chatRoom/auth', requestData)
+    .then(() => {
+      callback()
+    })
+    .catch((reason) => {
+      // 401はパスワード認証失敗
+      if (reason.response.status === 401) {
+        alert('パスワードが違います。')
+      } else {
+        alert('エラーです！')
+        console.log(reason)
+      }
+    })
+}

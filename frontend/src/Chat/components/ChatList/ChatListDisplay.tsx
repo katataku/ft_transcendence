@@ -12,37 +12,7 @@ import {
   updateChatRoomMembersRequest
 } from '../utils/requestUtils'
 import { ProtectedIcon } from '../utils/protectedIcon'
-
-// チャットルームに入室するためのボタンを表示する。
-// roomMemberである場合、参加ボタンを表示する。
-const EnterButton = (props: {
-  user: User
-  room: ChatRoom
-  isRoomMember: boolean
-  isBanned: boolean
-}): JSX.Element => {
-  const navigate = useNavigate()
-  const room = props.room
-  const user = props.user
-
-  // roomMemberでない場合、参加ボタンを表示しない。
-  if (!props.isRoomMember) return <></>
-
-  // Banされている場合、参加ボタンを表示しない。
-  if (props.isBanned) return <></>
-
-  return (
-    <Button
-      onClick={() => {
-        navigate('/chat', {
-          state: { room: room.name, user }
-        })
-      }}
-    >
-      Enter
-    </Button>
-  )
-}
+import { EnterButton } from './EnterButton'
 
 // チャットルームに参加するためのボタンを表示する。
 const JoinButton = (props: {
