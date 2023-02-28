@@ -43,12 +43,7 @@ export const PasswordPromptModal = (props: {
           <Button variant="secondary" onClick={props.handleModalClose}>
             Close
           </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              handleCheckPassword()
-            }}
-          >
+          <Button variant="primary" onClick={handleCheckPassword}>
             Enter
           </Button>
         </Modal.Footer>
