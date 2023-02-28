@@ -7,7 +7,7 @@ import { AddUserModal } from './AddUserModal'
 // モーダルを管理するためのstateを持つ。
 export const AddUserButton = (props: {
   room: ChatRoom
-  userList: User[]
+  chatRoomMemberList: ChatRoomMember[]
   updateMemberList: () => void
 }): ReactElement => {
   const [showAddUserModal, setShowAddUserModal] = useState(false)
@@ -21,11 +21,9 @@ export const AddUserButton = (props: {
     <>
       <p>
         <AddUserModal
-          room={props.room}
-          userList={props.userList}
+          {...props}
           showAddUserModal={showAddUserModal}
           handleModalClose={handleModalClose}
-          updateMemberList={props.updateMemberList}
         ></AddUserModal>
         <Button
           onClick={() => {

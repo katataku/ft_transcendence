@@ -1,6 +1,6 @@
 import { Button } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../utils/requestUtils'
-import { isOwner } from '../utils/userStatusUtils'
+import { isOwner, isTargetAdmin } from '../utils/userStatusUtils'
 
 const AdminMemberButton = (props: {
   currentChatRoomMember: ChatRoomMember
@@ -43,20 +43,19 @@ const AdminOFFMemberButton = (props: {
 }
 
 export const AdminButton = (props: {
+  user: User
   room: ChatRoom
   member: User
   currentChatRoomMember: ChatRoomMember
-  isAdmin: boolean
   updateMemberList: () => void
-  openAsOwner: boolean
 }): JSX.Element => {
   // 管理者権限の変更はオーナーしかできない
-  if (!props.openAsOwner) return <></>
+  if (!isOwner(props.user, props.room)) return <></>
 
   // オーナーは管理者権限を変更できない
   if (isOwner(props.member, props.room)) return <></>
 
-  return props.isAdmin ? (
+  return isTargetAdmin(props.currentChatRoomMember) ? (
     <>
       <AdminOFFMemberButton {...props} />
     </>

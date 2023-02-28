@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactElement } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import {
   getAllUsersRequest,
+  getUserRequest,
   updateChatRoomMembersRequest
 } from '../utils/requestUtils'
 
@@ -34,16 +35,46 @@ const AddButton = (props: {
 
 const ALLUserDisplay = (props: {
   room: ChatRoom
-  allUserList: User[]
-  userList: User[]
+  chatRoomMemberList: ChatRoomMember[]
   updateMemberList: () => void
 }): ReactElement => {
+  const [allUserList, setALLUserList] = useState<User[]>([])
+  const [userList, setUserList] = useState<User[]>([])
+
+  // チャットルームに所属しているユーザーのリストを取得する。
+  const updateMemberList = (): void => {
+    setUserList([])
+    props.chatRoomMemberList.map(async (value: ChatRoomMember) => {
+      getUserRequest(value.userId, (data) => {
+        setUserList(
+          (userList) =>
+            [...userList, data]
+              .sort((a, b) => a.id - b.id)
+              .filter(
+                (element, index, arr) =>
+                  arr.map((value) => value.id).indexOf(element.id) === index
+              ) // 重複削除
+        )
+      })
+    })
+  }
+
+  useEffect(() => {
+    updateMemberList()
+  }, [props.chatRoomMemberList])
+
+  useEffect(() => {
+    // ユーザ一覧を取得する。
+    getAllUsersRequest((data) => {
+      setALLUserList(data)
+    })
+  }, [])
+
   return (
     <ul>
-      {props.allUserList
+      {allUserList
         .filter(
-          (member) =>
-            !props.userList.map((value) => value.id).includes(member.id)
+          (member) => !userList.map((value) => value.id).includes(member.id)
         )
         .map((member, index) => {
           return (
@@ -63,20 +94,11 @@ const ALLUserDisplay = (props: {
 // チャットルームに追加したユーザは、チャットルームのメンバーとなる。
 export const AddUserModal = (props: {
   room: ChatRoom
-  userList: User[]
   showAddUserModal: boolean
+  chatRoomMemberList: ChatRoomMember[]
   handleModalClose: () => void
   updateMemberList: () => void
 }): ReactElement => {
-  const [allUserList, setALLUserList] = useState<User[]>([])
-
-  useEffect(() => {
-    // ユーザ一覧を取得する。
-    getAllUsersRequest((data) => {
-      setALLUserList(data)
-    })
-  }, [])
-
   return (
     <>
       <Modal show={props.showAddUserModal} onHide={props.handleModalClose}>
@@ -85,7 +107,7 @@ export const AddUserModal = (props: {
         </Modal.Header>
 
         <Modal.Body>
-          <ALLUserDisplay {...props} allUserList={allUserList}></ALLUserDisplay>
+          <ALLUserDisplay {...props}></ALLUserDisplay>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={props.handleModalClose}>

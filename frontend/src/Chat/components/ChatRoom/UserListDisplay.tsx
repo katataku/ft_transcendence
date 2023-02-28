@@ -1,79 +1,66 @@
-import { type ReactElement } from 'react'
+import { useEffect, useState, type ReactElement } from 'react'
 import { OwnerIcon } from '../utils/OwnerIcon'
 import { AdminButton } from './AdminButton'
 import { BanButton } from './BanButton'
-import { isAdmin, isBanned, isMuted, isOwner } from '../utils/userStatusUtils'
+import {
+  isOwner,
+  isTargetAdmin,
+  isTargetBanned,
+  isTargetMuted
+} from '../utils/userStatusUtils'
 import { AdminIcon } from '../utils/AdminIcon'
 import { DeleteMemberButton } from '../utils/DeleteMemberButton'
 import { BannedIcon } from '../utils/BannedIcon'
 import { MuteButton } from './MuteButton'
 import { MutedIcon } from '../utils/MutedIcon'
+import { getAllUsersRequest } from '../utils/requestUtils'
 
 export const UserListDisplay = (props: {
+  user: User
   room: ChatRoom
-  userList: User[]
   chatRoomMemberList: ChatRoomMember[]
   updateMemberList: () => void
-  openAsOwner: boolean
 }): ReactElement => {
+  // ユーザーの一覧を取得し、ユーザーIDをキーにした辞書を作成する
+  const [allUserDict, setAllUserDict] = useState<Map<number, User>>(new Map())
+  useEffect(() => {
+    getAllUsersRequest((allUserList: User[]) => {
+      const allUserDict = new Map<number, User>()
+      allUserList.forEach((user: User) => {
+        allUserDict.set(user.id, user)
+      })
+      setAllUserDict(allUserDict)
+    })
+  }, [props.chatRoomMemberList])
+
+  // ユーザーの一覧が取得できていない場合は何も表示しない
+  if (allUserDict.size === 0) return <></>
   return (
     <ul>
-      {props.userList.map((member, index) => {
-        const isOwnerBool: boolean = isOwner(member, props.room)
-        const isAdminBool: boolean = isAdmin(
-          member,
-          props.room,
-          props.chatRoomMemberList
-        )
-
-        const isBannedBool: boolean = isBanned(
-          member,
-          props.room,
-          props.chatRoomMemberList
-        )
-
-        const isMutedBool: boolean = isMuted(
-          member,
-          props.room,
-          props.chatRoomMemberList
-        )
-
-        const currentChatRoomMember: ChatRoomMember =
-          props.chatRoomMemberList.find(
-            (item) =>
-              item.userId === member.id && item.chatRoomId === props.room.id
-          ) ?? {
-            userId: 0,
-            chatRoomId: 0,
-            ban_until: undefined,
-            mute_until: undefined,
-            isAdministrator: false
-          }
+      {props.chatRoomMemberList.map((chatRoomMember, index) => {
+        const member = allUserDict.get(chatRoomMember.userId) as User
 
         return (
           <li key={index}>
             {member.name}
-            <OwnerIcon isOwner={isOwnerBool}></OwnerIcon>
-            <AdminIcon isAdmin={isAdminBool} />
-            <BannedIcon isBanned={isBannedBool} />
-            <MutedIcon isMuted={isMutedBool} />
+            <OwnerIcon isOwner={isOwner(member, props.room)}></OwnerIcon>
+            <AdminIcon isAdmin={isTargetAdmin(chatRoomMember)} />
+            <BannedIcon isBanned={isTargetBanned(chatRoomMember)} />
+            <MutedIcon isMuted={isTargetMuted(chatRoomMember)} />
             <BanButton
               {...props}
               member={member}
-              currentChatRoomMember={currentChatRoomMember}
-              isBanned={isBannedBool}
+              currentChatRoomMember={chatRoomMember}
             />
             <MuteButton
               {...props}
               member={member}
-              currentChatRoomMember={currentChatRoomMember}
-              isMuted={isMutedBool}
+              currentChatRoomMember={chatRoomMember}
             />
             <AdminButton
               {...props}
               member={member}
-              currentChatRoomMember={currentChatRoomMember}
-              isAdmin={isAdminBool}
+              currentChatRoomMember={chatRoomMember}
             />
             <DeleteMemberButton
               {...props}

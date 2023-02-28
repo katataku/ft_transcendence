@@ -4,19 +4,18 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { AddUserButton } from './AddUserButton'
 import {
   deleteChatRoomRequest,
-  getChatRoomMembersRequest,
-  getUserRequest
+  getChatRoomMembersRequest
 } from '../utils/requestUtils'
 import { UserListDisplay } from './UserListDisplay'
 import { isOwner } from '../utils/userStatusUtils'
 
 const DeleteRoomButton = (props: {
+  user: User
   room: ChatRoom
-  isOwner: boolean
 }): JSX.Element => {
   const navigate = useNavigate()
   const chatListState: ChatListState = { kicked: false }
-  if (!props.isOwner) return <></>
+  if (!isOwner(props.user, props.room)) return <></>
 
   return (
     <Button
@@ -43,41 +42,18 @@ export function ChatRoom(): ReactElement {
   const [chatRoomMembersList, setChatRoomMembersList] = useState<
     ChatRoomMember[]
   >([])
-  const [userList, setUserList] = useState<User[]>([])
-
-  const openAsOwner: boolean = isOwner(user, room)
-
-  // チャットルームに所属しているユーザーのリストを取得する。
-  const updateMemberList = (): void => {
-    setUserList([])
-    chatRoomMembersList.map(async (value: ChatRoomMember) => {
-      getUserRequest(value.userId, (data) => {
-        setUserList(
-          (userList) =>
-            [...userList, data]
-              .sort((a, b) => a.id - b.id)
-              .filter(
-                (element, index, arr) =>
-                  arr.map((value) => value.id).indexOf(element.id) === index
-              ) // 重複削除
-        )
-      })
-    })
-  }
 
   // chatRoomMembersListを更新する。
   const updateChatRoomMembersList = (): void => {
     setChatRoomMembersList([])
     getChatRoomMembersRequest((data) => {
       setChatRoomMembersList(
-        data.filter((value) => value.chatRoomId === room.id)
+        data
+          .filter((value) => value.chatRoomId === room.id)
+          .sort((a, b) => a.userId - b.userId)
       )
     })
   }
-
-  useEffect(() => {
-    updateMemberList()
-  }, [chatRoomMembersList])
 
   useEffect(() => {
     updateChatRoomMembersList()
@@ -87,18 +63,17 @@ export function ChatRoom(): ReactElement {
     <>
       ChatRoom: {room.name}
       <UserListDisplay
+        user={user}
         room={room}
-        userList={userList}
         chatRoomMemberList={chatRoomMembersList}
         updateMemberList={updateChatRoomMembersList}
-        openAsOwner={openAsOwner}
       ></UserListDisplay>
       <AddUserButton
         room={room}
+        chatRoomMemberList={chatRoomMembersList}
         updateMemberList={updateChatRoomMembersList}
-        userList={userList}
       ></AddUserButton>
-      <DeleteRoomButton room={room} isOwner={openAsOwner}></DeleteRoomButton>
+      <DeleteRoomButton user={user} room={room}></DeleteRoomButton>
     </>
   )
 }
