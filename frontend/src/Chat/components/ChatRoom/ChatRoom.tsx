@@ -10,9 +10,13 @@ import {
 import { UserListDisplay } from './UserListDisplay'
 import { isOwner } from '../utils/userStatusUtils'
 
-const DeleteRoomButton = (props: { room: ChatRoom }): JSX.Element => {
+const DeleteRoomButton = (props: {
+  room: ChatRoom
+  isOwner: boolean
+}): JSX.Element => {
   const navigate = useNavigate()
   const chatListState: ChatListState = { kicked: false }
+  if (!props.isOwner) return <></>
 
   return (
     <Button
@@ -94,7 +98,7 @@ export function ChatRoom(): ReactElement {
         updateMemberList={updateChatRoomMembersList}
         userList={userList}
       ></AddUserButton>
-      <DeleteRoomButton room={room}></DeleteRoomButton>
+      <DeleteRoomButton room={room} isOwner={openAsOwner}></DeleteRoomButton>
     </>
   )
 }

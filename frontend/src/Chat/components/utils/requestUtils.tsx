@@ -13,7 +13,11 @@ export function getChatRoomMembersRequest(
           return {
             ...member,
             ban_until:
-              member.ban_until != null ? new Date(member.ban_until) : undefined
+              member.ban_until != null ? new Date(member.ban_until) : undefined,
+            mute_until:
+              member.mute_until != null
+                ? new Date(member.mute_until)
+                : undefined
           }
         })
       )

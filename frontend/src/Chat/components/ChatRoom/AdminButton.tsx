@@ -3,8 +3,7 @@ import { updateChatRoomMembersRequest } from '../utils/requestUtils'
 import { isOwner } from '../utils/userStatusUtils'
 
 const AdminMemberButton = (props: {
-  room: ChatRoom
-  member: User
+  currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
   return (
@@ -12,9 +11,7 @@ const AdminMemberButton = (props: {
       variant="outline-info"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          ban_until: undefined,
+          ...props.currentChatRoomMember,
           isAdministrator: true
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
@@ -26,8 +23,7 @@ const AdminMemberButton = (props: {
 }
 
 const AdminOFFMemberButton = (props: {
-  room: ChatRoom
-  member: User
+  currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
   return (
@@ -35,9 +31,7 @@ const AdminOFFMemberButton = (props: {
       variant="outline-danger"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          ban_until: undefined,
+          ...props.currentChatRoomMember,
           isAdministrator: false
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
@@ -51,6 +45,7 @@ const AdminOFFMemberButton = (props: {
 export const AdminButton = (props: {
   room: ChatRoom
   member: User
+  currentChatRoomMember: ChatRoomMember
   isAdmin: boolean
   updateMemberList: () => void
   openAsOwner: boolean
@@ -63,11 +58,11 @@ export const AdminButton = (props: {
 
   return props.isAdmin ? (
     <>
-      <AdminOFFMemberButton {...props} member={props.member} />
+      <AdminOFFMemberButton {...props} />
     </>
   ) : (
     <>
-      <AdminMemberButton {...props} member={props.member} />
+      <AdminMemberButton {...props} />
     </>
   )
 }

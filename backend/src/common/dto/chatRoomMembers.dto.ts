@@ -9,6 +9,8 @@ export class ChatRoomMembersDto {
 
   ban_until?: Date;
 
+  mute_until?: Date;
+
   @IsBoolean()
   isAdministrator: boolean;
 }

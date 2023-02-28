@@ -21,6 +21,18 @@ export function isBanned(
   return banUntil.getTime() > new Date().getTime()
 }
 
+export function isMuted(
+  user: User,
+  room: ChatRoom,
+  chatRoomMemberList: ChatRoomMember[]
+): boolean {
+  const muteUntil = chatRoomMemberList.find(
+    (item) => item.userId === user.id && item.chatRoomId === room.id
+  )?.mute_until
+  if (muteUntil === null || muteUntil === undefined) return false
+  return muteUntil.getTime() > new Date().getTime()
+}
+
 export function isOwner(user: User, room: ChatRoom): boolean {
   return room.created_by_user_id === user.id
 }

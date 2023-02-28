@@ -13,6 +13,9 @@ export class ChatRoomMembers {
   @Column({ nullable: true })
   ban_until?: Date;
 
+  @Column({ nullable: true })
+  mute_until?: Date;
+
   @Column()
   isAdministrator: boolean;
 

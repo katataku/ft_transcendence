@@ -6,6 +6,7 @@ const BanMemberButton = (props: {
   room: ChatRoom
   member: User
   updateMemberList: () => void
+  currentChatRoomMember: ChatRoomMember
   ban_until: Date
   msg: string
 }): JSX.Element => {
@@ -14,10 +15,8 @@ const BanMemberButton = (props: {
       variant="outline-danger"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          ban_until: props.ban_until,
-          isAdministrator: false
+          ...props.currentChatRoomMember,
+          ban_until: props.ban_until
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
@@ -30,6 +29,7 @@ const BanMemberButton = (props: {
 const BanOFFMemberButton = (props: {
   room: ChatRoom
   member: User
+  currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
   return (
@@ -37,10 +37,8 @@ const BanOFFMemberButton = (props: {
       variant="outline-info"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          ban_until: undefined,
-          isAdministrator: false
+          ...props.currentChatRoomMember,
+          ban_until: undefined
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
@@ -53,6 +51,7 @@ const BanOFFMemberButton = (props: {
 export const BanButton = (props: {
   room: ChatRoom
   member: User
+  currentChatRoomMember: ChatRoomMember
   isBanned: boolean
   updateMemberList: () => void
 }): JSX.Element => {
@@ -63,19 +62,17 @@ export const BanButton = (props: {
 
   return props.isBanned ? (
     <>
-      <BanOFFMemberButton {...props} member={props.member} />
+      <BanOFFMemberButton {...props} />
     </>
   ) : (
     <>
       <BanMemberButton
         {...props}
-        member={props.member}
         ban_until={new Date(2023, 12, 31, 23, 59, 0)}
         msg="Ban"
       />
       <BanMemberButton
         {...props}
-        member={props.member}
         ban_until={new Date(Date.now() + banSec * 1000)}
         msg="Ban 10sec"
       />
