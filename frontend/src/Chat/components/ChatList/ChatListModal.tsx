@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { useState, type ReactElement } from 'react'
 import { Button, Dropdown, DropdownButton, Modal } from 'react-bootstrap'
+import { updateChatRoomRequest } from '../utils/requestUtils'
 
 const PublicSelectDropdownButton = (props: {
   setPublicId: React.Dispatch<React.SetStateAction<publicIdType>>
@@ -48,15 +49,7 @@ export const ChatListModal = (props: {
       created_by_user_id: props.user.id,
       public_id: publicId
     }
-    axios
-      .post<ChatRoom>('/chatRoom', requestData)
-      .then((_response) => {
-        props.handleModalClose()
-      })
-      .catch((reason) => {
-        alert('エラーです！')
-        console.log(reason)
-      })
+    updateChatRoomRequest(requestData, props.handleModalClose)
   }
 
   return (

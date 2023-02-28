@@ -65,6 +65,21 @@ export function deleteChatRoomRequest(room: ChatRoom): void {
     })
 }
 
+export function updateChatRoomRequest(
+  requestData: ChatRoomReqDto,
+  callback: () => void
+): void {
+  axios
+    .post<ChatRoom>('/chatRoom', requestData)
+    .then((_response) => {
+      callback()
+    })
+    .catch((reason) => {
+      alert('エラーです！')
+      console.log(reason)
+    })
+}
+
 export function updateChatRoomMembersRequest(
   requestData: ChatRoomMember,
   callback: () => void
