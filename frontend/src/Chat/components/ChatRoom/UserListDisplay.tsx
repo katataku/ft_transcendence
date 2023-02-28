@@ -1,82 +1,18 @@
 import { type ReactElement } from 'react'
-import { Badge, Button } from 'react-bootstrap'
-import {
-  deleteChatRoomMembersRequest,
-  updateChatRoomMembersRequest
-} from './requestUtils'
-
-const BanMemberButton = (props: {
-  room: ChatRoom
-  member: User
-  updateMemberList: () => void
-}): JSX.Element => {
-  return (
-    <Button
-      variant="outline-danger"
-      onClick={() => {
-        const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          isBanned: true
-        }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
-      }}
-    >
-      Ban
-    </Button>
-  )
-}
-
-const BanOFFMemberButton = (props: {
-  room: ChatRoom
-  member: User
-  updateMemberList: () => void
-}): JSX.Element => {
-  return (
-    <Button
-      variant="outline-info"
-      onClick={() => {
-        const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          isBanned: false
-        }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
-      }}
-    >
-      Ban 解除
-    </Button>
-  )
-}
-
-const BanButton = (props: {
-  room: ChatRoom
-  member: User
-  chatRoomMemberList: ChatRoomMember[]
-  updateMemberList: () => void
-}): JSX.Element => {
-  const isBanned = props.chatRoomMemberList.find(
-    (item) =>
-      item.userId === props.member.id && item.chatRoomId === props.room.id
-  )?.isBanned
-  if (isBanned === undefined) return <></>
-  return isBanned ? (
-    <>
-      <Badge bg="info">banned</Badge>
-      <BanOFFMemberButton {...props} member={props.member} />
-    </>
-  ) : (
-    <>
-      <BanMemberButton {...props} member={props.member} />
-    </>
-  )
-}
+import { Button } from 'react-bootstrap'
+import { OwnerIcon } from '../utils/OwnerIcon'
+import { AdminButton } from './AdminButton'
+import { BanButton } from './BanButton'
+import { deleteChatRoomMembersRequest } from '../utils/requestUtils'
+import { isOwner } from '../utils/userStatusUtils'
 
 const DeleteMemberButton = (props: {
   room: ChatRoom
   member: User
   updateMemberList: () => void
 }): JSX.Element => {
+  if (isOwner(props.member, props.room)) return <></>
+
   return (
     <Button
       variant="outline-danger"
@@ -88,7 +24,7 @@ const DeleteMemberButton = (props: {
         deleteChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
     >
-      Delete User
+      Delete User from Room
     </Button>
   )
 }
@@ -105,7 +41,9 @@ export const UserListDisplay = (props: {
         return (
           <li key={index}>
             {member.name}
+            <OwnerIcon room={props.room} user={member}></OwnerIcon>
             <BanButton {...props} member={member} />
+            <AdminButton {...props} member={member} />
             <DeleteMemberButton {...props} member={member} />
           </li>
         )
