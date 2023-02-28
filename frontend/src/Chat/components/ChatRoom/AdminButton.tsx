@@ -55,7 +55,8 @@ export const AdminButton = (props: {
   // オーナーは管理者権限を変更できない
   if (isOwner(props.member, props.room)) return <></>
 
-  return isTargetAdmin(props.currentChatRoomMember) ? (
+  const isAdmin: boolean = isTargetAdmin(props.currentChatRoomMember)
+  return isAdmin ? (
     <>
       <AdminOFFMemberButton {...props} />
     </>

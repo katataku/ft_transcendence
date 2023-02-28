@@ -54,8 +54,8 @@ export const BanButton = (props: {
 
   // 10秒
   const banSec = 10
-
-  return isTargetBanned(props.currentChatRoomMember) ? (
+  const isBanned: boolean = isTargetBanned(props.currentChatRoomMember)
+  return isBanned ? (
     <>
       <BanOFFMemberButton {...props} />
     </>
