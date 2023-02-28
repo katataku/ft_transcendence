@@ -1,11 +1,11 @@
 import { Button } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../utils/requestUtils'
-import { isOwner, isTargetBanned } from '../utils/userStatusUtils'
+import { isOwner, isTargetMuted } from '../utils/userStatusUtils'
 
-const BanMemberButton = (props: {
-  updateMemberList: () => void
+const MuteMemberButton = (props: {
   currentChatRoomMember: ChatRoomMember
-  ban_until: Date
+  updateMemberList: () => void
+  mute_until: Date
   msg: string
 }): JSX.Element => {
   return (
@@ -14,7 +14,7 @@ const BanMemberButton = (props: {
       onClick={() => {
         const requestData: ChatRoomMember = {
           ...props.currentChatRoomMember,
-          ban_until: props.ban_until
+          mute_until: props.mute_until
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
@@ -24,7 +24,7 @@ const BanMemberButton = (props: {
   )
 }
 
-const BanOFFMemberButton = (props: {
+const MuteOFFMemberButton = (props: {
   currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
@@ -34,17 +34,17 @@ const BanOFFMemberButton = (props: {
       onClick={() => {
         const requestData: ChatRoomMember = {
           ...props.currentChatRoomMember,
-          ban_until: undefined
+          mute_until: undefined
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
       }}
     >
-      Ban 解除
+      Mute 解除
     </Button>
   )
 }
 
-export const BanButton = (props: {
+export const MuteButton = (props: {
   room: ChatRoom
   member: User
   currentChatRoomMember: ChatRoomMember
@@ -53,23 +53,23 @@ export const BanButton = (props: {
   if (isOwner(props.member, props.room)) return <></>
 
   // 10秒
-  const banSec = 10
-  const isBanned: boolean = isTargetBanned(props.currentChatRoomMember)
-  return isBanned ? (
+  const muteSec = 10
+
+  return isTargetMuted(props.currentChatRoomMember) ? (
     <>
-      <BanOFFMemberButton {...props} />
+      <MuteOFFMemberButton {...props} />
     </>
   ) : (
     <>
-      <BanMemberButton
+      <MuteMemberButton
         {...props}
-        ban_until={new Date(2023, 12, 31, 23, 59, 0)}
-        msg="Ban"
+        mute_until={new Date(2023, 12, 31, 23, 59, 0)}
+        msg="Mute"
       />
-      <BanMemberButton
+      <MuteMemberButton
         {...props}
-        ban_until={new Date(Date.now() + banSec * 1000)}
-        msg="Ban 10sec"
+        mute_until={new Date(Date.now() + muteSec * 1000)}
+        msg="Mute 10sec"
       />
     </>
   )

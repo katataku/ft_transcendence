@@ -41,20 +41,12 @@ export const ChatListModal = (props: {
   const [newRoomName, setNewRoomName] = useState<string>('')
   const [publicId, setPublicId] = useState<publicIdType>('public')
 
-  const publicIdNumberTable = {
-    public: 1,
-    private: 2,
-    protected: 3,
-    DM: 4
-  }
-
   const handleCreateRoom = (): void => {
-    const publicIdNumber: number = publicIdNumberTable[publicId]
     const requestData: ChatRoomReqDto = {
       name: newRoomName,
       created_by: props.user.id,
       created_by_user_id: props.user.id,
-      public_id: publicIdNumber
+      public_id: publicId
     }
     axios
       .post<ChatRoom>('/chatRoom', requestData)

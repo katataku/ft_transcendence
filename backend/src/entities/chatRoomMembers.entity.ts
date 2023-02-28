@@ -10,8 +10,11 @@ export class ChatRoomMembers {
   @PrimaryColumn()
   userId: number;
 
-  @Column()
-  isBanned: boolean;
+  @Column({ nullable: true })
+  ban_until?: Date;
+
+  @Column({ nullable: true })
+  mute_until?: Date;
 
   @Column()
   isAdministrator: boolean;

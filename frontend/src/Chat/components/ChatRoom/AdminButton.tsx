@@ -1,11 +1,9 @@
 import { Button } from 'react-bootstrap'
-import { AdminIcon } from '../utils/AdminIcon'
 import { updateChatRoomMembersRequest } from '../utils/requestUtils'
-import { isAdmin, isOwner } from '../utils/userStatusUtils'
+import { isOwner, isTargetAdmin } from '../utils/userStatusUtils'
 
 const AdminMemberButton = (props: {
-  room: ChatRoom
-  member: User
+  currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
   return (
@@ -13,9 +11,7 @@ const AdminMemberButton = (props: {
       variant="outline-info"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          isBanned: false,
+          ...props.currentChatRoomMember,
           isAdministrator: true
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
@@ -27,8 +23,7 @@ const AdminMemberButton = (props: {
 }
 
 const AdminOFFMemberButton = (props: {
-  room: ChatRoom
-  member: User
+  currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
   return (
@@ -36,9 +31,7 @@ const AdminOFFMemberButton = (props: {
       variant="outline-danger"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          isBanned: false,
+          ...props.currentChatRoomMember,
           isAdministrator: false
         }
         updateChatRoomMembersRequest(requestData, props.updateMemberList)
@@ -50,27 +43,26 @@ const AdminOFFMemberButton = (props: {
 }
 
 export const AdminButton = (props: {
+  user: User
   room: ChatRoom
   member: User
-  chatRoomMemberList: ChatRoomMember[]
+  currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
+  // 管理者権限の変更はオーナーしかできない
+  if (!isOwner(props.user, props.room)) return <></>
+
+  // オーナーは管理者権限を変更できない
   if (isOwner(props.member, props.room)) return <></>
 
-  const isAdminBool: boolean = isAdmin(
-    props.member,
-    props.room,
-    props.chatRoomMemberList
-  )
-
-  return isAdminBool ? (
+  const isAdmin: boolean = isTargetAdmin(props.currentChatRoomMember)
+  return isAdmin ? (
     <>
-      <AdminIcon isAdmin={isAdminBool} />
-      <AdminOFFMemberButton {...props} member={props.member} />
+      <AdminOFFMemberButton {...props} />
     </>
   ) : (
     <>
-      <AdminMemberButton {...props} member={props.member} />
+      <AdminMemberButton {...props} />
     </>
   )
 }

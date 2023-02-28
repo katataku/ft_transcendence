@@ -515,8 +515,8 @@ components:
           type: number
           example: 1
         public_id:
-          type: number
-          example: 1
+          type: string
+          example: 'public'
     chat_room_req:
       type: object
       properties:
@@ -527,8 +527,8 @@ components:
           type: number
           example: 1
         public_id:
-          type: number
-          example: 1
+          type: string
+          example: 'public'
     chat_room_auth_req:
       type: object
       properties:

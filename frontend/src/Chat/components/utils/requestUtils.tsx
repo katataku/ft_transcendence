@@ -1,12 +1,26 @@
 import axios from 'axios'
 
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
+
 export function getChatRoomMembersRequest(
   callback: (members: ChatRoomMember[]) => void
 ): void {
   axios
     .get<ChatRoomMember[]>('/chatRoomMembers')
     .then((response) => {
-      callback(response.data)
+      callback(
+        response.data.map((member) => {
+          return {
+            ...member,
+            ban_until:
+              member.ban_until != null ? new Date(member.ban_until) : undefined,
+            mute_until:
+              member.mute_until != null
+                ? new Date(member.mute_until)
+                : undefined
+          }
+        })
+      )
     })
     .catch((reason) => {
       alert('エラーです！')

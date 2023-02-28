@@ -4,14 +4,18 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { AddUserButton } from './AddUserButton'
 import {
   deleteChatRoomRequest,
-  getChatRoomMembersRequest,
-  getUserRequest
+  getChatRoomMembersRequest
 } from '../utils/requestUtils'
 import { UserListDisplay } from './UserListDisplay'
+import { isOwner } from '../utils/userStatusUtils'
 
-const DeleteRoomButton = (props: { room: ChatRoom }): JSX.Element => {
+const DeleteRoomButton = (props: {
+  user: User
+  room: ChatRoom
+}): JSX.Element => {
   const navigate = useNavigate()
   const chatListState: ChatListState = { kicked: false }
+  if (!isOwner(props.user, props.room)) return <></>
 
   return (
     <Button
@@ -34,43 +38,22 @@ const DeleteRoomButton = (props: { room: ChatRoom }): JSX.Element => {
 
 // チャットルームに所属しているユーザーのリストを管理する。
 export function ChatRoom(): ReactElement {
-  const { room } = useLocation().state
+  const { room, user } = useLocation().state
   const [chatRoomMembersList, setChatRoomMembersList] = useState<
     ChatRoomMember[]
   >([])
-  const [userList, setUserList] = useState<User[]>([])
-
-  // チャットルームに所属しているユーザーのリストを取得する。
-  const updateMemberList = (): void => {
-    setUserList([])
-    chatRoomMembersList.map(async (value: ChatRoomMember) => {
-      getUserRequest(value.userId, (data) => {
-        setUserList(
-          (userList) =>
-            [...userList, data]
-              .sort((a, b) => a.id - b.id)
-              .filter(
-                (element, index, arr) =>
-                  arr.map((value) => value.id).indexOf(element.id) === index
-              ) // 重複削除
-        )
-      })
-    })
-  }
 
   // chatRoomMembersListを更新する。
   const updateChatRoomMembersList = (): void => {
     setChatRoomMembersList([])
     getChatRoomMembersRequest((data) => {
       setChatRoomMembersList(
-        data.filter((value) => value.chatRoomId === room.id)
+        data
+          .filter((value) => value.chatRoomId === room.id)
+          .sort((a, b) => a.userId - b.userId)
       )
     })
   }
-
-  useEffect(() => {
-    updateMemberList()
-  }, [chatRoomMembersList])
 
   useEffect(() => {
     updateChatRoomMembersList()
@@ -80,17 +63,17 @@ export function ChatRoom(): ReactElement {
     <>
       ChatRoom: {room.name}
       <UserListDisplay
+        user={user}
         room={room}
-        userList={userList}
         chatRoomMemberList={chatRoomMembersList}
         updateMemberList={updateChatRoomMembersList}
       ></UserListDisplay>
       <AddUserButton
         room={room}
+        chatRoomMemberList={chatRoomMembersList}
         updateMemberList={updateChatRoomMembersList}
-        userList={userList}
       ></AddUserButton>
-      <DeleteRoomButton room={room}></DeleteRoomButton>
+      <DeleteRoomButton user={user} room={room}></DeleteRoomButton>
     </>
   )
 }

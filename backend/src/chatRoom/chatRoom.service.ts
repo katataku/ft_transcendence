@@ -32,6 +32,7 @@ export class ChatRoomService {
         id: 'ASC',
       },
     });
+
     return rows;
   }
 
