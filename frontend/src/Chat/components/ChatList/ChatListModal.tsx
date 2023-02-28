@@ -90,12 +90,7 @@ export const ChatListModal = (props: {
           <Button variant="secondary" onClick={props.handleModalClose}>
             Close
           </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              handleCreateRoom()
-            }}
-          >
+          <Button variant="primary" onClick={handleCreateRoom}>
             Create
           </Button>
         </Modal.Footer>
