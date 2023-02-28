@@ -55,7 +55,8 @@ export const MuteButton = (props: {
   // 10秒
   const muteSec = 10
 
-  return isTargetMuted(props.currentChatRoomMember) ? (
+  const isMuted: boolean = isTargetMuted(props.currentChatRoomMember)
+  return isMuted ? (
     <>
       <MuteOFFMemberButton {...props} />
     </>
