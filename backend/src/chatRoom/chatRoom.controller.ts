@@ -37,10 +37,29 @@ export class ChatRoomController {
       chatRoomMembers.chatRoomId = result.id;
       chatRoomMembers.userId = data.created_by_user_id;
       chatRoomMembers.ban_until = undefined;
+      chatRoomMembers.mute_until = undefined;
       chatRoomMembers.isAdministrator = true;
       this.chatRoomMembersService.createRoomMember(chatRoomMembers);
     }
 
+    return result;
+  }
+
+  @Post(':id')
+  async update(
+    @Param('id') id: number,
+    @Body() data: ChatRoomReqDto,
+  ): Promise<ChatRoomResDto> {
+    const result = await this.service.updateRoom(id, data);
+    if (result) {
+      const chatRoomMembers = new ChatRoomMembersDto();
+      chatRoomMembers.chatRoomId = result.id;
+      chatRoomMembers.userId = data.created_by_user_id;
+      chatRoomMembers.ban_until = undefined;
+      chatRoomMembers.mute_until = undefined;
+      chatRoomMembers.isAdministrator = true;
+      this.chatRoomMembersService.createRoomMember(chatRoomMembers);
+    }
     return result;
   }
 

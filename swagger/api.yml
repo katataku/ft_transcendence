@@ -215,6 +215,30 @@ paths:
                 $ref: '#/components/schemas/chat_room_res'
 
   /chatroom/{roomId}:
+    post:
+      summary: update chatRoom
+      tags:
+        - chatRoom
+      description: chatRoom情報を更新
+      parameters:
+        - in: path
+          name: roomId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chat_room_req'
+      responses:
+        201:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chat_room_res'
+
     delete:
       tags:
         - chatRoom
