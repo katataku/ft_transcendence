@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactElement } from 'react'
-import { OwnerIcon } from '../utils/OwnerIcon'
+import { OwnerIcon } from '../utils/Icon/OwnerIcon'
 import { AdminButton } from './AdminButton'
 import { BanButton } from './BanButton'
 import {
@@ -8,11 +8,11 @@ import {
   isTargetBanned,
   isTargetMuted
 } from '../utils/userStatusUtils'
-import { AdminIcon } from '../utils/AdminIcon'
-import { DeleteMemberButton } from '../utils/DeleteMemberButton'
-import { BannedIcon } from '../utils/BannedIcon'
+import { AdminIcon } from '../utils/Icon/AdminIcon'
+import { DeleteMemberButton } from '../utils/Button/DeleteMemberButton'
+import { BannedIcon } from '../utils/Icon/BannedIcon'
 import { MuteButton } from './MuteButton'
-import { MutedIcon } from '../utils/MutedIcon'
+import { MutedIcon } from '../utils/Icon/MutedIcon'
 import { getAllUsersRequest } from '../utils/requestUtils'
 
 export const UserListDisplay = (props: {

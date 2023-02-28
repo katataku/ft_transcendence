@@ -1,17 +1,17 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState, type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
-import { OwnerIcon } from '../utils/OwnerIcon'
-import { BannedIcon } from '../utils/BannedIcon'
-import { AdminIcon } from '../utils/AdminIcon'
+import { OwnerIcon } from '../utils/Icon/OwnerIcon'
+import { BannedIcon } from '../utils/Icon/BannedIcon'
+import { AdminIcon } from '../utils/Icon/AdminIcon'
 import { isAdmin, isBanned, isOwner } from '../utils/userStatusUtils'
-import { DeleteMemberButton } from '../utils/DeleteMemberButton'
-import { PrivateIcon } from '../utils/privateIcon'
+import { DeleteMemberButton } from '../utils/Button/DeleteMemberButton'
+import { PrivateIcon } from '../utils/Icon/privateIcon'
 import {
   getChatRoomMembersRequest,
   updateChatRoomMembersRequest
 } from '../utils/requestUtils'
-import { ProtectedIcon } from '../utils/protectedIcon'
+import { ProtectedIcon } from '../utils/Icon/protectedIcon'
 import { EnterButton } from './EnterButton'
 
 // チャットルームに参加するためのボタンを表示する。

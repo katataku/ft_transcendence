@@ -1,5 +1,5 @@
 import { type ReactElement } from 'react'
-import { ChatRoomSetupModal } from '../utils/ChatRoomSetupModal'
+import { ChatRoomSetupModal } from '../utils/Modal/ChatRoomSetupModal'
 import { updateChatRoomRequest } from '../utils/requestUtils'
 
 export const UpdateChatRoomModal = (props: {

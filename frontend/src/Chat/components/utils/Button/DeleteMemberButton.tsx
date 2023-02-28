@@ -1,6 +1,6 @@
 import { Button } from 'react-bootstrap'
-import { deleteChatRoomMembersRequest } from './requestUtils'
-import { isOwner } from './userStatusUtils'
+import { deleteChatRoomMembersRequest } from '../requestUtils'
+import { isOwner } from '../userStatusUtils'
 
 export const DeleteMemberButton = (props: {
   room: ChatRoom
