@@ -1,5 +1,5 @@
 import { useState, type ReactElement } from 'react'
-import { Button, Dropdown, DropdownButton, Modal } from 'react-bootstrap'
+import { Button, Dropdown, DropdownButton, Form, Modal } from 'react-bootstrap'
 import { updateChatRoomRequest } from '../utils/requestUtils'
 
 const PublicSelectDropdownButton = (props: {
@@ -24,11 +24,15 @@ const PublicSelectDropdownButton = (props: {
           case 'private':
             props.setPublicId('private')
             break
+          case 'protected':
+            props.setPublicId('protected')
+            break
         }
       }}
     >
       <Dropdown.Item eventKey="public">public</Dropdown.Item>
       <Dropdown.Item eventKey="private">private</Dropdown.Item>
+      <Dropdown.Item eventKey="protected">protected</Dropdown.Item>
     </DropdownButton>
   )
 }
@@ -40,13 +44,15 @@ export const ChatListModal = (props: {
 }): ReactElement => {
   const [newRoomName, setNewRoomName] = useState<string>('')
   const [publicId, setPublicId] = useState<publicIdType>('public')
+  const [password, setPassword] = useState<string>('')
 
   const handleCreateRoom = (): void => {
     const requestData: ChatRoomReqDto = {
       name: newRoomName,
       created_by: props.user.id,
       created_by_user_id: props.user.id,
-      public_id: publicId
+      public_id: publicId,
+      password: publicId === 'protected' ? password : undefined
     }
     updateChatRoomRequest(requestData, props.handleModalClose)
   }
@@ -71,6 +77,14 @@ export const ChatListModal = (props: {
             <PublicSelectDropdownButton
               setPublicId={setPublicId}
             ></PublicSelectDropdownButton>
+            <Form.Control
+              placeholder="Password"
+              onChange={(e) => {
+                setPassword(e.target.value)
+              }}
+              disabled={publicId !== 'protected'}
+              isInvalid={publicId === 'protected' && password === ''}
+            />
           </>
         </Modal.Body>
         <Modal.Footer>
