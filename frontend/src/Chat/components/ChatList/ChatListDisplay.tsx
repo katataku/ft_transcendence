@@ -11,6 +11,7 @@ import {
   getChatRoomMembersRequest,
   updateChatRoomMembersRequest
 } from '../utils/requestUtils'
+import { ProtectedIcon } from '../utils/protectedIcon'
 
 // チャットルームに入室するためのボタンを表示する。
 // roomMemberである場合、参加ボタンを表示する。
@@ -146,6 +147,9 @@ export const ChatListDisplay = (props: {
           <li key={index}>
             {room.name}
             <PrivateIcon isPrivate={room.public_id === 'private'}></PrivateIcon>
+            <ProtectedIcon
+              isProtected={room.public_id === 'protected'}
+            ></ProtectedIcon>
             <OwnerIcon isOwner={isOwnerBool}></OwnerIcon>
             <AdminIcon isAdmin={isAdminBool}></AdminIcon>
             <BannedIcon isBanned={isBannedBool}></BannedIcon>
