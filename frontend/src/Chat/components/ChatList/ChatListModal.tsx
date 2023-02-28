@@ -1,4 +1,3 @@
-import axios from 'axios'
 import { useState, type ReactElement } from 'react'
 import { Button, Dropdown, DropdownButton, Modal } from 'react-bootstrap'
 import { updateChatRoomRequest } from '../utils/requestUtils'
