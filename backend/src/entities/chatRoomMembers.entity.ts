@@ -10,12 +10,18 @@ export class ChatRoomMembers {
   @PrimaryColumn()
   userId: number;
 
-  @Column()
-  isBanned: boolean;
+  @Column({ nullable: true })
+  ban_until?: Date;
 
-  @ManyToOne(() => ChatRoom)
+  @Column({ nullable: true })
+  mute_until?: Date;
+
+  @Column()
+  isAdministrator: boolean;
+
+  @ManyToOne(() => ChatRoom, { onDelete: 'CASCADE' })
   chatRoom: ChatRoom;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   user: User;
 }

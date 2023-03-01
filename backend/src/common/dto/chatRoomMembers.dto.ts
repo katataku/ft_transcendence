@@ -7,8 +7,12 @@ export class ChatRoomMembersDto {
   @IsNumber()
   userId: number;
 
+  ban_until?: Date;
+
+  mute_until?: Date;
+
   @IsBoolean()
-  isBanned: boolean;
+  isAdministrator: boolean;
 }
 
 export class ChatRoomMembersPKDto {

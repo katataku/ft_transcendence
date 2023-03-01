@@ -22,7 +22,7 @@
   },
   "scripts": {
     "format": "prettier --write \"src/**/*.{tsx,ts}\"",
-    "lint": "eslint \"src/**/*.{tsx,ts}\" --fix",
+    "lint": "eslint \"src/**/*.{tsx,ts}\" --fix --max-warnings 0",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

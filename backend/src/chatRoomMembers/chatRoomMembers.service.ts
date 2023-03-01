@@ -29,7 +29,9 @@ export class ChatRoomMembersService {
     const data = new ChatRoomMembers();
     data.chatRoomId = param.chatRoomId;
     data.userId = param.userId;
-    data.isBanned = param.isBanned;
+    data.ban_until = param.ban_until ? param.ban_until : null;
+    data.mute_until = param.mute_until ? param.mute_until : null;
+    data.isAdministrator = param.isAdministrator;
     const ret = await this.chatRoomMembersRepository.save(data);
     return ret;
   }

@@ -1,4 +1,4 @@
-import React, { type ReactElement, useState, useEffect } from 'react'
+import { type ReactElement, useState, useEffect } from 'react'
 // import axios from 'axios'
 import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
@@ -32,7 +32,10 @@ export function App(): ReactElement {
           <Link to="MatchList">Move to MatchList</Link>
         </p>
         <p>
-          <Link to="Game" state={user}>
+          <Link
+            to="Game"
+            state={{ matchId: 0, userId: user.id, userName: user.name }}
+          >
             Move to Game
           </Link>
         </p>
