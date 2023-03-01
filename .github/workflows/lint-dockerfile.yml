@@ -9,6 +9,3 @@ jobs:
         uses: actions/checkout@v3
       - name: Lint Dockerfile
         run: make lint-dockerfile
-      - name: Frontend format
-        working-directory: ./frontend
-        run: npm run format
