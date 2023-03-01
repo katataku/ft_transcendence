@@ -14,7 +14,6 @@ interface ChatRoomReqDto {
   password?: string
 }
 
-
 interface ChatRoomAuthReqDto {
   id: number
   password: string
