@@ -1,0 +1,14 @@
+name: lint Dockerfile
+run-name: lint Dockerfile by ${{ github.actor }}
+on: [push]
+jobs:
+  Lint-and-Format:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Lint Dockerfile
+        run: make lint-dockerfile
+      - name: Frontend format
+        working-directory: ./frontend
+        run: npm run format
