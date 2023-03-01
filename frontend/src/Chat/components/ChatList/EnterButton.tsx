@@ -1,7 +1,7 @@
 import { type ReactElement, useState } from 'react'
 import { Button, Form, Modal } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
-import { chatRoomAuthRequest } from '../utils/requestUtils'
+import { chatRoomAuthRequest } from '../../../utils/chatRoomAxios'
 
 export const PasswordPromptModal = (props: {
   room: ChatRoom

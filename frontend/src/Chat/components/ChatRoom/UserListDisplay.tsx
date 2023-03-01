@@ -13,7 +13,7 @@ import { DeleteMemberButton } from '../utils/Button/DeleteMemberButton'
 import { BannedIcon } from '../utils/Icon/BannedIcon'
 import { MuteButton } from './MuteButton'
 import { MutedIcon } from '../utils/Icon/MutedIcon'
-import { getAllUsersRequest } from '../utils/requestUtils'
+import { getAllUsersRequest } from '../../../utils/userAxios'
 
 export const UserListDisplay = (props: {
   user: User

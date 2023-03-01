@@ -10,7 +10,7 @@ import { PrivateIcon } from '../utils/Icon/privateIcon'
 import {
   getChatRoomMembersRequest,
   updateChatRoomMembersRequest
-} from '../utils/requestUtils'
+} from '../../../utils/chatRoomMemberAxios'
 import { ProtectedIcon } from '../utils/Icon/protectedIcon'
 import { EnterButton } from './EnterButton'
 

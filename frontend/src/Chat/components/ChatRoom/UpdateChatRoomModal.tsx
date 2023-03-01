@@ -1,6 +1,6 @@
 import { type ReactElement } from 'react'
 import { ChatRoomSetupModal } from '../utils/Modal/ChatRoomSetupModal'
-import { updateChatRoomRequest } from '../utils/requestUtils'
+import { updateChatRoomRequest } from '../../../utils/chatRoomAxios'
 
 export const UpdateChatRoomModal = (props: {
   user: User

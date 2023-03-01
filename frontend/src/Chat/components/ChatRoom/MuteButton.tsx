@@ -1,5 +1,5 @@
 import { Button } from 'react-bootstrap'
-import { updateChatRoomMembersRequest } from '../utils/requestUtils'
+import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { isOwner, isTargetMuted } from '../utils/userStatusUtils'
 
 const MuteMemberButton = (props: {

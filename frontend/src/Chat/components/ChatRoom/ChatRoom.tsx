@@ -2,10 +2,8 @@ import { useEffect, useState, type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AddUserButton } from './AddUserButton'
-import {
-  deleteChatRoomRequest,
-  getChatRoomMembersRequest
-} from '../utils/requestUtils'
+import { deleteChatRoomRequest } from '../../../utils/chatRoomAxios'
+import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { UserListDisplay } from './UserListDisplay'
 import { isOwner } from '../utils/userStatusUtils'
 import { UpdateRoomButton } from './UpdateRoomButton'

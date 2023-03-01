@@ -1,10 +1,7 @@
 import { useEffect, useState, type ReactElement } from 'react'
 import { Button, Modal } from 'react-bootstrap'
-import {
-  getAllUsersRequest,
-  getUserRequest,
-  updateChatRoomMembersRequest
-} from '../utils/requestUtils'
+import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { getAllUsersRequest, getUserRequest } from '../../../utils/userAxios'
 
 const AddButton = (props: {
   room: ChatRoom
