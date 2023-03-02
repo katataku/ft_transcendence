@@ -10,6 +10,7 @@ export const CreateChatRoomModal = (props: {
   return (
     <ChatRoomSetupModal
       {...props}
+      modalHeaderMessage={'Create New Room'}
       submitButtonMessage={'Create'}
       requestSendFunction={createChatRoomRequest}
     ></ChatRoomSetupModal>

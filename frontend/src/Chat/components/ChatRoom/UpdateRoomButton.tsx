@@ -1,5 +1,6 @@
-import { type ReactElement, useState } from 'react'
+import { type ReactElement, useState, useContext } from 'react'
 import { Button } from 'react-bootstrap'
+import { ChatRoomContext } from '../utils/context'
 import { isOwner } from '../utils/userStatusUtils'
 import { UpdateChatRoomModal } from './UpdateChatRoomModal'
 
@@ -8,9 +9,9 @@ import { UpdateChatRoomModal } from './UpdateChatRoomModal'
 // モーダルを管理するためのstateを持つ。
 export const UpdateRoomButton = (props: {
   user: User
-  room: ChatRoom
   updateMemberList: () => void
 }): ReactElement => {
+  const room = useContext(ChatRoomContext)
   const [showUpdateRoomModal, setShowUpdateRoomModal] = useState(false)
 
   const handleModalClose = (): void => {
@@ -19,7 +20,7 @@ export const UpdateRoomButton = (props: {
   }
 
   // チャットルームのオーナーでない場合は、ボタンを表示しない。
-  if (!isOwner(props.user, props.room)) return <></>
+  if (!isOwner(props.user, room)) return <></>
   return (
     <>
       <p>

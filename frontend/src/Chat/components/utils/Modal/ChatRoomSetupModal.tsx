@@ -40,6 +40,7 @@ export const ChatRoomSetupModal = (props: {
   user: User
   showModal: boolean
   handleModalClose: () => void
+  modalHeaderMessage: string
   submitButtonMessage: string
   requestSendFunction: (
     requestData: ChatRoomReqDto,
@@ -65,7 +66,7 @@ export const ChatRoomSetupModal = (props: {
     <>
       <Modal show={props.showModal} onHide={props.handleModalClose}>
         <Modal.Header closeButton>
-          <Modal.Title>create new Room</Modal.Title>
+          <Modal.Title>{props.modalHeaderMessage}</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>

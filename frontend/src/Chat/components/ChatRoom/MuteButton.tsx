@@ -1,5 +1,7 @@
+import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { ChatRoomContext } from '../utils/context'
 import { isOwner, isTargetMuted } from '../utils/userStatusUtils'
 
 const MuteMemberButton = (props: {
@@ -45,12 +47,12 @@ const MuteOFFMemberButton = (props: {
 }
 
 export const MuteButton = (props: {
-  room: ChatRoom
   member: User
   currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
-  if (isOwner(props.member, props.room)) return <></>
+  const room = useContext(ChatRoomContext)
+  if (isOwner(props.member, room)) return <></>
 
   // 10秒
   const muteSec = 10

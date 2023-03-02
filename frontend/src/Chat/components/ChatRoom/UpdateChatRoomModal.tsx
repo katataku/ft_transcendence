@@ -1,23 +1,26 @@
-import { type ReactElement } from 'react'
+import { useContext, type ReactElement } from 'react'
 import { ChatRoomSetupModal } from '../utils/Modal/ChatRoomSetupModal'
 import { updateChatRoomRequest } from '../../../utils/chatRoomAxios'
+import { ChatRoomContext } from '../utils/context'
 
 export const UpdateChatRoomModal = (props: {
   user: User
-  room: ChatRoom
   showModal: boolean
   handleModalClose: () => void
 }): ReactElement => {
+  const room = useContext(ChatRoomContext)
+
   const requestSendFunction = (
     requestData: ChatRoomReqDto,
     callback: () => void
   ): void => {
-    updateChatRoomRequest(props.room, requestData, callback)
+    updateChatRoomRequest(room, requestData, callback)
   }
   return (
     <ChatRoomSetupModal
       {...props}
-      submitButtonMessage={'Create'}
+      modalHeaderMessage={'Update Room'}
+      submitButtonMessage={'Update'}
       requestSendFunction={requestSendFunction}
     ></ChatRoomSetupModal>
   )

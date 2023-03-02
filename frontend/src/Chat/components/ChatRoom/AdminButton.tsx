@@ -1,5 +1,7 @@
+import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { ChatRoomContext } from '../utils/context'
 import { isOwner, isTargetAdmin } from '../utils/userStatusUtils'
 
 const AdminMemberButton = (props: {
@@ -44,16 +46,17 @@ const AdminOFFMemberButton = (props: {
 
 export const AdminButton = (props: {
   user: User
-  room: ChatRoom
   member: User
   currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
+  const room = useContext(ChatRoomContext)
+
   // 管理者権限の変更はオーナーしかできない
-  if (!isOwner(props.user, props.room)) return <></>
+  if (!isOwner(props.user, room)) return <></>
 
   // オーナーは管理者権限を変更できない
-  if (isOwner(props.member, props.room)) return <></>
+  if (isOwner(props.member, room)) return <></>
 
   const isAdmin: boolean = isTargetAdmin(props.currentChatRoomMember)
   return isAdmin ? (

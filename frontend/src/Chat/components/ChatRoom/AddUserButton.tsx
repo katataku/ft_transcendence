@@ -6,7 +6,6 @@ import { AddUserModal } from './AddUserModal'
 // ボタンを押すと、モーダルを表示する。
 // モーダルを管理するためのstateを持つ。
 export const AddUserButton = (props: {
-  room: ChatRoom
   chatRoomMemberList: ChatRoomMember[]
   updateMemberList: () => void
 }): ReactElement => {

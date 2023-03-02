@@ -1,5 +1,7 @@
+import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { ChatRoomContext } from '../utils/context'
 import { isOwner, isTargetBanned } from '../utils/userStatusUtils'
 
 const BanMemberButton = (props: {
@@ -45,12 +47,12 @@ const BanOFFMemberButton = (props: {
 }
 
 export const BanButton = (props: {
-  room: ChatRoom
   member: User
   currentChatRoomMember: ChatRoomMember
   updateMemberList: () => void
 }): JSX.Element => {
-  if (isOwner(props.member, props.room)) return <></>
+  const room = useContext(ChatRoomContext)
+  if (isOwner(props.member, room)) return <></>
 
   // 10秒
   const banSec = 10
