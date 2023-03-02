@@ -17,7 +17,7 @@ import {
 } from './types/game.model';
 
 const gameWinWid = 1000;
-const gameWinHght = 500;
+const gameWinHght = 600;
 const ballPx = 20;
 const winningScore = 3;
 

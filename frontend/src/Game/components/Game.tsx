@@ -24,7 +24,7 @@ const socket = io(ServerURL + '/game')
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
-const gameWinHght: number = 500
+const gameWinHght: number = 600
 const ballPx: number = 20
 const paddleSpeed: number = 10
 let keydown = ''
@@ -170,18 +170,16 @@ function SpeedPU(props: { leftID: string; status: EStatus }): ReactElement {
   }, [title])
 
   return (
-    <div id="buttonPos">
-      <DropdownButton
-        id="dropdown-basic-button"
-        variant="info"
-        title={title}
-        onSelect={modifySpeed}
-      >
-        <Dropdown.Item eventKey="easy">Easy</Dropdown.Item>
-        <Dropdown.Item eventKey="medium">Medium</Dropdown.Item>
-        <Dropdown.Item eventKey="hard">Hard</Dropdown.Item>
-      </DropdownButton>
-    </div>
+    <DropdownButton
+      id="dropdown-basic-button"
+      variant="info"
+      title={title}
+      onSelect={modifySpeed}
+    >
+      <Dropdown.Item eventKey="easy">Easy</Dropdown.Item>
+      <Dropdown.Item eventKey="medium">Medium</Dropdown.Item>
+      <Dropdown.Item eventKey="hard">Hard</Dropdown.Item>
+    </DropdownButton>
   )
 }
 
@@ -270,6 +268,7 @@ function Ready(props: { player: IPlayer }): ReactElement {
       button === grayButton &&
       selfName === matchState.userName
     ) {
+      setButton(greenButton)
       socket.emit('updatePlayerReady', props.player.socketID)
     }
   }
@@ -277,7 +276,7 @@ function Ready(props: { player: IPlayer }): ReactElement {
   if (button === grayButton && props.player.ready) setButton(greenButton)
 
   return (
-    <button type="button" className={button} onClick={setReady}>
+    <button type="button" id="buttonPos" className={button} onClick={setReady}>
       Ready
     </button>
   )
@@ -286,17 +285,15 @@ function Ready(props: { player: IPlayer }): ReactElement {
 function Player(props: { player: IPlayer }): ReactElement {
   return (
     <Col>
-      <div className="display-4">
-        {props.player.name.slice(0, 7)}&emsp;
-        <Ready player={props.player} />
-      </div>
+      <div className="display-1">{props.player.name.slice(0, 7)}</div>
       <div className="border">
-        <h4>Match History</h4>
-        <h6>
+        <h3>Match History</h3>
+        <h5>
           wins:<span className="text-success">{props.player.wins} </span>
           losses:<span className="text-danger">{props.player.losses}</span>
-        </h6>
+        </h5>
       </div>
+      <Ready player={props.player} />
     </Col>
   )
 }
