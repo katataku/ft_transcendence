@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FriendRequestDto,
@@ -7,7 +7,12 @@ import {
   UserUpdateReqDto,
   UserGetDto,
 } from 'src/common/dto/users.dto';
-import { Friendship, PendingFriendship, User } from '../entities/users.entity';
+import {
+  Friendship,
+  PendingFriendship,
+  User,
+  UserAvatars,
+} from '../entities/users.entity';
 import { Repository } from 'typeorm';
 import { SHA256 } from 'crypto-js';
 
@@ -20,6 +25,8 @@ export class UsersService {
     private friendshipRepository: Repository<Friendship>,
     @InjectRepository(PendingFriendship)
     private pendingRepository: Repository<PendingFriendship>,
+    @InjectRepository(UserAvatars)
+    private userAvatarsRepository: Repository<UserAvatars>,
   ) {}
 
   async create(data: UserCreateReqDto): Promise<UserCreateResDto> {
@@ -29,9 +36,10 @@ export class UsersService {
       password: SHA256(data.password).toString(),
       createdAt: new Date(),
     };
-    const saved = await this.usersRepository.save(obj);
+    const user = await this.usersRepository.save(obj);
+    await this.saveAvatar(user.id, data.avatar);
     const res: UserCreateResDto = {
-      id: saved.id,
+      id: user.id,
     };
     return res;
   }
@@ -110,7 +118,6 @@ export class UsersService {
     for (let i = 0; i < pendings.length; ++i) {
       res.push(await this.getUserById(pendings[i].from));
     }
-    Logger.log(res);
     return res;
   }
 
@@ -126,5 +133,20 @@ export class UsersService {
       }
     }
     return res;
+  }
+
+  async saveAvatar(userId: number, data: string): Promise<number> {
+    const obj: UserAvatars = {
+      id: null,
+      userId: userId,
+      data: data,
+    };
+    return (await this.userAvatarsRepository.save(obj)).id;
+  }
+
+  async getAvatarById(userId: number): Promise<string> {
+    return (
+      await this.userAvatarsRepository.findOne({ where: { userId: userId } })
+    ).data;
   }
 }
