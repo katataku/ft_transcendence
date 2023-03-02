@@ -14,4 +14,9 @@ interface ChatRoomReqDto {
   password?: string
 }
 
+interface ChatRoomAuthReqDto {
+  id: number
+  password: string
+}
+
 type publicIdType = 'public' | 'private' | 'protected' | 'DM'

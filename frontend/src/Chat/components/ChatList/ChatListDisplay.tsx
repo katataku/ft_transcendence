@@ -1,47 +1,18 @@
 import { useNavigate } from 'react-router-dom'
 import { useEffect, useState, type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
-import { OwnerIcon } from '../utils/OwnerIcon'
-import { BannedIcon } from '../utils/BannedIcon'
-import { AdminIcon } from '../utils/AdminIcon'
+import { OwnerIcon } from '../utils/Icon/OwnerIcon'
+import { BannedIcon } from '../utils/Icon/BannedIcon'
+import { AdminIcon } from '../utils/Icon/AdminIcon'
 import { isAdmin, isBanned, isOwner } from '../utils/userStatusUtils'
-import { DeleteMemberButton } from '../utils/DeleteMemberButton'
-import { PrivateIcon } from '../utils/privateIcon'
+import { DeleteMemberButton } from '../utils/Button/DeleteMemberButton'
+import { PrivateIcon } from '../utils/Icon/privateIcon'
 import {
   getChatRoomMembersRequest,
   updateChatRoomMembersRequest
-} from '../utils/requestUtils'
-
-// チャットルームに入室するためのボタンを表示する。
-// roomMemberである場合、参加ボタンを表示する。
-const EnterButton = (props: {
-  user: User
-  room: ChatRoom
-  isRoomMember: boolean
-  isBanned: boolean
-}): JSX.Element => {
-  const navigate = useNavigate()
-  const room = props.room
-  const user = props.user
-
-  // roomMemberでない場合、参加ボタンを表示しない。
-  if (!props.isRoomMember) return <></>
-
-  // Banされている場合、参加ボタンを表示しない。
-  if (props.isBanned) return <></>
-
-  return (
-    <Button
-      onClick={() => {
-        navigate('/chat', {
-          state: { room: room.name, user }
-        })
-      }}
-    >
-      Enter
-    </Button>
-  )
-}
+} from '../../../utils/chatRoomMemberAxios'
+import { ProtectedIcon } from '../utils/Icon/protectedIcon'
+import { EnterButton } from './EnterButton'
 
 // チャットルームに参加するためのボタンを表示する。
 const JoinButton = (props: {
@@ -146,6 +117,9 @@ export const ChatListDisplay = (props: {
           <li key={index}>
             {room.name}
             <PrivateIcon isPrivate={room.public_id === 'private'}></PrivateIcon>
+            <ProtectedIcon
+              isProtected={room.public_id === 'protected'}
+            ></ProtectedIcon>
             <OwnerIcon isOwner={isOwnerBool}></OwnerIcon>
             <AdminIcon isAdmin={isAdminBool}></AdminIcon>
             <BannedIcon isBanned={isBannedBool}></BannedIcon>

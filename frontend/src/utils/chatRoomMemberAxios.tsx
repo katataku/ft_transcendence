@@ -28,43 +28,6 @@ export function getChatRoomMembersRequest(
     })
 }
 
-export function getAllUsersRequest(callback: (users: User[]) => void): void {
-  axios
-    .get<User[]>('/user/users')
-    .then((response) => {
-      callback(response.data)
-    })
-    .catch((reason) => {
-      alert('エラーです！')
-      console.log(reason)
-    })
-}
-
-export function getUserRequest(
-  userId: number,
-  callback: (user: User) => void
-): void {
-  axios
-    .get<User>('/user/' + String(userId))
-    .then((response) => {
-      callback(response.data)
-    })
-    .catch((reason) => {
-      alert('エラーです！')
-      console.log(reason)
-    })
-}
-
-export function deleteChatRoomRequest(room: ChatRoom): void {
-  axios
-    .delete('/chatRoom/' + String(room.id))
-    .then((_response) => {})
-    .catch((reason) => {
-      alert('エラーです！')
-      console.log(reason)
-    })
-}
-
 export function updateChatRoomMembersRequest(
   requestData: ChatRoomMember,
   callback: () => void

@@ -1,5 +1,5 @@
 import { Button } from 'react-bootstrap'
-import { updateChatRoomMembersRequest } from '../utils/requestUtils'
+import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { isOwner, isTargetMuted } from '../utils/userStatusUtils'
 
 const MuteMemberButton = (props: {
@@ -55,7 +55,8 @@ export const MuteButton = (props: {
   // 10秒
   const muteSec = 10
 
-  return isTargetMuted(props.currentChatRoomMember) ? (
+  const isMuted: boolean = isTargetMuted(props.currentChatRoomMember)
+  return isMuted ? (
     <>
       <MuteOFFMemberButton {...props} />
     </>

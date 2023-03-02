@@ -1,6 +1,5 @@
-import axios from 'axios'
-import { useState, type ReactElement } from 'react'
-import { Button, Dropdown, DropdownButton, Modal } from 'react-bootstrap'
+import { type ReactElement, useState } from 'react'
+import { Button, Dropdown, DropdownButton, Form, Modal } from 'react-bootstrap'
 
 const PublicSelectDropdownButton = (props: {
   setPublicId: React.Dispatch<React.SetStateAction<publicIdType>>
@@ -24,61 +23,71 @@ const PublicSelectDropdownButton = (props: {
           case 'private':
             props.setPublicId('private')
             break
+          case 'protected':
+            props.setPublicId('protected')
+            break
         }
       }}
     >
       <Dropdown.Item eventKey="public">public</Dropdown.Item>
       <Dropdown.Item eventKey="private">private</Dropdown.Item>
+      <Dropdown.Item eventKey="protected">protected</Dropdown.Item>
     </DropdownButton>
   )
 }
 
-export const ChatListModal = (props: {
+export const ChatRoomSetupModal = (props: {
   user: User
-  showCreateRoomModal: boolean
+  showModal: boolean
   handleModalClose: () => void
+  submitButtonMessage: string
+  requestSendFunction: (
+    requestData: ChatRoomReqDto,
+    callback: () => void
+  ) => void
 }): ReactElement => {
   const [newRoomName, setNewRoomName] = useState<string>('')
   const [publicId, setPublicId] = useState<publicIdType>('public')
+  const [password, setPassword] = useState<string>('')
 
-  const handleCreateRoom = (): void => {
+  const handleSubmitOnClick = (): void => {
     const requestData: ChatRoomReqDto = {
       name: newRoomName,
       created_by: props.user.id,
       created_by_user_id: props.user.id,
-      public_id: publicId
+      public_id: publicId,
+      password: publicId === 'protected' ? password : undefined
     }
-    axios
-      .post<ChatRoom>('/chatRoom', requestData)
-      .then((_response) => {
-        props.handleModalClose()
-      })
-      .catch((reason) => {
-        alert('エラーです！')
-        console.log(reason)
-      })
+    props.requestSendFunction(requestData, props.handleModalClose)
   }
 
   return (
     <>
-      <Modal show={props.showCreateRoomModal} onHide={props.handleModalClose}>
+      <Modal show={props.showModal} onHide={props.handleModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>create new Room</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <>
-            new room:
-            <input
-              type="text"
-              value={newRoomName}
+            <Form.Control
+              placeholder="New Room Name"
               onChange={(e) => {
                 setNewRoomName(e.target.value)
               }}
+              isInvalid={newRoomName === ''}
             />
             <PublicSelectDropdownButton
               setPublicId={setPublicId}
             ></PublicSelectDropdownButton>
+            <Form.Control
+              placeholder="Password"
+              onChange={(e) => {
+                setPassword(e.target.value)
+              }}
+              disabled={publicId !== 'protected'}
+              isInvalid={publicId === 'protected' && password === ''}
+            />
           </>
         </Modal.Body>
         <Modal.Footer>
@@ -87,11 +96,10 @@ export const ChatListModal = (props: {
           </Button>
           <Button
             variant="primary"
-            onClick={() => {
-              handleCreateRoom()
-            }}
+            onClick={handleSubmitOnClick}
+            disabled={publicId === 'protected' && password === ''}
           >
-            Create
+            {props.submitButtonMessage}
           </Button>
         </Modal.Footer>
       </Modal>
