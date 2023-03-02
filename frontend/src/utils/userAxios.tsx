@@ -28,3 +28,8 @@ export function getUserRequest(
       console.log(reason)
     })
 }
+
+export async function getAvatar(userId: number): Promise<string> {
+  const res = await axios.get<string>(`/user/user_avatar/${userId}`)
+  return res.data
+}
