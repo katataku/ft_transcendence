@@ -14,14 +14,14 @@ import { BannedIcon } from '../utils/Icon/BannedIcon'
 import { MuteButton } from './MuteButton'
 import { MutedIcon } from '../utils/Icon/MutedIcon'
 import { getAllUsersRequest } from '../../../utils/userAxios'
-import { ChatRoomContext } from '../utils/context'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
 export const UserListDisplay = (props: {
   user: User
   chatRoomMemberList: ChatRoomMember[]
-  updateMemberList: () => void
 }): ReactElement => {
   const room = useContext(ChatRoomContext)
+  const updateMemberList = useContext(ChatRoomRefreshContext)
 
   // ユーザーの一覧を取得し、ユーザーIDをキーにした辞書を作成する
   const [allUserDict, setAllUserDict] = useState<Map<number, User>>(new Map())
@@ -49,13 +49,8 @@ export const UserListDisplay = (props: {
             <AdminIcon isAdmin={isTargetAdmin(chatRoomMember)} />
             <BannedIcon isBanned={isTargetBanned(chatRoomMember)} />
             <MutedIcon isMuted={isTargetMuted(chatRoomMember)} />
-            <BanButton
-              {...props}
-              member={member}
-              currentChatRoomMember={chatRoomMember}
-            />
+            <BanButton member={member} currentChatRoomMember={chatRoomMember} />
             <MuteButton
-              {...props}
               member={member}
               currentChatRoomMember={chatRoomMember}
             />
@@ -67,7 +62,7 @@ export const UserListDisplay = (props: {
             <DeleteMemberButton
               room={room}
               member={member}
-              onClickCallback={props.updateMemberList}
+              onClickCallback={updateMemberList}
               msg={'Delete User from Room'}
             />
           </li>

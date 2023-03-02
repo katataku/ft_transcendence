@@ -7,7 +7,7 @@ import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { UserListDisplay } from './UserListDisplay'
 import { isOwner } from '../utils/userStatusUtils'
 import { UpdateRoomButton } from './UpdateRoomButton'
-import { ChatRoomContext } from '../utils/context'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
 const DeleteRoomButton = (props: { user: User }): JSX.Element => {
   const navigate = useNavigate()
@@ -59,21 +59,16 @@ export function ChatRoom(): ReactElement {
 
   return (
     <ChatRoomContext.Provider value={room}>
-      ChatRoom: {room.name}
-      <UserListDisplay
-        user={user}
-        chatRoomMemberList={chatRoomMembersList}
-        updateMemberList={updateChatRoomMembersList}
-      ></UserListDisplay>
-      <AddUserButton
-        chatRoomMemberList={chatRoomMembersList}
-        updateMemberList={updateChatRoomMembersList}
-      ></AddUserButton>
-      <UpdateRoomButton
-        user={user}
-        updateMemberList={updateChatRoomMembersList}
-      ></UpdateRoomButton>
-      <DeleteRoomButton user={user}></DeleteRoomButton>
+      <ChatRoomRefreshContext.Provider value={updateChatRoomMembersList}>
+        ChatRoom: {room.name}
+        <UserListDisplay
+          user={user}
+          chatRoomMemberList={chatRoomMembersList}
+        ></UserListDisplay>
+        <AddUserButton chatRoomMemberList={chatRoomMembersList}></AddUserButton>
+        <UpdateRoomButton user={user}></UpdateRoomButton>
+        <DeleteRoomButton user={user}></DeleteRoomButton>
+      </ChatRoomRefreshContext.Provider>
     </ChatRoomContext.Provider>
   )
 }

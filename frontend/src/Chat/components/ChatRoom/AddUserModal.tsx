@@ -2,13 +2,11 @@ import { useContext, useEffect, useState, type ReactElement } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { getAllUsersRequest, getUserRequest } from '../../../utils/userAxios'
-import { ChatRoomContext } from '../utils/context'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
-const AddButton = (props: {
-  member: User
-  updateMemberList: () => void
-}): JSX.Element => {
+const AddButton = (props: { member: User }): JSX.Element => {
   const room = useContext(ChatRoomContext)
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   const handleUpdateChatRoomMembers = (): void => {
     const requestData: ChatRoomMember = {
       chatRoomId: room.id,
@@ -16,7 +14,7 @@ const AddButton = (props: {
       ban_until: undefined,
       isAdministrator: false
     }
-    updateChatRoomMembersRequest(requestData, props.updateMemberList)
+    updateChatRoomMembersRequest(requestData, updateMemberList)
   }
 
   return (
@@ -33,7 +31,6 @@ const AddButton = (props: {
 
 const ALLUserDisplay = (props: {
   chatRoomMemberList: ChatRoomMember[]
-  updateMemberList: () => void
 }): ReactElement => {
   const [allUserList, setALLUserList] = useState<User[]>([])
   const [userList, setUserList] = useState<User[]>([])
@@ -93,7 +90,6 @@ export const AddUserModal = (props: {
   showAddUserModal: boolean
   chatRoomMemberList: ChatRoomMember[]
   handleModalClose: () => void
-  updateMemberList: () => void
 }): ReactElement => {
   return (
     <>

@@ -1,5 +1,6 @@
-import { type ReactElement, useState } from 'react'
+import { type ReactElement, useState, useContext } from 'react'
 import { Button } from 'react-bootstrap'
+import { ChatRoomRefreshContext } from '../utils/context'
 import { AddUserModal } from './AddUserModal'
 
 // チャットルームにユーザを追加するボタンを表示する。
@@ -7,13 +8,13 @@ import { AddUserModal } from './AddUserModal'
 // モーダルを管理するためのstateを持つ。
 export const AddUserButton = (props: {
   chatRoomMemberList: ChatRoomMember[]
-  updateMemberList: () => void
 }): ReactElement => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   const [showAddUserModal, setShowAddUserModal] = useState(false)
 
   const handleModalClose = (): void => {
     setShowAddUserModal(false)
-    props.updateMemberList()
+    updateMemberList()
   }
 
   return (

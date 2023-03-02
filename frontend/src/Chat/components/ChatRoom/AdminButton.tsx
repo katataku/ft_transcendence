@@ -1,13 +1,13 @@
 import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
-import { ChatRoomContext } from '../utils/context'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 import { isOwner, isTargetAdmin } from '../utils/userStatusUtils'
 
 const AdminMemberButton = (props: {
   currentChatRoomMember: ChatRoomMember
-  updateMemberList: () => void
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-info"
@@ -16,7 +16,7 @@ const AdminMemberButton = (props: {
           ...props.currentChatRoomMember,
           isAdministrator: true
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       Admin
@@ -26,8 +26,8 @@ const AdminMemberButton = (props: {
 
 const AdminOFFMemberButton = (props: {
   currentChatRoomMember: ChatRoomMember
-  updateMemberList: () => void
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-danger"
@@ -36,7 +36,7 @@ const AdminOFFMemberButton = (props: {
           ...props.currentChatRoomMember,
           isAdministrator: false
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       Admin 解除
@@ -48,7 +48,6 @@ export const AdminButton = (props: {
   user: User
   member: User
   currentChatRoomMember: ChatRoomMember
-  updateMemberList: () => void
 }): JSX.Element => {
   const room = useContext(ChatRoomContext)
 

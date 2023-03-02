@@ -8,3 +8,5 @@ const defaultChatRoom: ChatRoom = {
 }
 
 export const ChatRoomContext = createContext<ChatRoom>(defaultChatRoom)
+
+export const ChatRoomRefreshContext = createContext<() => void>(() => {})

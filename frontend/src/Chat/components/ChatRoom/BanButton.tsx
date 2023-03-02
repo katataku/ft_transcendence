@@ -1,15 +1,15 @@
 import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
-import { ChatRoomContext } from '../utils/context'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 import { isOwner, isTargetBanned } from '../utils/userStatusUtils'
 
 const BanMemberButton = (props: {
-  updateMemberList: () => void
   currentChatRoomMember: ChatRoomMember
   ban_until: Date
   msg: string
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-danger"
@@ -18,7 +18,7 @@ const BanMemberButton = (props: {
           ...props.currentChatRoomMember,
           ban_until: props.ban_until
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       {props.msg}
@@ -28,8 +28,8 @@ const BanMemberButton = (props: {
 
 const BanOFFMemberButton = (props: {
   currentChatRoomMember: ChatRoomMember
-  updateMemberList: () => void
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-info"
@@ -38,7 +38,7 @@ const BanOFFMemberButton = (props: {
           ...props.currentChatRoomMember,
           ban_until: undefined
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       Ban 解除
@@ -49,7 +49,6 @@ const BanOFFMemberButton = (props: {
 export const BanButton = (props: {
   member: User
   currentChatRoomMember: ChatRoomMember
-  updateMemberList: () => void
 }): JSX.Element => {
   const room = useContext(ChatRoomContext)
   if (isOwner(props.member, room)) return <></>
