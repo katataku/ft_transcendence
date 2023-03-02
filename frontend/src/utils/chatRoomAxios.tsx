@@ -44,11 +44,12 @@ export function updateChatRoomRequest(
 }
 
 export function chatRoomAuthRequest(
+  room: ChatRoom,
   requestData: ChatRoomAuthReqDto,
   callback: () => void
 ): void {
   axios
-    .post('/chatRoom/auth', requestData)
+    .post('/chatRoom/' + String(room.id) + '/auth', requestData)
     .then(() => {
       callback()
     })

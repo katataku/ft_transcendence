@@ -13,10 +13,9 @@ export const PasswordPromptModal = (props: {
 
   const handleCheckPassword = (): void => {
     const requestData: ChatRoomAuthReqDto = {
-      id: props.room.id,
       password
     }
-    chatRoomAuthRequest(requestData, props.passwordAuthSuccess)
+    chatRoomAuthRequest(props.room, requestData, props.passwordAuthSuccess)
   }
 
   return (
