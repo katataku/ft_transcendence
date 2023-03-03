@@ -2,11 +2,11 @@ import { type ReactElement, useState, useEffect } from 'react'
 // import axios from 'axios'
 import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
-import { Resistration } from './User/Resistration'
+import { SignIn } from './User/components/SignIn'
 
 export function App(): ReactElement {
   const ChatListState: ChatListState = { kicked: false }
-  const [loggedIn, setLoggedIn] = useState<boolean>(false)
+  const [SignedIn, setSignedIn] = useState<boolean>(false)
   const [user, setUser] = useState<User>({
     id: 0,
     name: 'hoge'
@@ -14,11 +14,11 @@ export function App(): ReactElement {
 
   useEffect(() => {
     console.log(user)
-  }, [loggedIn])
+  }, [SignedIn])
 
   // プロフィル/チャット->ゲーム をナビゲートされる人のユーザー情報は必要があります
   // 下の<Link to="Game" state={user}>のようでできます
-  if (loggedIn) {
+  if (SignedIn) {
     return (
       <div className="App">
         <p>ID : {user.id}</p>
@@ -42,7 +42,7 @@ export function App(): ReactElement {
         <p>
           <Button
             onClick={() => {
-              setLoggedIn(false)
+              setSignedIn(false)
             }}
           >
             Log out
@@ -52,7 +52,7 @@ export function App(): ReactElement {
     )
   } else {
     return (
-      <Resistration user={user} setUser={setUser} setLoggedIn={setLoggedIn} />
+      <SignIn user={user} setUser={setUser} setSignedIn={setSignedIn} />
     )
   }
 }
