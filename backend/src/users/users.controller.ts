@@ -2,10 +2,10 @@ import {
   Body,
   Controller,
   Get,
-  Logger,
   Param,
   Post,
   Delete,
+  Header,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -61,8 +61,14 @@ export class UsersController {
 
   @Get('friends/pending/:id')
   getPendingFriends(@Param() param: UserIdParam): Promise<UserGetDto[]> {
-    Logger.log(param);
     const list = this.service.getPendingFriends(param.id);
     return list;
+  }
+
+  @Get('user_avatar/:id')
+  @Header('content-type', 'text/plain')
+  async getAvatar(@Param() param: UserIdParam): Promise<string> {
+    const base64Data: string = await this.service.getAvatarById(param.id);
+    return base64Data;
   }
 }

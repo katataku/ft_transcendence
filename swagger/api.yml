@@ -181,6 +181,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/friends_get_res'
 
+  /user/user_avatar/{userID}:
+    get:
+      tags:
+        - user
+      summary: get user avatar
+      parameters:
+        - name: userID
+          required: true
+          in: path
+          schema:
+            type: integer
+      responses:
+        200:
+          description: 成功
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: hogehogebase64
+
   /chatroom:
     get:
       tags:
@@ -477,6 +497,9 @@ components:
         password:
           type: string
           example: password
+        avatar:
+          type: string
+          example: iVBORw0KGgBase64...
 
     user_create_res:
       type: object
@@ -509,7 +532,10 @@ components:
         name:
           type: string
           example: Tom Brady
-  
+        avatar_url:
+          type: string
+          example: 'http://example.com/user/user_avatar/1'
+
     friends_get_res:
       type: array
       items:

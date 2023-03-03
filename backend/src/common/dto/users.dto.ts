@@ -5,6 +5,8 @@ export class UserCreateReqDto {
   name: string;
   @IsString()
   password: string;
+  @IsString()
+  avatar: string;
 }
 
 export class UserCreateResDto {

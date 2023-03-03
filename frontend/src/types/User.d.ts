@@ -6,4 +6,5 @@ interface User {
 interface createUser {
   name: string
   password: string
+  avatar: string
 }

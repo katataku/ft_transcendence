@@ -58,7 +58,7 @@ async function resizeAndEncode(file: File): Promise<string> {
         canvasHeight
       )
 
-      const resizedImageData = canvas.toDataURL('image/jpeg')
+      const resizedImageData = canvas.toDataURL('image/png')
       resolve(resizedImageData)
     }
 
@@ -73,26 +73,27 @@ export function Resistration(props: {
   setUser: Setter<User>
   setLoggedIn: Setter<boolean>
 }): ReactElement {
-  let userName = ''
-  let password = ''
+  const [userName, setUserName] = useState('')
+  const [password, setPassword] = useState('')
   const [image, setImage] = useState<string>('')
   return (
     <div>
       <Form.Control
         placeholder="UserName"
         onChange={(e) => {
-          userName = e.target.value
+          setUserName(e.target.value)
         }}
       />
       <Form.Control
         placeholder="Password"
         type="password"
         onChange={(e) => {
-          password = e.target.value
+          setPassword(e.target.value)
         }}
       />
       <Form.Control
         type="file"
+        accept="imgage/png"
         onChange={(e) => {
           const file = (e.target as HTMLInputElement).files?.[0] as File
           resizeAndEncode(file)
@@ -101,6 +102,8 @@ export function Resistration(props: {
             })
             .catch((err) => {
               console.error(err)
+              alert('Onl .png is accepted.')
+              setImage('')
             })
         }}
       />
@@ -108,7 +111,8 @@ export function Resistration(props: {
       <br />
       <Button
         onClick={() => {
-          createUser({ name: userName, password })
+          console.log(image)
+          createUser({ name: userName, password, avatar: image })
             .then((res) => {
               props.setUser({ id: Number(res.data.id), name: userName })
             })
