@@ -100,14 +100,14 @@ export class ChatRoomService {
     this.chatRoomRepository.remove(targetRoom);
   }
 
-  async authChatRoom(data: ChatRoomAuthReqDto): Promise<boolean> {
+  async authChatRoom(id: number, data: ChatRoomAuthReqDto): Promise<boolean> {
     const row: ChatRoom = await this.chatRoomRepository.findOne({
       select: {
         id: true,
         password: true,
       },
       where: {
-        id: data.id,
+        id: id,
       },
       order: {
         id: 'ASC',

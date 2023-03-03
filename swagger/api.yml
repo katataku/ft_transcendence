@@ -259,12 +259,18 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/chat_room_res'
-  /chatroom/auth:
+  /chatroom/{roomId}/auth:
     post:
       tags:
         - chatRoom
       summary: auth protected chatRoom
       description: chatRoomへのパスワード認証
+      parameters:
+        - in: path
+          name: roomId
+          required: true
+          schema:
+            type: integer
       requestBody:
         content:
           application/json:
@@ -556,9 +562,6 @@ components:
     chat_room_auth_req:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
         password:
           type: string
           example: "password"

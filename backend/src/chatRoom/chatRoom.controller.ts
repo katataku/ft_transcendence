@@ -68,9 +68,14 @@ export class ChatRoomController {
     return this.service.deleteRoom(id);
   }
 
-  @Post('auth')
-  async authChatRoom(@Body() data: ChatRoomAuthReqDto): Promise<void> {
-    const result = await this.service.authChatRoom(data);
+  @Post(':id/auth')
+  async authChatRoom(
+    @Param('id') id: number,
+    @Body() data: ChatRoomAuthReqDto,
+  ): Promise<void> {
+    console.log('authChatRoom');
+    console.table(data);
+    const result = await this.service.authChatRoom(id, data);
     if (!result)
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     return;
