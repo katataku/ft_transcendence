@@ -1,21 +1,20 @@
-import { useEffect, useState, type ReactElement } from 'react'
+import { useContext, useEffect, useState, type ReactElement } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { getAllUsersRequest, getUserRequest } from '../../../utils/userAxios'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
-const AddButton = (props: {
-  room: ChatRoom
-  member: User
-  updateMemberList: () => void
-}): JSX.Element => {
+const AddButton = (props: { member: User }): JSX.Element => {
+  const room = useContext(ChatRoomContext)
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   const handleUpdateChatRoomMembers = (): void => {
     const requestData: ChatRoomMember = {
-      chatRoomId: props.room.id,
+      chatRoomId: room.id,
       userId: props.member.id,
       ban_until: undefined,
       isAdministrator: false
     }
-    updateChatRoomMembersRequest(requestData, props.updateMemberList)
+    updateChatRoomMembersRequest(requestData, updateMemberList)
   }
 
   return (
@@ -31,9 +30,7 @@ const AddButton = (props: {
 }
 
 const ALLUserDisplay = (props: {
-  room: ChatRoom
   chatRoomMemberList: ChatRoomMember[]
-  updateMemberList: () => void
 }): ReactElement => {
   const [allUserList, setALLUserList] = useState<User[]>([])
   const [userList, setUserList] = useState<User[]>([])
@@ -90,11 +87,9 @@ const ALLUserDisplay = (props: {
 // ユーザを選択し、追加ボタンを押すと、チャットルームにユーザを追加する。
 // チャットルームに追加したユーザは、チャットルームのメンバーとなる。
 export const AddUserModal = (props: {
-  room: ChatRoom
   showAddUserModal: boolean
   chatRoomMemberList: ChatRoomMember[]
   handleModalClose: () => void
-  updateMemberList: () => void
 }): ReactElement => {
   return (
     <>

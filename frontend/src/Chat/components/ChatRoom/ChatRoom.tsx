@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactElement } from 'react'
+import { useContext, useEffect, useState, type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AddUserButton } from './AddUserButton'
@@ -7,20 +7,19 @@ import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { UserListDisplay } from './UserListDisplay'
 import { isOwner } from '../utils/userStatusUtils'
 import { UpdateRoomButton } from './UpdateRoomButton'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
-const DeleteRoomButton = (props: {
-  user: User
-  room: ChatRoom
-}): JSX.Element => {
+const DeleteRoomButton = (props: { user: User }): JSX.Element => {
   const navigate = useNavigate()
   const chatListState: ChatListState = { kicked: false }
-  if (!isOwner(props.user, props.room)) return <></>
+  const room = useContext(ChatRoomContext)
+  if (!isOwner(props.user, room)) return <></>
 
   return (
     <Button
       variant="outline-danger"
       onClick={() => {
-        deleteChatRoomRequest(props.room)
+        deleteChatRoomRequest(room)
         // 100ms後に更新する
         // 削除した直後に更新すると、削除したルームが表示されてしまうため。。。
         setTimeout(() => {
@@ -59,25 +58,17 @@ export function ChatRoom(): ReactElement {
   }, [])
 
   return (
-    <>
-      ChatRoom: {room.name}
-      <UserListDisplay
-        user={user}
-        room={room}
-        chatRoomMemberList={chatRoomMembersList}
-        updateMemberList={updateChatRoomMembersList}
-      ></UserListDisplay>
-      <AddUserButton
-        room={room}
-        chatRoomMemberList={chatRoomMembersList}
-        updateMemberList={updateChatRoomMembersList}
-      ></AddUserButton>
-      <UpdateRoomButton
-        user={user}
-        room={room}
-        updateMemberList={updateChatRoomMembersList}
-      ></UpdateRoomButton>
-      <DeleteRoomButton user={user} room={room}></DeleteRoomButton>
-    </>
+    <ChatRoomContext.Provider value={room}>
+      <ChatRoomRefreshContext.Provider value={updateChatRoomMembersList}>
+        ChatRoom: {room.name}
+        <UserListDisplay
+          user={user}
+          chatRoomMemberList={chatRoomMembersList}
+        ></UserListDisplay>
+        <AddUserButton chatRoomMemberList={chatRoomMembersList}></AddUserButton>
+        <UpdateRoomButton user={user}></UpdateRoomButton>
+        <DeleteRoomButton user={user}></DeleteRoomButton>
+      </ChatRoomRefreshContext.Provider>
+    </ChatRoomContext.Provider>
   )
 }

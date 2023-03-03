@@ -1,13 +1,15 @@
+import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 import { isOwner, isTargetMuted } from '../utils/userStatusUtils'
 
 const MuteMemberButton = (props: {
   currentChatRoomMember: ChatRoomMember
-  updateMemberList: () => void
   mute_until: Date
   msg: string
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-danger"
@@ -16,7 +18,7 @@ const MuteMemberButton = (props: {
           ...props.currentChatRoomMember,
           mute_until: props.mute_until
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       {props.msg}
@@ -26,8 +28,8 @@ const MuteMemberButton = (props: {
 
 const MuteOFFMemberButton = (props: {
   currentChatRoomMember: ChatRoomMember
-  updateMemberList: () => void
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-info"
@@ -36,7 +38,7 @@ const MuteOFFMemberButton = (props: {
           ...props.currentChatRoomMember,
           mute_until: undefined
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       Mute 解除
@@ -45,12 +47,11 @@ const MuteOFFMemberButton = (props: {
 }
 
 export const MuteButton = (props: {
-  room: ChatRoom
   member: User
   currentChatRoomMember: ChatRoomMember
-  updateMemberList: () => void
 }): JSX.Element => {
-  if (isOwner(props.member, props.room)) return <></>
+  const room = useContext(ChatRoomContext)
+  if (isOwner(props.member, room)) return <></>
 
   // 10秒
   const muteSec = 10
