@@ -8,12 +8,25 @@ export function SignIn(props: {
   setUser: Setter<User>
   setSignedIn: Setter<boolean>
 }): ReactElement {
-  const [SignUpMode, setSignUpMode] = useState<boolean>(false)
-  const [userName, setUserName] = useState('')
-  const [password, setPassword] = useState('')
+  const [signUpMode, setSignUpMode] = useState<boolean>(true)
+  const [userName, setUserName] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
   const [image, setImage] = useState<string>('')
+
+  function toggle(): void {
+    setSignUpMode(!signUpMode)
+  }
+
   return (
     <div>
+      <h2>{signUpMode ? 'Sign Up' : 'Sign In'}</h2>
+      <div>
+        {
+          signUpMode
+          ? <div>Already have an account?<Button variant='link' onClick={toggle}>Sign In</Button></div>
+          : <div>Don&apos;t have an account<Button variant='link' onClick={toggle}>Sign Up</Button></div>
+        }
+      </div>
       <Form.Control
         placeholder="UserName"
         onChange={(e) => {
