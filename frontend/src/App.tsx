@@ -51,8 +51,6 @@ export function App(): ReactElement {
       </div>
     )
   } else {
-    return (
-      <SignIn user={user} setUser={setUser} setSignedIn={setSignedIn} />
-    )
+    return <SignIn user={user} setUser={setUser} setSignedIn={setSignedIn} />
   }
 }
