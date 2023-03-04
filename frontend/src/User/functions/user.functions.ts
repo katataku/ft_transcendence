@@ -1,12 +1,3 @@
-import axios from 'axios'
-
-axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
-
-export async function createUser(data: createUser): Promise<any> {
-  const res = await axios.post('/user', data)
-  return res
-}
-
 export async function resizeAndEncode(file: File): Promise<string> {
   return await new Promise<string>((resolve, reject) => {
     const img: HTMLImageElement = new Image()

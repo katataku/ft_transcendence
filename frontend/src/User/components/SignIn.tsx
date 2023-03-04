@@ -1,8 +1,9 @@
 import { type ReactElement } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
-import { resizeAndEncode, createUser } from '../functions/user.functions'
+import { resizeAndEncode } from '../functions/user.functions'
 import { noImage64 } from '../constants'
+import { createUser } from '../../utils/userAxios'
 
 export function SignIn(props: {
   user: User
@@ -94,7 +95,6 @@ export function SignIn(props: {
         <br />
         <Button
           onClick={() => {
-            console.log(image)
             createUser({ name: userName, password, avatar: image })
               .then((res) => {
                 props.setUser({ id: Number(res.data.id), name: userName })

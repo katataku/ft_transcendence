@@ -29,6 +29,11 @@ export function getUserRequest(
     })
 }
 
+export async function createUser(data: createUser): Promise<any> {
+  const res = await axios.post('/user', data)
+  return res
+}
+
 export async function getAvatar(userId: number): Promise<string> {
   const res = await axios.get<string>(`/user/user_avatar/${userId}`)
   return res.data
