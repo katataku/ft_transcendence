@@ -23,7 +23,7 @@ function Ready(props: { player: IPlayer }): ReactElement {
   function setReady(): void {
     if (
       props.player.socketID === gameSocket.id &&
-      button === grayButton
+      button === grayButton &&
       selfName === matchState.userName
     ) {
       gameSocket.emit('updatePlayerReady', props.player.socketID)
