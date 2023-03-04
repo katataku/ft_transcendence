@@ -1,16 +1,14 @@
-import { type ReactElement } from 'react'
+import { type ReactElement, useContext } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { noImage64 } from '../constants'
 import { createUser } from '../../utils/userAxios'
+import { GlobalContext } from '../../App'
 
-export function SignIn(props: {
-  user: User
-  setUser: Setter<User>
-  setSignedIn: Setter<boolean>
-}): ReactElement {
-  const [signUpMode, setSignUpMode] = useState<boolean>(true)
+export function SignIn(): ReactElement {
+  const { user, setUser, signedIn, setSignedIn } = useContext(GlobalContext)
+  const [signUpMode, setSignUpMode] = useState<boolean>(false)
   const [userName, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [showPassword, setShowPassword] = useState<boolean>(false)
@@ -97,12 +95,12 @@ export function SignIn(props: {
           onClick={() => {
             createUser({ name: userName, password, avatar: image })
               .then((res) => {
-                props.setUser({ id: Number(res.data.id), name: userName })
+                setUser({ id: Number(res.data.id), name: userName })
               })
               .catch(() => {
                 /**/
               })
-            props.setSignedIn(true)
+            setSignedIn(true)
           }}
         >
           Submit

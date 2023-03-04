@@ -43,7 +43,7 @@ export function TopPage(): ReactElement {
           </p>
         </div>
       ) : (
-        <SignIn user={user} setUser={setUser} setSignedIn={setSignedIn} />
+        <SignIn />
       )}
     </div>
   )
