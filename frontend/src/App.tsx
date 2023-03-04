@@ -8,17 +8,17 @@ import { TopPage } from './TopPage'
 export const GlobalContext = createContext<GlobalContext>({} as GlobalContext) // eslint-disable-line
 
 export function App(): ReactElement {
-  const [user, setUser] = useState<User>({
+  const [loginUser, setLoginUser] = useState<User>({
     id: 0,
     name: ''
   })
-  const [signedIn, setSignedIn] = useState<boolean>(false)
+  const [isSignedIn, setIsSignedIn] = useState<boolean>(false)
 
   const context: GlobalContext = {
-    user,
-    setUser,
-    signedIn,
-    setSignedIn
+    loginUser,
+    setLoginUser,
+    isSignedIn,
+    setIsSignedIn
   }
 
   return (
