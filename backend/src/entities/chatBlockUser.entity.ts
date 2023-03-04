@@ -1,20 +1,20 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from 'typeorm';
 import { User } from './users.entity';
 
-@Entity({ name: 'chat_mute_user' })
-export class ChatMuteUser {
+@Entity({ name: 'chat_block_user' })
+export class ChatBlockUser {
   @PrimaryColumn()
-  muteUserId: number;
+  blockUserId: number;
 
   @PrimaryColumn()
-  mutedUserId: number;
+  blockedUserId: number;
 
   @Column()
-  mute_until: Date;
+  block_until: Date;
 
   @ManyToOne(() => User)
-  muteUser: User;
+  blockUser: User;
 
   @ManyToOne(() => User)
-  mutedUser: User;
+  blockedUser: User;
 }

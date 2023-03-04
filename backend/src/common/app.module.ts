@@ -4,9 +4,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { HealthCheck } from '../entities/healthCheck.entity';
 import { PostgresConnectionOptions } from 'typeorm/driver/postgres/PostgresConnectionOptions';
 import { ChatModule } from '../chat';
-import { ChatMuteUserModule } from '../chatMuteUser';
+import { ChatBlockUserModule } from '../chatBlockUser';
 import * as dotenv from 'dotenv';
-import { ChatMuteUser } from '../entities/chatMuteUser.entity';
+import { ChatBlockUser } from '../entities/chatBlockUser.entity';
 import { UsersModule } from 'src/users';
 import {
   Friendship,
@@ -33,7 +33,7 @@ const options: PostgresConnectionOptions = {
   database: process.env.POSTGRES_DB,
   entities: [
     HealthCheck,
-    ChatMuteUser,
+    ChatBlockUser,
     User,
     Friendship,
     PendingFriendship,
@@ -50,7 +50,7 @@ const options: PostgresConnectionOptions = {
   imports: [
     TypeOrmModule.forRoot(options),
     HealthCheckModule,
-    ChatMuteUserModule,
+    ChatBlockUserModule,
     ChatModule,
     UsersModule,
     ChatRoomModule,
