@@ -11,13 +11,13 @@ import {
 import { GameSocketContext } from './context'
 import { Match } from './Match'
 
-let selfName: string
+// let selfName: string
 
 function Ready(props: { player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
-  const matchState = useLocation().state
+  // const matchState = useLocation().state
   const gameSocket = useContext(GameSocketContext)
 
   function setReady(): void {
@@ -73,15 +73,15 @@ function Matching(): ReactElement {
 }
 
 export function Game(): ReactElement {
-  const matchState = useLocation().state
-  console.log(matchState)
+  // const matchState = useLocation().state
+  // console.log(matchState)
 
   const gameSocket = useContext(GameSocketContext)
 
   const [match, setMatch] = useState<IMatch | undefined>(undefined)
 
   useEffect(() => {
-    selfName = matchState.userName
+    // selfName = matchState.userName
     gameSocket.emit('updateConnections')
     gameSocket.on('updateConnections', (serverMatch: IMatch) => {
       setMatch(serverMatch)
