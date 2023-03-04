@@ -10,10 +10,10 @@ import {
 import { UsersService } from './users.service';
 import {
   FriendRequestDto,
-  UserCreateReqDto,
-  UserCreateResDto,
   UserUpdateReqDto,
   UserGetDto,
+  UserSignUpReqDto,
+  UserSignUpResDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 
@@ -22,8 +22,8 @@ export class UsersController {
   constructor(private service: UsersService) {}
 
   @Post()
-  createUser(@Body() body: UserCreateReqDto): Promise<UserCreateResDto> {
-    return this.service.create(body);
+  signUp(@Body() body: UserSignUpReqDto): Promise<UserSignUpResDto> {
+    return this.service.createUser(body);
   }
 
   @Get('users')

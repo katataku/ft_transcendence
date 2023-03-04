@@ -2,10 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FriendRequestDto,
-  UserCreateReqDto,
-  UserCreateResDto,
   UserUpdateReqDto,
   UserGetDto,
+  UserSignUpReqDto,
+  UserSignUpResDto,
 } from 'src/common/dto/users.dto';
 import {
   Friendship,
@@ -29,7 +29,7 @@ export class UsersService {
     private userAvatarsRepository: Repository<UserAvatars>,
   ) {}
 
-  async create(data: UserCreateReqDto): Promise<UserCreateResDto> {
+  async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
     const obj: User = {
       id: null,
       name: data.name,
@@ -38,7 +38,7 @@ export class UsersService {
     };
     const user = await this.usersRepository.save(obj);
     await this.saveAvatar(user.id, data.avatar);
-    const res: UserCreateResDto = {
+    const res: UserSignUpResDto = {
       id: user.id,
     };
     return res;
