@@ -34,7 +34,7 @@ function updatePaddle(paddle: IPaddle, keydown: Ref): IPaddle {
   return paddle
 }
 
-function DrawPaddle(props: {paddle: IPaddle}): ReactElement {
+function DrawPaddle(props: { paddle: IPaddle }): ReactElement {
   return (
     <div
       style={{
@@ -48,7 +48,6 @@ function DrawPaddle(props: {paddle: IPaddle}): ReactElement {
       id="paddle"
     />
   )
-
 }
 
 export function Paddles(props: {
