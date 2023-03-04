@@ -8,7 +8,6 @@ import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 // 非表示にするユーザの一覧を取得する。
 // 一覧は、非表示にするユーザのIDの配列である。
 // 非表示にするユーザはブロックされたユーザと、ミュートされたユーザの両方である。
-// TODO: ミュートされたユーザの一覧を取得する。
 const getHiddenUserList = (user: User, room: ChatRoom): number[] => {
   const [blockedUserList, setBlockedUserList] = useState<number[]>([])
   const [mutedUserList, setMuteUserList] = useState<number[]>([])
