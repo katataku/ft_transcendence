@@ -1,14 +1,25 @@
-import axios from "axios";
-import {EStatus, type IBall, type IMatch, type IPaddle, type IScore, type Vector2} from "../types/game.model";
-import React, { type ReactElement, useContext, useEffect, useState } from "react";
-import {useAnimationFrame} from "../../hooks/useAnimationFrame";
-import DropdownButton from "react-bootstrap/DropdownButton";
-import Dropdown from "react-bootstrap/Dropdown";
-import Col from "react-bootstrap/Col";
+import axios from 'axios'
+import {
+  EStatus,
+  type IBall,
+  type IMatch,
+  type IPaddle,
+  type IScore,
+  type Vector2
+} from '../types/game.model'
+import React, {
+  type ReactElement,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+import { useAnimationFrame } from '../../hooks/useAnimationFrame'
+import DropdownButton from 'react-bootstrap/DropdownButton'
+import Dropdown from 'react-bootstrap/Dropdown'
+import Col from 'react-bootstrap/Col'
 import { GameSocketContext } from './context'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
-
 
 const gameWinHght: number = 500
 const ballPx: number = 20
@@ -35,7 +46,8 @@ function Paddles(props: {
       'updatePaddle',
       (data: { leftPaddle: IPaddle; rightPaddle: IPaddle }) => {
         if (props.leftSocketID !== gameSocket.id) setLeftPaddle(data.leftPaddle)
-        if (props.rightSocketID !== gameSocket.id) setRightPaddle(data.rightPaddle)
+        if (props.rightSocketID !== gameSocket.id)
+          setRightPaddle(data.rightPaddle)
       }
     )
   }, [])

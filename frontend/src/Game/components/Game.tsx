@@ -1,13 +1,15 @@
-import React, { type ReactElement, useState, useEffect, useContext } from 'react'
+import React, {
+  type ReactElement,
+  useState,
+  useEffect,
+  useContext
+} from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import '../assets/styles.css'
 import { useLocation } from 'react-router-dom'
-import {
-  type IMatch,
-  type IPlayer,
-} from '../types/game.model'
+import { type IMatch, type IPlayer } from '../types/game.model'
 import { GameSocketContext } from './context'
 import { Match } from './Match'
 
