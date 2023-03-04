@@ -6,6 +6,7 @@ import {
   Post,
   Delete,
   Header,
+  Logger,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -14,6 +15,7 @@ import {
   UserGetDto,
   UserSignUpReqDto,
   UserSignUpResDto,
+  UserSignInDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 
@@ -26,11 +28,16 @@ export class UsersController {
     return this.service.createUser(body);
   }
 
+  @Post('sign_in')
+  signIn(@Body() body: UserSignInDto) {
+    return this.service.signInUser(body);
+  }
+
   @Get('users')
   getUsers(): Promise<UserGetDto[]> {
     return this.service.getUsers();
   }
-
+  
   @Get(':id')
   getUserById(@Param() param: UserIdParam): Promise<UserGetDto> {
     return this.service.getUserById(param.id);
@@ -48,10 +55,10 @@ export class UsersController {
   deleteUser(@Param() param: UserIdParam): Promise<string> {
     return this.service.deleteUser(param.id);
   }
-
+  
   @Post('friends')
   requestFriend(@Body() body: FriendRequestDto) {
-    this.service.requestFriendship(body);
+    return this.service.requestFriendship(body);
   }
 
   @Get('friends/:id')

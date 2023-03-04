@@ -1,4 +1,4 @@
-import { IsNumberString, IsString } from 'class-validator';
+import { IsInt, IsNumberString, IsString } from 'class-validator';
 
 export class UserSignUpReqDto {
   @IsString()
@@ -29,7 +29,7 @@ export class UserUpdateReqDto {
 }
 
 export class UserSignInDto {
-  @IsNumberString()
+  @IsInt()
   id: number;
   @IsString()
   password: string;
