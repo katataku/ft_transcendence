@@ -20,10 +20,7 @@ function Ready(props: { player: IPlayer }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
 
   function setReady(): void {
-    if (
-      props.player.socketID === gameSocket.id &&
-      button === grayButton
-    ) {
+    if (props.player.socketID === gameSocket.id && button === grayButton) {
       gameSocket.emit('updatePlayerReady', props.player.socketID)
     }
   }
@@ -82,7 +79,6 @@ function Playing(props: { match: IMatch }): ReactElement {
       </Row>
     </Container>
   )
-
 }
 
 export function Game(): ReactElement {
@@ -97,7 +93,7 @@ export function Game(): ReactElement {
     })
   }, [])
 
-  function matchPending (): boolean {
+  function matchPending(): boolean {
     return (
       match === undefined ||
       match.leftPlayer === undefined ||

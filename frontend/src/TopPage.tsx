@@ -26,10 +26,7 @@ export function TopPage(): ReactElement {
             <Link to="MatchList">Move to MatchList</Link>
           </p>
           <p>
-            <Link
-              to="Game"
-              state={0}
-            >
+            <Link to="Game" state={0}>
               Move to Game
             </Link>
           </p>
