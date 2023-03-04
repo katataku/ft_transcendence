@@ -7,7 +7,7 @@ import { createUser } from '../../utils/userAxios'
 import { GlobalContext } from '../../App'
 
 export function SignIn(): ReactElement {
-  const { user, setUser, signedIn, setSignedIn } = useContext(GlobalContext)
+  const { setUser, setSignedIn } = useContext(GlobalContext)
   const [signUpMode, setSignUpMode] = useState<boolean>(false)
   const [userName, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')

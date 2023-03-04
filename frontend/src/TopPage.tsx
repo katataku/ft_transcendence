@@ -6,7 +6,7 @@ import { GlobalContext } from './App'
 
 export function TopPage(): ReactElement {
   const ChatListState: ChatListState = { kicked: false }
-  const { user, setUser, signedIn, setSignedIn } = useContext(GlobalContext)
+  const { user, signedIn, setSignedIn } = useContext(GlobalContext)
 
   // プロフィル/チャット->ゲーム をナビゲートされる人のユーザー情報は必要があります
   // 下の<Link to="Game" state={user}>のようでできます
