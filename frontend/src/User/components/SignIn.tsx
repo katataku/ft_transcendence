@@ -105,6 +105,23 @@ export function SignIn(): ReactElement {
         >
           Submit
         </Button>
+
+        {
+          /* For Debug */
+          ['guest1', 'guest2', 'guest3', 'guest4'].map((name, index) => (
+            <p key={index}>
+              <Button
+                variant="warning"
+                onClick={() => {
+                  setLoginUser({ id: index + 1, name })
+                  setIsSignedIn(true)
+                }}
+              >
+                Login as {name}
+              </Button>
+            </p>
+          ))
+        }
       </div>
     </div>
   )

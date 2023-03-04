@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import '../../assets/styles.css'
 import io from 'socket.io-client'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { type ReactElement } from 'react'
 import { MessageDisplay } from './ChatMessageDisplay'
 import { MessageSend } from './ChatMessageSend'
+import { GlobalContext } from '../../../App'
 
 const ServerURL: string = process.env.REACT_APP_BACKEND_WEBSOCKET_BASE_URL ?? ''
 const socket = io(ServerURL)
@@ -15,7 +16,8 @@ export function Chat(): ReactElement {
   const [messageEventList, setMessageEventList] = useState<messageEventType[]>(
     []
   )
-  const { room, user }: ChatState = useLocation().state
+  const { loginUser } = useContext(GlobalContext)
+  const { room }: ChatState = useLocation().state
   const navigate = useNavigate()
 
   const handleConnectEvent = (): void => {
@@ -32,15 +34,15 @@ export function Chat(): ReactElement {
   const handleKickEvent = (item: kickEventType): void => {
     console.log('kick received:' + JSON.stringify(item))
     const ChatListState: ChatListState = { kicked: true }
-    if (item.room === room && item.userId === user.id) {
+    if (item.room === room && item.userId === loginUser.id) {
       navigate('/chatlist', { state: ChatListState })
     }
   }
 
   useEffect(() => {
     console.log('room : ' + room)
-    console.log('user id : ' + String(user.id))
-    console.log('user name :' + String(user.name))
+    console.log('user id : ' + String(loginUser.id))
+    console.log('user name :' + String(loginUser.name))
     socket.on('connect', handleConnectEvent)
     socket.on('message', handleMessageEvent)
     socket.on('kickNotification', handleKickEvent)
@@ -56,7 +58,7 @@ export function Chat(): ReactElement {
   const sendMessageEvent = (msg: string): void => {
     const obj: messageEventType = {
       key: Date.now(),
-      user,
+      user: loginUser,
       room,
       msg
     }
@@ -80,13 +82,11 @@ export function Chat(): ReactElement {
       <div className="Chat">
         <h1>Chat Page</h1>
         <MessageDisplay
-          user={user}
           room={room}
           messageEventList={messageEventList}
           SendKickEvent={sendKickEvent}
         ></MessageDisplay>
         <MessageSend
-          user={user}
           room={room}
           sendMessageEvent={sendMessageEvent}
         ></MessageSend>

@@ -1,5 +1,4 @@
 interface ChatState {
-  user: User
   room: string
 }
 

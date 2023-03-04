@@ -1,3 +1,6 @@
+import { useContext } from 'react'
+import { GlobalContext } from '../../../App'
+
 function getMember(
   user: User,
   room: ChatRoom,
@@ -56,4 +59,9 @@ export function isTargetMuted(
 
 export function isOwner(user: User, room: ChatRoom): boolean {
   return room.created_by_user_id === user.id
+}
+
+export function isLoginUserOwner(room: ChatRoom): boolean {
+  const { loginUser } = useContext(GlobalContext)
+  return isOwner(loginUser, room)
 }

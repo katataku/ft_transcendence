@@ -3,7 +3,6 @@ import { Button } from 'react-bootstrap'
 import { CreateChatRoomModal } from './CreateChatRoomModal'
 
 export const CreateRoomButton = (props: {
-  user: User
   updateChatRoomList: () => void
 }): ReactElement => {
   const [showCreateRoomModal, setShowCreateRoomModal] = useState(false)
@@ -16,7 +15,6 @@ export const CreateRoomButton = (props: {
   return (
     <p>
       <CreateChatRoomModal
-        user={props.user}
         showModal={showCreateRoomModal}
         handleModalClose={handleModalClose}
       ></CreateChatRoomModal>
