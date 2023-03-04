@@ -31,11 +31,11 @@ export function getUserRequest(
 
 export function signUp(obj: signUp, callback: (id: number) => void): void {
   axios
-    .post<{id: number}>('/user', obj)
-    .then(res => {
+    .post<{ id: number }>('/user', obj)
+    .then((res) => {
       callback(res.data.id)
     })
-    .catch(err => {
+    .catch((err) => {
       alert(err)
     })
 }
@@ -43,7 +43,7 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
 export function signIn(obj: signIn, callback: (user: User) => void): void {
   axios
     .post<User>('/user/sign_in', obj)
-    .then(res => {
+    .then((res) => {
       callback(res.data)
     })
     .catch((err: AxiosError) => {

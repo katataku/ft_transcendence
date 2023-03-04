@@ -94,12 +94,12 @@ export function SignIn(): ReactElement {
         <Button
           onClick={() => {
             if (signUpMode) {
-              signUp({ name: userName, password, avatar: image }, res => {
+              signUp({ name: userName, password, avatar: image }, (res) => {
                 setLoginUser({ id: res, name: userName })
               })
               setIsSignedIn(true)
             } else {
-              signIn({ id: Number(userName), password }, res => {
+              signIn({ id: Number(userName), password }, (res) => {
                 setLoginUser({ id: res.id, name: res.name })
                 setIsSignedIn(true)
               })
