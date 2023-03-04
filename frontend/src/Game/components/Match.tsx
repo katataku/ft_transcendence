@@ -1,23 +1,14 @@
 import axios from 'axios'
-import {
-  EStatus,
-  type IBall,
-  type IMatch,
-  type IPaddle,
-  type IScore,
-  type Vector2
-} from '../types/game.model'
 import React, {
   type ReactElement,
   useContext,
   useEffect,
   useState
 } from 'react'
+import { EStatus } from '../types/game.model'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
-import DropdownButton from 'react-bootstrap/DropdownButton'
-import Dropdown from 'react-bootstrap/Dropdown'
-import Col from 'react-bootstrap/Col'
-import { GameSocketContext } from './context'
+import { DropdownButton, Dropdown, Col } from 'react-bootstrap'
+import { GameSocketContext } from '../utils/gameSocketContext'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 

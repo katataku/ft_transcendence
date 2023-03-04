@@ -4,13 +4,10 @@ import React, {
   useEffect,
   useContext
 } from 'react'
-import Container from 'react-bootstrap/Container'
-import Row from 'react-bootstrap/Row'
-import Col from 'react-bootstrap/Col'
+import { Col, Row, Container } from 'react-bootstrap'
 import '../assets/styles.css'
 // import { useLocation } from 'react-router-dom'
-import { type IMatch, type IPlayer } from '../types/game.model'
-import { GameSocketContext } from './context'
+import { GameSocketContext } from '../utils/gameSocketContext'
 import { Match } from './Match'
 
 function Ready(props: { player: IPlayer }): ReactElement {
@@ -52,6 +49,20 @@ function Player(props: { player: IPlayer }): ReactElement {
   )
 }
 
+function Playing(props: { match: IMatch }): ReactElement {
+  return (
+    <Container>
+      <Row id="header">
+        <Player player={props.match.leftPlayer} />
+        <Player player={props.match.rightPlayer} />
+      </Row>
+      <Row>
+        <Match match={props.match} />
+      </Row>
+    </Container>
+  )
+}
+
 function Matching(): ReactElement {
   const gameSocket = useContext(GameSocketContext)
 
@@ -64,20 +75,6 @@ function Matching(): ReactElement {
       <h1>matching...</h1>
       <button onClick={findMatch}>updateMatch</button>
     </div>
-  )
-}
-
-function Playing(props: { match: IMatch }): ReactElement {
-  return (
-    <Container>
-      <Row id="header">
-        <Player player={props.match.leftPlayer} />
-        <Player player={props.match.rightPlayer} />
-      </Row>
-      <Row>
-        <Match match={props.match} />
-      </Row>
-    </Container>
   )
 }
 
