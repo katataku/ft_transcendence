@@ -5,10 +5,10 @@ import React, {
   useEffect,
   useState
 } from 'react'
-import { EStatus } from '../types/game.model'
-import { useAnimationFrame } from '../../hooks/useAnimationFrame'
+import { EStatus } from '../../types/game.model'
+import { useAnimationFrame } from '../../../hooks/useAnimationFrame'
 import { DropdownButton, Dropdown, Col } from 'react-bootstrap'
-import { GameSocketContext } from '../utils/gameSocketContext'
+import { GameSocketContext } from '../../utils/gameSocketContext'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
