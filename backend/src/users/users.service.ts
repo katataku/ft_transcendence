@@ -62,7 +62,7 @@ export class UsersService {
     } else {
       return {
         id: target.id,
-        name: target.name
+        name: target.name,
       };
     }
   }

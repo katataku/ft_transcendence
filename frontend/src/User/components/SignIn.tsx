@@ -44,7 +44,7 @@ export function SignIn(): ReactElement {
       </div>
       <div style={{ width: '500px', margin: 'auto' }}>
         <Form.Control
-          placeholder={signUpMode ? "UserName": "UserID"}
+          placeholder={signUpMode ? 'UserName' : 'UserID'}
           onChange={(e) => {
             setUserName(e.target.value)
           }}
@@ -103,18 +103,17 @@ export function SignIn(): ReactElement {
                 })
               setIsSignedIn(true)
             } else {
-              signIn({id: Number(userName), password: password})
+              signIn({ id: Number(userName), password })
                 .then((res) => {
                   console.log(res)
-                  setLoginUser({id: res.id, name: res.name})
+                  setLoginUser({ id: res.id, name: res.name })
                   setIsSignedIn(true)
                 })
-                .catch(err => {
+                .catch((err) => {
                   alert(err)
                 })
             }
-          }
-        }
+          }}
         >
           Submit
         </Button>

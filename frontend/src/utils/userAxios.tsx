@@ -29,19 +29,21 @@ export function getUserRequest(
     })
 }
 
-export async function signUp(obj: signUp): Promise<{id: number}> {
-  const res: {id: number} = (await axios.post('/user', obj)).data
+export async function signUp(obj: signUp): Promise<{ id: number }> {
+  const res: { id: number } = (await axios.post('/user', obj)).data
   return res
 }
 
 export async function signIn(obj: signIn): Promise<User> {
-  const res = await axios.post('/user/sign_in', obj).catch((err: AxiosError) => {
-    if (err.response?.status === 401) {
-      throw new Error('Password is incorrect.')
-    } else {
-      throw new Error('Unknown Error.')
-    }
-  })
+  const res = await axios
+    .post('/user/sign_in', obj)
+    .catch((err: AxiosError) => {
+      if (err.response?.status === 401) {
+        throw new Error('Password is incorrect.')
+      } else {
+        throw new Error('Unknown Error.')
+      }
+    })
   return res.data as User
 }
 
