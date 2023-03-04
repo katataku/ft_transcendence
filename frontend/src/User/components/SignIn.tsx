@@ -94,24 +94,15 @@ export function SignIn(): ReactElement {
         <Button
           onClick={() => {
             if (signUpMode) {
-              signUp({ name: userName, password, avatar: image })
-                .then((res) => {
-                  setLoginUser({ id: res.id, name: userName })
-                })
-                .catch((err) => {
-                  alert(err)
-                })
+              signUp({ name: userName, password, avatar: image }, res => {
+                setLoginUser({ id: res, name: userName })
+              })
               setIsSignedIn(true)
             } else {
-              signIn({ id: Number(userName), password })
-                .then((res) => {
-                  console.log(res)
-                  setLoginUser({ id: res.id, name: res.name })
-                  setIsSignedIn(true)
-                })
-                .catch((err) => {
-                  alert(err)
-                })
+              signIn({ id: Number(userName), password }, res => {
+                setLoginUser({ id: res.id, name: res.name })
+                setIsSignedIn(true)
+              })
             }
           }}
         >
