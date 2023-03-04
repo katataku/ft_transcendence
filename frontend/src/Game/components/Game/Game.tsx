@@ -8,10 +8,8 @@ import { Row, Container } from 'react-bootstrap'
 import '../../assets/styles.css'
 // import { useLocation } from 'react-router-dom'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { Match } from "../Match/Match";
+import { Match } from '../Match/Match'
 import { Player } from './Player'
-
-
 
 function Playing(props: { match: IMatch }): ReactElement {
   return (
