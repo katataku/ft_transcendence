@@ -1,56 +1,42 @@
-import { type ReactElement, useState, useEffect } from 'react'
-// import axios from 'axios'
-import { Link } from 'react-router-dom'
-import Button from 'react-bootstrap/Button'
-import { SignIn } from './User/components/SignIn'
+import { type ReactElement, useState, createContext } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { Game, MatchList } from './Game'
+import { ChatList, Chat, ChatRoom } from './Chat'
+import { TopPage } from './TopPage'
+
+// interfaceの初期化をしろとeslintに怒られますが、Setterは初期化できないため、ここだけeslintを無視します。
+export const GlobalContext = createContext<GlobalContext>({} as GlobalContext) // eslint-disable-line
 
 export function App(): ReactElement {
-  const ChatListState: ChatListState = { kicked: false }
-  const [SignedIn, setSignedIn] = useState<boolean>(false)
   const [user, setUser] = useState<User>({
     id: 0,
-    name: 'hoge'
+    name: ''
   })
+  const [signedIn, setSignedIn] = useState<boolean>(false)
 
-  useEffect(() => {
-    console.log(user)
-  }, [SignedIn])
-
-  // プロフィル/チャット->ゲーム をナビゲートされる人のユーザー情報は必要があります
-  // 下の<Link to="Game" state={user}>のようでできます
-  if (SignedIn) {
-    return (
-      <div className="App">
-        <p>ID : {user.id}</p>
-        <p>NAME: {user.name}</p>
-        <p>
-          <Link to="chatlist" state={{ ChatListState }}>
-            Move to ChatList
-          </Link>
-        </p>
-        <p>
-          <Link to="MatchList">Move to MatchList</Link>
-        </p>
-        <p>
-          <Link
-            to="Game"
-            state={{ matchId: 0, userId: user.id, userName: user.name }}
-          >
-            Move to Game
-          </Link>
-        </p>
-        <p>
-          <Button
-            onClick={() => {
-              setSignedIn(false)
-            }}
-          >
-            Log out
-          </Button>
-        </p>
-      </div>
-    )
-  } else {
-    return <SignIn user={user} setUser={setUser} setSignedIn={setSignedIn} />
+  const context: GlobalContext = {
+    user,
+    setUser,
+    signedIn,
+    setSignedIn
   }
+
+  return (
+    <div className="App">
+      <GlobalContext.Provider value={context}>
+        <BrowserRouter>
+          <div>
+            <Routes>
+              <Route path="/" element={<TopPage />} />
+              <Route path="/game" element={<Game />} />
+              <Route path="/matchlist" element={<MatchList />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/chatlist" element={<ChatList />} />
+              <Route path="/chatroom" element={<ChatRoom />} />
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </GlobalContext.Provider>
+    </div>
+  )
 }
