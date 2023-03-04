@@ -27,7 +27,11 @@ export function TopPage(): ReactElement {
           <p>
             <Link
               to="Game"
-              state={{ matchId: 0, userId: loginUser.id, userName: loginUser.name }}
+              state={{
+                matchId: 0,
+                userId: loginUser.id,
+                userName: loginUser.name
+              }}
             >
               Move to Game
             </Link>
