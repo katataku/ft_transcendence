@@ -3,8 +3,8 @@ import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { noImage64 } from '../constants'
-import { createUser } from '../../utils/userAxios'
 import { GlobalContext } from '../../App'
+import { signIn, signUp } from '../../utils/userAxios'
 
 export function SignIn(): ReactElement {
   const { setLoginUser, setIsSignedIn } = useContext(GlobalContext)
@@ -44,7 +44,7 @@ export function SignIn(): ReactElement {
       </div>
       <div style={{ width: '500px', margin: 'auto' }}>
         <Form.Control
-          placeholder="UserName"
+          placeholder={signUpMode ? 'UserName' : 'UserID'}
           onChange={(e) => {
             setUserName(e.target.value)
           }}
@@ -93,14 +93,17 @@ export function SignIn(): ReactElement {
         <br />
         <Button
           onClick={() => {
-            createUser({ name: userName, password, avatar: image })
-              .then((res) => {
-                setLoginUser({ id: Number(res.data.id), name: userName })
+            if (signUpMode) {
+              signUp({ name: userName, password, avatar: image }, (res) => {
+                setLoginUser({ id: res, name: userName })
               })
-              .catch(() => {
-                /**/
+              setIsSignedIn(true)
+            } else {
+              signIn({ id: Number(userName), password }, (res) => {
+                setLoginUser({ id: res.id, name: res.name })
+                setIsSignedIn(true)
               })
-            setIsSignedIn(true)
+            }
           }}
         >
           Submit

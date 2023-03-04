@@ -3,8 +3,13 @@ interface User {
   name: string
 }
 
-interface createUser {
+interface signUp {
   name: string
   password: string
   avatar: string
+}
+
+interface signIn {
+  id: number
+  password: string
 }
