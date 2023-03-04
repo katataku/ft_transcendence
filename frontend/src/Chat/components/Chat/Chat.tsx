@@ -26,7 +26,7 @@ export function Chat(): ReactElement {
 
   const handleMessageEvent = (data: messageEventType): void => {
     console.log('message received:' + JSON.stringify(data))
-    if (data.room === room) {
+    if (data.room === room.name) {
       setMessageEventList((eventList) => [...eventList, data])
     }
   }
@@ -34,19 +34,19 @@ export function Chat(): ReactElement {
   const handleKickEvent = (item: kickEventType): void => {
     console.log('kick received:' + JSON.stringify(item))
     const ChatListState: ChatListState = { kicked: true }
-    if (item.room === room && item.userId === loginUser.id) {
+    if (item.room === room.name && item.userId === loginUser.id) {
       navigate('/chatlist', { state: ChatListState })
     }
   }
 
   useEffect(() => {
-    console.log('room : ' + room)
+    console.log('room : ' + String(room.name))
     console.log('user id : ' + String(loginUser.id))
     console.log('user name :' + String(loginUser.name))
     socket.on('connect', handleConnectEvent)
     socket.on('message', handleMessageEvent)
     socket.on('kickNotification', handleKickEvent)
-    socket.emit('channelNotification', room)
+    socket.emit('channelNotification', room.name)
 
     return () => {
       socket.off('connect')
@@ -59,7 +59,7 @@ export function Chat(): ReactElement {
     const obj: messageEventType = {
       key: Date.now(),
       user: loginUser,
-      room,
+      room: room.name,
       msg
     }
     const sendMsg: string = JSON.stringify(obj)
@@ -72,7 +72,7 @@ export function Chat(): ReactElement {
     const sendMsg: kickEventType = {
       key: Date.now(),
       userId,
-      room
+      room: room.name
     }
     socket.emit('kickNotification', sendMsg)
   }
@@ -87,7 +87,7 @@ export function Chat(): ReactElement {
           SendKickEvent={sendKickEvent}
         ></MessageDisplay>
         <MessageSend
-          room={room}
+          room={room.name}
           sendMessageEvent={sendMessageEvent}
         ></MessageSend>
       </div>
