@@ -28,7 +28,7 @@ export class UsersController {
   }
 
   @Post('sign_in')
-  signIn(@Body() body: UserSignInDto) {
+  signIn(@Body() body: UserSignInDto): Promise<UserGetDto> {
     return this.service.signInUser(body);
   }
 

@@ -45,7 +45,7 @@ export class UsersService {
     return res;
   }
 
-  async signInUser(data: UserSignInDto): Promise<string> {
+  async signInUser(data: UserSignInDto): Promise<UserGetDto> {
     const target = await this.usersRepository.findOne({
       where: { id: data.id },
     });
@@ -60,7 +60,10 @@ export class UsersService {
         HttpStatus.UNAUTHORIZED,
       );
     } else {
-      return 'Success!';
+      return {
+        id: target.id,
+        name: target.name
+      };
     }
   }
 
