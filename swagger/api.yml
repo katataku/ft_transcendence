@@ -123,6 +123,22 @@ paths:
               schema:
                 $ref: '#/components/schemas/user_get_res'
 
+  /user/sign_in:
+    post:
+      tags:
+        - user
+      summary: Sign In
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/user_signin_req'
+      responses:
+        200:
+          description: 成功
+        401:
+          description: 失敗 
+
   /user/friends/{userID}:
     get:
       tags:
