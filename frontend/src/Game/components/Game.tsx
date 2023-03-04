@@ -8,7 +8,7 @@ import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import '../assets/styles.css'
-import { useLocation } from 'react-router-dom'
+// import { useLocation } from 'react-router-dom'
 import { type IMatch, type IPlayer } from '../types/game.model'
 import { GameSocketContext } from './context'
 import { Match } from './Match'
@@ -17,7 +17,6 @@ function Ready(props: { player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
-  const matchId = useLocation().state
   const gameSocket = useContext(GameSocketContext)
 
   function setReady(): void {
@@ -93,18 +92,19 @@ export function Game(): ReactElement {
   useEffect(() => {
     gameSocket.emit('updateConnections')
     gameSocket.on('updateConnections', (serverMatch: IMatch) => {
-      setMatch({...serverMatch, id: useLocation().state})
+      // setMatch({...serverMatch, id: useLocation().state})
+      setMatch(serverMatch)
     })
   }, [])
 
-  function gameReady (): boolean {
+  function matchPending (): boolean {
     return (
-      match !== undefined &&
-      match.leftPlayer !== undefined &&
-      match.rightPlayer !== undefined
+      match === undefined ||
+      match.leftPlayer === undefined ||
+      match.rightPlayer === undefined
     )
   }
 
-  // @ts-ignore match will not be undefined thanks to gameRead()
-  return gameReady() ? <Playing match={match} /> : <Matching />
+  // @ts-expect-error matchPendingはundefinedのマッチを確認してます
+  return matchPending() ? <Matching /> : <Playing match={match} />
 }
