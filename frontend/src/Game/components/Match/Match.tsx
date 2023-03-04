@@ -32,12 +32,12 @@ function CountDown(): ReactElement {
   return <div>{timer !== 0 && timer}</div>
 }
 
-function Score(props: { match: IMatch }): ReactElement {
-  const [scores, setScores] = useState<IScore>({
-    left: props.match.leftPlayer.score,
-    right: props.match.rightPlayer.score
-  })
+function Score(): ReactElement {
   const gameSocket = useContext(GameSocketContext)
+  const [scores, setScores] = useState<IScore>({
+    left: 0,
+    right: 0
+  })
 
   useEffect(() => {
     gameSocket.on('updateScore', (serverScore: IScore) => {
@@ -54,8 +54,8 @@ function Score(props: { match: IMatch }): ReactElement {
 }
 
 export function Match(props: { match: IMatch }): ReactElement {
-  const [status, setStatus] = useState<EStatus>(props.match.status)
   const gameSocket = useContext(GameSocketContext)
+  const [status, setStatus] = useState<EStatus>(EStatus.none)
 
   useEffect(() => {
     gameSocket.on('updateStatus', (serverStatus: EStatus) => {
@@ -68,7 +68,7 @@ export function Match(props: { match: IMatch }): ReactElement {
       <SpeedPU leftID={props.match.leftPlayer.socketID} status={status} />
       <div id="match">
         <div id="boardDiv" />
-        <Score match={props.match} />
+        <Score />
         <div id="countDown">{status === EStatus.ready && <CountDown />}</div>
         {status === EStatus.play && <Ball ball={props.match.ball} />}
         {status === EStatus.set && <Result match={props.match} />}
