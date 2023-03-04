@@ -17,7 +17,6 @@ import { getAllUsersRequest } from '../../../utils/userAxios'
 import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
 export const UserListDisplay = (props: {
-  user: User
   chatRoomMemberList: ChatRoomMember[]
 }): ReactElement => {
   const room = useContext(ChatRoomContext)
@@ -55,7 +54,6 @@ export const UserListDisplay = (props: {
               currentChatRoomMember={chatRoomMember}
             />
             <AdminButton
-              {...props}
               member={member}
               currentChatRoomMember={chatRoomMember}
             />

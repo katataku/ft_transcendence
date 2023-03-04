@@ -4,7 +4,6 @@ import { updateChatRoomRequest } from '../../../utils/chatRoomAxios'
 import { ChatRoomContext } from '../utils/context'
 
 export const UpdateChatRoomModal = (props: {
-  user: User
   showModal: boolean
   handleModalClose: () => void
 }): ReactElement => {

@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { type ReactElement } from 'react'
 import { ChatModal } from './ChatModal'
 import { getChatBlockUserRequest } from '../../../utils/chatBlockUserAxios'
+import { GlobalContext } from '../../../App'
 
 // 非表示にするユーザの一覧を取得する。
 // 一覧は、非表示にするユーザのIDの配列である。
@@ -43,11 +44,11 @@ const getHiddenUserList = (user: User): number[] => {
 }
 
 export const MessageDisplay = (props: {
-  user: User
   room: string
   messageEventList: messageEventType[]
   SendKickEvent: (userId: number) => void
 }): ReactElement => {
+  const { loginUser } = useContext(GlobalContext)
   const [showModal, setShowModal] = useState(false)
   const [targetUser, setTargetUser] = useState<User>({ id: 0, name: '' })
 
@@ -66,11 +67,11 @@ export const MessageDisplay = (props: {
     const imageURL: string =
       'https://1.bp.blogspot.com/-SWOiphrHWnI/XWS5x7MYwHI/AAAAAAABUXA/i_PRL_Atr08ayl9sZy9-x0uoY4zV2d5xwCLcBGAs/s1600/pose_dance_ukareru_man.png'
     const outerClassName: string =
-      props.user.id === item.user.id ? 'line__right' : 'line__left'
+      loginUser.id === item.user.id ? 'line__right' : 'line__left'
     const innerClassName: string =
-      props.user.id === item.user.id ? 'line__right-text' : 'line__left-text'
+      loginUser.id === item.user.id ? 'line__right-text' : 'line__left-text'
     const imageObject: JSX.Element =
-      props.user.id === item.user.id ? (
+      loginUser.id === item.user.id ? (
         <></>
       ) : (
         <figure>
@@ -98,7 +99,7 @@ export const MessageDisplay = (props: {
     }
   }
 
-  const hiddenUserList = getHiddenUserList(props.user)
+  const hiddenUserList = getHiddenUserList(loginUser)
   return (
     <>
       <ChatModal
