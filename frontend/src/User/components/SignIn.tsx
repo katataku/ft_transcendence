@@ -66,7 +66,7 @@ export function SignIn(): ReactElement {
           <div>
             <Form.Control
               type="file"
-              accept="imgage/png"
+              accept="image/png"
               onChange={(e) => {
                 const file = (e.target as HTMLInputElement).files?.[0] as File
                 resizeAndEncode(file)
