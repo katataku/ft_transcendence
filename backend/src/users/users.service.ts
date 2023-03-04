@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FriendRequestDto,
@@ -45,18 +45,20 @@ export class UsersService {
     return res;
   }
 
-  async signInUser(data: UserSignInDto): Promise<String> {
+  async signInUser(data: UserSignInDto): Promise<string> {
     const target = await this.usersRepository.findOne({
       where: { id: data.id },
     });
 
-    Logger.log({target})
     if (target == null) {
       throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
     }
 
     if (SHA256(data.password).toString() !== target.password) {
-      throw new HttpException('Password is incorrect.', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        'Password is incorrect.',
+        HttpStatus.UNAUTHORIZED,
+      );
     } else {
       return 'Success!';
     }
