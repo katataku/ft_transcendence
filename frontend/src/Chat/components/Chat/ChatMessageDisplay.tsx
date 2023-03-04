@@ -13,15 +13,18 @@ const getHiddenUserList = (user: User, room: ChatRoom): number[] => {
   const [mutedUserList, setMuteUserList] = useState<number[]>([])
   const [hiddenUsersList, setHiddenUsersList] = useState<number[]>([])
 
+  const isValidDate = (date: Date | undefined): boolean => {
+    if (date === undefined) return false
+    const now = new Date()
+    const targetDate = new Date(date)
+    return targetDate.getTime() > now.getTime()
+  }
+
   const updateBlockList = (): void => {
     const callback = (data: blockUserList[]): void => {
-      const now = new Date()
       const newBlockedUserList = data
-        .filter((value: blockUserList) => {
-          const blockUntil = new Date(value.block_until)
-          return blockUntil.getTime() > now.getTime()
-        })
-        .map((item) => item.blockedUserId)
+        .filter((item: blockUserList) => isValidDate(item.block_until))
+        .map((item: blockUserList) => item.blockedUserId)
 
       setBlockedUserList(newBlockedUserList)
       console.log('setBlockedUserList', newBlockedUserList)
@@ -31,15 +34,10 @@ const getHiddenUserList = (user: User, room: ChatRoom): number[] => {
 
   const updateMuteList = (): void => {
     const callback = (data: ChatRoomMember[]): void => {
-      const now = new Date()
       const newMutedUserList = data
-        .filter((value: ChatRoomMember) => value.chatRoomId === room.id)
-        .filter((value: ChatRoomMember) => {
-          if (value.mute_until === undefined) return false
-          const muteUntil = new Date(value.mute_until)
-          return muteUntil.getTime() > now.getTime()
-        })
-        .map((item) => item.userId)
+        .filter((item: ChatRoomMember) => item.chatRoomId === room.id)
+        .filter((item: ChatRoomMember) => isValidDate(item.mute_until))
+        .map((item: ChatRoomMember) => item.userId)
 
       setMuteUserList(newMutedUserList)
       console.log('setMutedUserList', newMutedUserList)
