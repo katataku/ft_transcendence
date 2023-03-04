@@ -29,7 +29,7 @@ function listMatches(matches: MatchDto[], users: User[]): ReactElement[] {
         onClick={() => {
           // マッチリスト->ゲーム をナビゲートされる人のユーザー情報は必要ないです
           navigate('/Game/', {
-            state: { matchId: match.id, userId: '', userName: '' }
+            state: match.id
           })
         }}
       >

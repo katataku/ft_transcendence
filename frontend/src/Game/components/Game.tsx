@@ -13,20 +13,17 @@ import { type IMatch, type IPlayer } from '../types/game.model'
 import { GameSocketContext } from './context'
 import { Match } from './Match'
 
-let selfName: string
-
 function Ready(props: { player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
   const grayButton = 'btn btn-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
-  const matchState = useLocation().state
+  const matchId = useLocation().state
   const gameSocket = useContext(GameSocketContext)
 
   function setReady(): void {
     if (
       props.player.socketID === gameSocket.id &&
-      button === grayButton &&
-      selfName === matchState.userName
+      button === grayButton
     ) {
       gameSocket.emit('updatePlayerReady', props.player.socketID)
     }
@@ -74,35 +71,40 @@ function Matching(): ReactElement {
   )
 }
 
-export function Game(): ReactElement {
-  const matchState = useLocation().state
-  console.log(matchState)
-
-  const gameSocket = useContext(GameSocketContext)
-
-  const [match, setMatch] = useState<IMatch | undefined>(undefined)
-
-  useEffect(() => {
-    selfName = matchState.userName
-    gameSocket.emit('updateConnections')
-    gameSocket.on('updateConnections', (serverMatch: IMatch) => {
-      setMatch(serverMatch)
-    })
-  }, [])
-
-  return match === undefined ||
-    match.leftPlayer === undefined ||
-    match.rightPlayer === undefined ? (
-    <Matching />
-  ) : (
+function Playing(props: { match: IMatch }): ReactElement {
+  return (
     <Container>
       <Row id="header">
-        <Player player={match.leftPlayer} />
-        <Player player={match.rightPlayer} />
+        <Player player={props.match.leftPlayer} />
+        <Player player={props.match.rightPlayer} />
       </Row>
       <Row>
-        <Match match={match} />
+        <Match match={props.match} />
       </Row>
     </Container>
   )
+
+}
+
+export function Game(): ReactElement {
+  const [match, setMatch] = useState<IMatch | undefined>(undefined)
+  const gameSocket = useContext(GameSocketContext)
+
+  useEffect(() => {
+    gameSocket.emit('updateConnections')
+    gameSocket.on('updateConnections', (serverMatch: IMatch) => {
+      setMatch({...serverMatch, id: useLocation().state})
+    })
+  }, [])
+
+  function gameReady (): boolean {
+    return (
+      match !== undefined &&
+      match.leftPlayer !== undefined &&
+      match.rightPlayer !== undefined
+    )
+  }
+
+  // @ts-ignore match will not be undefined thanks to gameRead()
+  return gameReady() ? <Playing match={match} /> : <Matching />
 }
