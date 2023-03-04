@@ -136,6 +136,10 @@ paths:
       responses:
         200:
           description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/user_get_res'
         401:
           description: 失敗 
 
@@ -548,9 +552,16 @@ components:
         name:
           type: string
           example: Tom Brady
-        avatar_url:
+
+    user_signin_req:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        password:
           type: string
-          example: 'http://example.com/user/user_avatar/1'
+          example: password
 
     friends_get_res:
       type: array
