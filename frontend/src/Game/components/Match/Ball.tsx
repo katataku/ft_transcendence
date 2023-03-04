@@ -1,5 +1,10 @@
-import React, {type ReactElement, useContext, useEffect, useState} from "react";
-import {GameSocketContext} from "../../utils/gameSocketContext";
+import React, {
+  type ReactElement,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+import { GameSocketContext } from '../../utils/gameSocketContext'
 
 export function Ball(props: { ball: IBall }): ReactElement {
   const [ball, setBall] = useState<IBall>(props.ball)

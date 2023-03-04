@@ -1,7 +1,13 @@
-import {EStatus} from "../../types/game.model";
-import React, {type ReactElement, useContext, useEffect, useRef, useState} from "react";
-import {GameSocketContext} from "../../utils/gameSocketContext";
-import {useAnimationFrame} from "../../../hooks/useAnimationFrame";
+import { EStatus } from '../../types/game.model'
+import React, {
+  type ReactElement,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from 'react'
+import { GameSocketContext } from '../../utils/gameSocketContext'
+import { useAnimationFrame } from '../../../hooks/useAnimationFrame'
 type Ref = React.MutableRefObject<any>
 
 const gameWinHght: number = 500
@@ -28,9 +34,16 @@ function updatePaddle(paddle: IPaddle, keydown: Ref): IPaddle {
   return paddle
 }
 
-export function Paddles(props: { match: IMatch; status: EStatus }): ReactElement {
-  const [leftPaddle, setLeftPaddle] = useState<IPaddle>(props.match.leftPlayer.paddle)
-  const [rightPaddle, setRightPaddle] = useState<IPaddle>(props.match.rightPlayer.paddle)
+export function Paddles(props: {
+  match: IMatch
+  status: EStatus
+}): ReactElement {
+  const [leftPaddle, setLeftPaddle] = useState<IPaddle>(
+    props.match.leftPlayer.paddle
+  )
+  const [rightPaddle, setRightPaddle] = useState<IPaddle>(
+    props.match.rightPlayer.paddle
+  )
   const keydown = useRef<string>('')
   const gameSocket = useContext(GameSocketContext)
   const leftSocketID = props.match.leftPlayer.socketID
@@ -50,8 +63,7 @@ export function Paddles(props: { match: IMatch; status: EStatus }): ReactElement
       'updatePaddle',
       (data: { leftPaddle: IPaddle; rightPaddle: IPaddle }) => {
         if (leftSocketID !== gameSocket.id) setLeftPaddle(data.leftPaddle)
-        if (rightSocketID !== gameSocket.id)
-          setRightPaddle(data.rightPaddle)
+        if (rightSocketID !== gameSocket.id) setRightPaddle(data.rightPaddle)
       }
     )
   }, [])

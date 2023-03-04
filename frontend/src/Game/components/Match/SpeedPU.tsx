@@ -1,9 +1,17 @@
-import {EStatus} from "../../types/game.model";
-import React, {type ReactElement, useContext, useEffect, useState} from "react";
-import {GameSocketContext} from "../../utils/gameSocketContext";
-import {Dropdown, DropdownButton} from "react-bootstrap";
+import { EStatus } from '../../types/game.model'
+import React, {
+  type ReactElement,
+  useContext,
+  useEffect,
+  useState
+} from 'react'
+import { GameSocketContext } from '../../utils/gameSocketContext'
+import { Dropdown, DropdownButton } from 'react-bootstrap'
 
-export function SpeedPU(props: { leftID: string; status: EStatus }): ReactElement {
+export function SpeedPU(props: {
+  leftID: string
+  status: EStatus
+}): ReactElement {
   const [title, setTitle] = useState<string>('Difficulty')
   const gameSocket = useContext(GameSocketContext)
   const modifySpeed = (op: string | null): void => {
