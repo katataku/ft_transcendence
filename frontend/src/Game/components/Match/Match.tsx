@@ -21,8 +21,8 @@ function Result(props: { match: IMatch }): ReactElement {
 }
 
 function CountDown(): ReactElement {
-  const [timer, setTimer] = useState<number>(0)
   const gameSocket = useContext(GameSocketContext)
+  const [timer, setTimer] = useState<number>(0)
   useEffect(() => {
     gameSocket.on('updateCountDown', (seconds: number) => {
       setTimer(seconds)

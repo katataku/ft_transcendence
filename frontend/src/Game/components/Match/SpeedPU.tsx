@@ -12,8 +12,9 @@ export function SpeedPU(props: {
   leftID: string
   status: EStatus
 }): ReactElement {
-  const [title, setTitle] = useState<string>('Difficulty')
   const gameSocket = useContext(GameSocketContext)
+  const [title, setTitle] = useState<string>('Difficulty')
+
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || gameSocket.id !== props.leftID) return
     switch (op) {
