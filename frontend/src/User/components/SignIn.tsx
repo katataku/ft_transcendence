@@ -7,7 +7,7 @@ import { createUser } from '../../utils/userAxios'
 import { GlobalContext } from '../../App'
 
 export function SignIn(): ReactElement {
-  const { setUser, setSignedIn } = useContext(GlobalContext)
+  const { setLoginUser, setIsSignedIn } = useContext(GlobalContext)
   const [signUpMode, setSignUpMode] = useState<boolean>(false)
   const [userName, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -95,12 +95,12 @@ export function SignIn(): ReactElement {
           onClick={() => {
             createUser({ name: userName, password, avatar: image })
               .then((res) => {
-                setUser({ id: Number(res.data.id), name: userName })
+                setLoginUser({ id: Number(res.data.id), name: userName })
               })
               .catch(() => {
                 /**/
               })
-            setSignedIn(true)
+            setIsSignedIn(true)
           }}
         >
           Submit

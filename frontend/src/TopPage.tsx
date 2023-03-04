@@ -6,16 +6,16 @@ import { GlobalContext } from './App'
 
 export function TopPage(): ReactElement {
   const ChatListState: ChatListState = { kicked: false }
-  const { user, signedIn, setSignedIn } = useContext(GlobalContext)
+  const { loginUser, isSignedIn, setIsSignedIn } = useContext(GlobalContext)
 
   // プロフィル/チャット->ゲーム をナビゲートされる人のユーザー情報は必要があります
   // 下の<Link to="Game" state={user}>のようでできます
   return (
     <div className="App">
-      {signedIn ? (
+      {isSignedIn ? (
         <div>
-          <p>ID : {user.id}</p>
-          <p>NAME: {user.name}</p>
+          <p>ID : {loginUser.id}</p>
+          <p>NAME: {loginUser.name}</p>
           <p>
             <Link to="chatlist" state={{ ChatListState }}>
               Move to ChatList
@@ -27,7 +27,7 @@ export function TopPage(): ReactElement {
           <p>
             <Link
               to="Game"
-              state={{ matchId: 0, userId: user.id, userName: user.name }}
+              state={{ matchId: 0, userId: loginUser.id, userName: loginUser.name }}
             >
               Move to Game
             </Link>
@@ -35,7 +35,7 @@ export function TopPage(): ReactElement {
           <p>
             <Button
               onClick={() => {
-                setSignedIn(false)
+                setIsSignedIn(false)
               }}
             >
               Log out
