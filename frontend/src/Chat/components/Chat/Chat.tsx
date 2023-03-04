@@ -3,14 +3,11 @@ import '../../assets/styles.css'
 import io from 'socket.io-client'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { type ReactElement } from 'react'
-import axios from 'axios'
 import { MessageDisplay } from './ChatMessageDisplay'
 import { MessageSend } from './ChatMessageSend'
 
 const ServerURL: string = process.env.REACT_APP_BACKEND_WEBSOCKET_BASE_URL ?? ''
 const socket = io(ServerURL)
-
-axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
 // Websocket通信を管理。
 // 描画などは各モジュールに移譲する。

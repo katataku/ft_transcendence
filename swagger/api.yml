@@ -13,7 +13,7 @@ tags:
     description: ユーザー
   - name: chatRoom
     description: チャットルーム
-  - name:  chat-mute-user
+  - name:  chat-block-user
     description: チャット機能でのミュートユーザ情報
   - name: chatRoomMembers
     description: チャットルームの参加者情報
@@ -301,11 +301,11 @@ paths:
           description: 成功
         401:
           description: 認証失敗
-  /chat-mute-user:
+  /chat-block-user:
     get:
       tags:
-        - chat-mute-user
-      summary: get chat-mute-user
+        - chat-block-user
+      summary: get chat-block-user
       description: チャット機能でのミュートユーザ情報一覧を取得
       responses:
         200:
@@ -315,46 +315,46 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/chat-mute-user'
+                  $ref: '#/components/schemas/chat-block-user'
     post:
-      summary: update mute
+      summary: update block
       tags:
-        - chat-mute-user
+        - chat-block-user
       description: チャット機能でのミュートユーザ情報を更新
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/chat-mute-user'
+              $ref: '#/components/schemas/chat-block-user'
       responses:
         201:
           description: 成功
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/chat-mute-user'
+                $ref: '#/components/schemas/chat-block-user'
     delete:
-      summary: update mute
+      summary: update block
       tags:
-        - chat-mute-user
+        - chat-block-user
       description: チャット機能でのミュートユーザ情報を削除
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/chat-mute-user-pk'
+              $ref: '#/components/schemas/chat-block-user-pk'
       responses:
         200:
           description: 成功
-  /chat-mute-user/{muteUserId}:
+  /chat-block-user/{blockUserId}:
     get:
       tags:
-        - chat-mute-user
-      summary: get mute for the specified user
+        - chat-block-user
+      summary: get block for the specified user
       description: チャット機能でのミュートユーザ情報の取得
       parameters:
         - in: path
-          name: muteUserId
+          name: blockUserId
           required: true
           schema:
             type: number
@@ -366,7 +366,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/chat-mute-user'
+                  $ref: '#/components/schemas/chat-block-user'
   /chatRoomMembers:
     get:
       tags:
@@ -591,25 +591,25 @@ components:
         password:
           type: string
           example: "password"
-    chat-mute-user:
+    chat-block-user:
       type: object
       properties:
-        muteUserId:
+        blockUserId:
           type: number
           example: 1
-        mutedUserId:
+        blockedUserId:
           type: number
           example: 2
-        mute_until:
+        block_until:
           type: string
           example: "2024-01-31T14:59:00.000Z"
-    chat-mute-user-pk:
+    chat-block-user-pk:
       type: object
       properties:
-        muteUserId:
+        blockUserId:
           type: number
           example: 1
-        mutedUserId:
+        blockedUserId:
           type: number
           example: 2
     chatRoomMember:

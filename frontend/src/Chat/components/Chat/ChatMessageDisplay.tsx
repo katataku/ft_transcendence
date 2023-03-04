@@ -1,8 +1,46 @@
 import { useEffect, useState } from 'react'
 import { type ReactElement } from 'react'
-import axios from 'axios'
-import { Button } from 'react-bootstrap'
 import { ChatModal } from './ChatModal'
+import { getChatBlockUserRequest } from '../../../utils/chatBlockUserAxios'
+
+// 非表示にするユーザの一覧を取得する。
+// 一覧は、非表示にするユーザのIDの配列である。
+// 非表示にするユーザはブロックされたユーザと、ミュートされたユーザの両方である。
+// TODO: ミュートされたユーザの一覧を取得する。
+const getHiddenUserList = (user: User): number[] => {
+  const [blockedUserList, setBlockedUserList] = useState<blockUserList[]>([])
+  const [hiddenUsersList, setHiddenUsersList] = useState<number[]>([])
+
+  const updateBlockList = (): void => {
+    const callback = (data: blockUserList[]): void => {
+      const now = new Date()
+      const newBlockedUserList = data
+        .map((value: blockUserList) => {
+          value.block_until = new Date(value.block_until)
+          return value
+        })
+        .filter(
+          (item: blockUserList) => item.block_until.getTime() > now.getTime()
+        )
+
+      setBlockedUserList(newBlockedUserList)
+    }
+    getChatBlockUserRequest(user, callback)
+  }
+
+  useEffect(() => {
+    updateBlockList()
+  }, [])
+
+  useEffect(() => {
+    setHiddenUsersList(
+      blockedUserList.map((value) => value.blockedUserId).concat()
+    )
+    console.log('hiddenUserList : ' + JSON.stringify(hiddenUsersList))
+  }, [blockedUserList])
+
+  return hiddenUsersList
+}
 
 export const MessageDisplay = (props: {
   user: User
@@ -12,32 +50,6 @@ export const MessageDisplay = (props: {
 }): ReactElement => {
   const [showModal, setShowModal] = useState(false)
   const [targetUser, setTargetUser] = useState<User>({ id: 0, name: '' })
-  const [mutedUserList, setMutedUserList] = useState<muteUserList[]>([])
-
-  const updateMuteList = (): void => {
-    const now = new Date()
-    axios
-      .get('/chat-mute-user/' + String(props.user.id))
-      .then((response) => {
-        const newMusedUserList = response.data
-          .map((value: muteUserList) => {
-            value.mute_until = new Date(value.mute_until)
-            return value
-          })
-          .filter(
-            (item: muteUserList) => item.mute_until.getTime() > now.getTime()
-          )
-
-        setMutedUserList(newMusedUserList)
-        console.log('mutedUserList : ' + JSON.stringify(newMusedUserList))
-      })
-      .catch(() => {
-        alert('エラーです！')
-      })
-  }
-  useEffect(() => {
-    updateMuteList()
-  }, [])
 
   const handleModalClose = (): void => {
     setShowModal(false)
@@ -46,33 +58,6 @@ export const MessageDisplay = (props: {
   const handleKickButtonClick = (): void => {
     props.SendKickEvent(targetUser.id)
     setShowModal(false)
-  }
-
-  const handleMuteButtonClick = ({ muteSec }: { muteSec: number }): void => {
-    let ts: Date
-    if (muteSec === 0) {
-      ts = new Date(2023, 12, 31, 23, 59, 0)
-    } else {
-      ts = new Date(Date.now() + muteSec * 1000)
-    }
-
-    const newMuteUser: muteUserList = {
-      muteUserId: props.user.id,
-      mutedUserId: targetUser.id,
-      mute_until: ts
-    }
-
-    axios
-      .post<muteUserList>('/chat-mute-user', newMuteUser)
-      .then((_response) => {
-        console.log('mute requested')
-        updateMuteList()
-        setShowModal(false)
-      })
-      .catch((reason) => {
-        alert('エラーです！')
-        console.log(reason)
-      })
   }
 
   const makeItem = (item: messageEventType): messageItem => {
@@ -113,7 +98,7 @@ export const MessageDisplay = (props: {
     }
   }
 
-  const mutedUserStringList = mutedUserList.map((value) => value.mutedUserId)
+  const hiddenUserList = getHiddenUserList(props.user)
   return (
     <>
       <ChatModal
@@ -121,16 +106,12 @@ export const MessageDisplay = (props: {
         targetUser={targetUser}
         handleModalClose={handleModalClose}
         handleKickButtonClick={handleKickButtonClick}
-        handleMuteButtonClick={handleMuteButtonClick}
       ></ChatModal>
-      <Button variant="primary" onClick={updateMuteList}>
-        update MuteList
-      </Button>
       <div className="line__container">
         <div className="line__contents">
           {props.messageEventList
             .map((event) => makeItem(event))
-            .filter((value) => !mutedUserStringList.includes(value.user.id))
+            .filter((value) => !hiddenUserList.includes(value.user.id))
             .map((value) => value.body)}
         </div>
       </div>
