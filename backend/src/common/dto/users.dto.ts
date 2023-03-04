@@ -30,7 +30,7 @@ export class UserUpdateReqDto {
 
 export class UserSignInDto {
   @IsNumberString()
-  is: number;
+  id: number;
   @IsString()
   password: string;
 }
