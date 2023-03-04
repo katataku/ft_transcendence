@@ -6,7 +6,6 @@ export const ChatModal = (props: {
   targetUser: User
   handleModalClose: () => void
   handleKickButtonClick: () => void
-  handleMuteButtonClick: ({ muteSec }: { muteSec: number }) => void
 }): ReactElement => {
   return (
     <>
@@ -20,22 +19,6 @@ export const ChatModal = (props: {
           </Button>
           <Button variant="primary" onClick={props.handleKickButtonClick}>
             Kick
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              props.handleMuteButtonClick({ muteSec: 0 })
-            }}
-          >
-            Mute
-          </Button>
-          <Button
-            variant="primary"
-            onClick={() => {
-              props.handleMuteButtonClick({ muteSec: 10 })
-            }}
-          >
-            Mute 10sec
           </Button>
         </Modal.Footer>
       </Modal>
