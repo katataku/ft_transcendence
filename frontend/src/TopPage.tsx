@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import { SignIn } from './User/components/SignIn'
 import { GlobalContext } from './App'
+import { Image } from 'react-bootstrap'
+import { BaseURL } from './constants'
 
 export function TopPage(): ReactElement {
   const ChatListState: ChatListState = { kicked: false }
@@ -17,6 +19,7 @@ export function TopPage(): ReactElement {
         <div>
           <p>ID : {loginUser.id}</p>
           <p>NAME: {loginUser.name}</p>
+          <Image src={`${BaseURL}/user/user_avatar/1`}/>
           <p>
             <Link to="chatlist" state={{ ChatListState }}>
               Move to ChatList
