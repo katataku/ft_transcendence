@@ -37,6 +37,17 @@ export function TopPage(): ReactElement {
             </Link>
           </p>
           <p>
+            <Link to={'profile/' + String(loginUser.id)}>
+              Move to My page (My Profile)
+            </Link>
+          </p>
+          <p>
+            <Link to={'profile/' + String(1)}>Move to Guest1 Profile</Link>
+          </p>
+          <p>
+            <Link to={'profile/' + String(2)}>Move to Guest2 Profile</Link>
+          </p>
+          <p>
             <Button
               onClick={() => {
                 setIsSignedIn(false)
