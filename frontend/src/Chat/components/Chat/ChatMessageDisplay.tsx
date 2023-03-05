@@ -3,48 +3,64 @@ import { type ReactElement } from 'react'
 import { ChatModal } from './ChatModal'
 import { getChatBlockUserRequest } from '../../../utils/chatBlockUserAxios'
 import { GlobalContext } from '../../../App'
+import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 
 // 非表示にするユーザの一覧を取得する。
 // 一覧は、非表示にするユーザのIDの配列である。
 // 非表示にするユーザはブロックされたユーザと、ミュートされたユーザの両方である。
-// TODO: ミュートされたユーザの一覧を取得する。
-const getHiddenUserList = (user: User): number[] => {
-  const [blockedUserList, setBlockedUserList] = useState<blockUserList[]>([])
+const getHiddenUserList = (user: User, room: ChatRoom): number[] => {
+  const [blockedUserList, setBlockedUserList] = useState<number[]>([])
+  const [mutedUserList, setMuteUserList] = useState<number[]>([])
   const [hiddenUsersList, setHiddenUsersList] = useState<number[]>([])
+
+  const isValidDate = (date: Date | undefined): boolean => {
+    if (date === undefined) return false
+    const now = new Date()
+    const targetDate = new Date(date)
+    return targetDate.getTime() > now.getTime()
+  }
 
   const updateBlockList = (): void => {
     const callback = (data: blockUserList[]): void => {
-      const now = new Date()
       const newBlockedUserList = data
-        .map((value: blockUserList) => {
-          value.block_until = new Date(value.block_until)
-          return value
-        })
-        .filter(
-          (item: blockUserList) => item.block_until.getTime() > now.getTime()
-        )
+        .filter((item: blockUserList) => isValidDate(item.block_until))
+        .map((item: blockUserList) => item.blockedUserId)
 
       setBlockedUserList(newBlockedUserList)
+      console.log('setBlockedUserList', newBlockedUserList)
     }
     getChatBlockUserRequest(user, callback)
   }
 
+  const updateMuteList = (): void => {
+    const callback = (data: ChatRoomMember[]): void => {
+      const newMutedUserList = data
+        .filter((item: ChatRoomMember) => item.chatRoomId === room.id)
+        .filter((item: ChatRoomMember) => isValidDate(item.mute_until))
+        .map((item: ChatRoomMember) => item.userId)
+
+      setMuteUserList(newMutedUserList)
+      console.log('setMutedUserList', newMutedUserList)
+    }
+    getChatRoomMembersRequest(callback)
+  }
+
   useEffect(() => {
     updateBlockList()
+    updateMuteList()
   }, [])
 
   useEffect(() => {
-    setHiddenUsersList(
-      blockedUserList.map((value) => value.blockedUserId).concat()
-    )
-    console.log('hiddenUserList : ' + JSON.stringify(hiddenUsersList))
-  }, [blockedUserList])
+    setHiddenUsersList([...blockedUserList, ...mutedUserList])
+  }, [blockedUserList, mutedUserList])
+
+  console.log('hiddenUserList', hiddenUsersList)
 
   return hiddenUsersList
 }
 
 export const MessageDisplay = (props: {
-  room: string
+  room: ChatRoom
   messageEventList: messageEventType[]
   SendKickEvent: (userId: number) => void
 }): ReactElement => {
@@ -99,7 +115,7 @@ export const MessageDisplay = (props: {
     }
   }
 
-  const hiddenUserList = getHiddenUserList(loginUser)
+  const hiddenUserList: number[] = getHiddenUserList(loginUser, props.room)
   return (
     <>
       <ChatModal

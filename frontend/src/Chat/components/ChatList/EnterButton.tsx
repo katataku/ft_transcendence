@@ -76,7 +76,7 @@ export const EnterButton = (props: {
   const passwordAuthSuccess = (): void => {
     handleModalClose()
     navigate('/chat', {
-      state: { room: room.name }
+      state: { room }
     })
   }
 

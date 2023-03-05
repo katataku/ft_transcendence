@@ -13,7 +13,8 @@ const DeleteRoomButton = (): JSX.Element => {
   const navigate = useNavigate()
   const chatListState: ChatListState = { kicked: false }
   const room = useContext(ChatRoomContext)
-  if (!isLoginUserOwner(room)) return <></>
+  const isLoginUserOwnerBool: boolean = isLoginUserOwner(room)
+  if (!isLoginUserOwnerBool) return <></>
 
   return (
     <Button
