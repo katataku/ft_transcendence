@@ -73,9 +73,15 @@ export class UsersController {
   }
 
   @Get('user_avatar/:id')
-  async getAvatar(@Param() param: UserIdParam, @Res() res: Response): Promise<void> {
+  async getAvatar(
+    @Param() param: UserIdParam,
+    @Res() res: Response,
+  ): Promise<void> {
     const base64Data: string = await this.service.getAvatarById(param.id);
-    const binaryData = Buffer.from(base64Data.replace(/^data:image\/png;base64,/, ''), 'base64');
+    const binaryData = Buffer.from(
+      base64Data.replace(/^data:image\/png;base64,/, ''),
+      'base64',
+    );
 
     res.setHeader('Content-Type', 'image/png');
     res.send(binaryData);
