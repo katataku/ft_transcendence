@@ -19,7 +19,11 @@ export function TopPage(): ReactElement {
         <div>
           <p>ID : {loginUser.id}</p>
           <p>NAME: {loginUser.name}</p>
-          <Image src={`${BaseURL}/user/user_avatar/1`}/>
+          <Image
+            src={`${BaseURL}/user/user_avatar/${loginUser.id}`}
+            style={{ borderRadius: '50%', margin: '30px' }}
+            height={300}
+          />
           <p>
             <Link to="chatlist" state={{ ChatListState }}>
               Move to ChatList
