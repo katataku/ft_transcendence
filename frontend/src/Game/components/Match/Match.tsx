@@ -23,6 +23,7 @@ function Result(props: { match: IMatch }): ReactElement {
 function CountDown(): ReactElement {
   const gameSocket = useContext(GameSocketContext)
   const [timer, setTimer] = useState<number>(0)
+
   useEffect(() => {
     gameSocket.on('updateCountDown', (seconds: number) => {
       setTimer(seconds)
@@ -54,6 +55,7 @@ function Score(): ReactElement {
 }
 
 export function Match(props: { match: IMatch }): ReactElement {
+
   const gameSocket = useContext(GameSocketContext)
   const [status, setStatus] = useState<EStatus>(EStatus.none)
 

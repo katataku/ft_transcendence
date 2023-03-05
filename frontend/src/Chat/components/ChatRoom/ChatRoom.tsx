@@ -5,15 +5,16 @@ import { AddUserButton } from './AddUserButton'
 import { deleteChatRoomRequest } from '../../../utils/chatRoomAxios'
 import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { UserListDisplay } from './UserListDisplay'
-import { isOwner } from '../utils/userStatusUtils'
+import { isLoginUserOwner } from '../utils/userStatusUtils'
 import { UpdateRoomButton } from './UpdateRoomButton'
 import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
-const DeleteRoomButton = (props: { user: User }): JSX.Element => {
+const DeleteRoomButton = (): JSX.Element => {
   const navigate = useNavigate()
   const chatListState: ChatListState = { kicked: false }
   const room = useContext(ChatRoomContext)
-  if (!isOwner(props.user, room)) return <></>
+  const isLoginUserOwnerBool: boolean = isLoginUserOwner(room)
+  if (!isLoginUserOwnerBool) return <></>
 
   return (
     <Button
@@ -36,7 +37,7 @@ const DeleteRoomButton = (props: { user: User }): JSX.Element => {
 
 // チャットルームに所属しているユーザーのリストを管理する。
 export function ChatRoom(): ReactElement {
-  const { room, user } = useLocation().state
+  const { room }: ChatRoomState = useLocation().state
   const [chatRoomMembersList, setChatRoomMembersList] = useState<
     ChatRoomMember[]
   >([])
@@ -62,12 +63,11 @@ export function ChatRoom(): ReactElement {
       <ChatRoomRefreshContext.Provider value={updateChatRoomMembersList}>
         ChatRoom: {room.name}
         <UserListDisplay
-          user={user}
           chatRoomMemberList={chatRoomMembersList}
         ></UserListDisplay>
         <AddUserButton chatRoomMemberList={chatRoomMembersList}></AddUserButton>
-        <UpdateRoomButton user={user}></UpdateRoomButton>
-        <DeleteRoomButton user={user}></DeleteRoomButton>
+        <UpdateRoomButton></UpdateRoomButton>
+        <DeleteRoomButton></DeleteRoomButton>
       </ChatRoomRefreshContext.Provider>
     </ChatRoomContext.Provider>
   )

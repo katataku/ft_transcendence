@@ -54,14 +54,12 @@ export const PasswordPromptModal = (props: {
 // チャットルームに入室するためのボタンを表示する。
 // roomMemberである場合、参加ボタンを表示する。
 export const EnterButton = (props: {
-  user: User
   room: ChatRoom
   isRoomMember: boolean
   isBanned: boolean
 }): JSX.Element => {
   const navigate = useNavigate()
   const room = props.room
-  const user = props.user
 
   const [showPasswordPromptModal, setShowPasswordPromptModal] = useState(false)
 
@@ -78,7 +76,7 @@ export const EnterButton = (props: {
   const passwordAuthSuccess = (): void => {
     handleModalClose()
     navigate('/chat', {
-      state: { room: room.name, user }
+      state: { room }
     })
   }
 

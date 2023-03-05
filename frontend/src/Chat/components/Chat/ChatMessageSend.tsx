@@ -2,7 +2,6 @@ import { type ReactElement, useState } from 'react'
 import { Button } from 'react-bootstrap'
 
 export const MessageSend = (props: {
-  user: User
   room: string
   sendMessageEvent: (msg: string) => void
 }): ReactElement => {

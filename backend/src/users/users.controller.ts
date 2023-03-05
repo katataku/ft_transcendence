@@ -10,10 +10,11 @@ import {
 import { UsersService } from './users.service';
 import {
   FriendRequestDto,
-  UserCreateReqDto,
-  UserCreateResDto,
   UserUpdateReqDto,
   UserGetDto,
+  UserSignUpReqDto,
+  UserSignUpResDto,
+  UserSignInDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 
@@ -22,8 +23,13 @@ export class UsersController {
   constructor(private service: UsersService) {}
 
   @Post()
-  createUser(@Body() body: UserCreateReqDto): Promise<UserCreateResDto> {
-    return this.service.create(body);
+  signUp(@Body() body: UserSignUpReqDto): Promise<UserSignUpResDto> {
+    return this.service.createUser(body);
+  }
+
+  @Post('sign_in')
+  signIn(@Body() body: UserSignInDto): Promise<UserGetDto> {
+    return this.service.signInUser(body);
   }
 
   @Get('users')
@@ -51,7 +57,7 @@ export class UsersController {
 
   @Post('friends')
   requestFriend(@Body() body: FriendRequestDto) {
-    this.service.requestFriendship(body);
+    return this.service.requestFriendship(body);
   }
 
   @Get('friends/:id')
