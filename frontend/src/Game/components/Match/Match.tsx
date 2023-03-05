@@ -55,7 +55,6 @@ function Score(): ReactElement {
 }
 
 export function Match(props: { match: IMatch }): ReactElement {
-
   const gameSocket = useContext(GameSocketContext)
   const [status, setStatus] = useState<EStatus>(EStatus.none)
 
