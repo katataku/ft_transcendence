@@ -24,6 +24,9 @@ export function OtherUserProfile(): ReactElement {
       <p>current statusを表示する(online, offline, in a game,など).</p>
 
       <p>
+        <Button>このユーザをフレンドに招待するボタンになる予定</Button>
+      </p>
+      <p>
         <Button>このユーザとDMを開始するボタンになる予定</Button>
       </p>
       <p>
