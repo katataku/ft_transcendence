@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
+import { GlobalContext } from '../../../App'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 import { isOwner, isTargetAdmin } from '../utils/userStatusUtils'
@@ -45,14 +46,14 @@ const AdminOFFMemberButton = (props: {
 }
 
 export const AdminButton = (props: {
-  user: User
   member: User
   currentChatRoomMember: ChatRoomMember
 }): JSX.Element => {
+  const { loginUser } = useContext(GlobalContext)
   const room = useContext(ChatRoomContext)
 
   // 管理者権限の変更はオーナーしかできない
-  if (!isOwner(props.user, room)) return <></>
+  if (!isOwner(loginUser, room)) return <></>
 
   // オーナーは管理者権限を変更できない
   if (isOwner(props.member, room)) return <></>

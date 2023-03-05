@@ -1,5 +1,6 @@
-import { type ReactElement, useState } from 'react'
+import { type ReactElement, useState, useContext } from 'react'
 import { Button, Dropdown, DropdownButton, Form, Modal } from 'react-bootstrap'
+import { GlobalContext } from '../../../../App'
 
 const PublicSelectDropdownButton = (props: {
   setPublicId: React.Dispatch<React.SetStateAction<publicIdType>>
@@ -37,7 +38,6 @@ const PublicSelectDropdownButton = (props: {
 }
 
 export const ChatRoomSetupModal = (props: {
-  user: User
   showModal: boolean
   handleModalClose: () => void
   modalHeaderMessage: string
@@ -50,12 +50,13 @@ export const ChatRoomSetupModal = (props: {
   const [newRoomName, setNewRoomName] = useState<string>('')
   const [publicId, setPublicId] = useState<publicIdType>('public')
   const [password, setPassword] = useState<string>('')
+  const { loginUser } = useContext(GlobalContext)
 
   const handleSubmitOnClick = (): void => {
     const requestData: ChatRoomReqDto = {
       name: newRoomName,
-      created_by: props.user.id,
-      created_by_user_id: props.user.id,
+      created_by: loginUser.id,
+      created_by_user_id: loginUser.id,
       public_id: publicId,
       password: publicId === 'protected' ? password : undefined
     }

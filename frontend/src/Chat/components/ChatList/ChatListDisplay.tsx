@@ -1,10 +1,15 @@
 import { useNavigate } from 'react-router-dom'
-import { useEffect, useState, type ReactElement } from 'react'
+import { useContext, useEffect, useState, type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
 import { OwnerIcon } from '../utils/Icon/OwnerIcon'
 import { BannedIcon } from '../utils/Icon/BannedIcon'
 import { AdminIcon } from '../utils/Icon/AdminIcon'
-import { isAdmin, isBanned, isOwner } from '../utils/userStatusUtils'
+import {
+  isAdmin,
+  isBanned,
+  isLoginUserOwner,
+  isOwner
+} from '../utils/userStatusUtils'
 import { DeleteMemberButton } from '../utils/Button/DeleteMemberButton'
 import { PrivateIcon } from '../utils/Icon/privateIcon'
 import {
@@ -13,16 +18,16 @@ import {
 } from '../../../utils/chatRoomMemberAxios'
 import { ProtectedIcon } from '../utils/Icon/protectedIcon'
 import { EnterButton } from './EnterButton'
+import { GlobalContext } from '../../../App'
 
 // チャットルームに参加するためのボタンを表示する。
 const JoinButton = (props: {
-  user: User
   room: ChatRoom
   isRoomMember: boolean
   updateChatRoomList: () => void
 }): JSX.Element => {
   const room = props.room
-  const user = props.user
+  const { loginUser } = useContext(GlobalContext)
 
   // Privateルームの場合、参加ボタンを表示しない。
   if (room.public_id === 'private') return <></>
@@ -33,7 +38,7 @@ const JoinButton = (props: {
   const handleJoinRoom = (): void => {
     const requestData: ChatRoomMember = {
       chatRoomId: room.id,
-      userId: user.id,
+      userId: loginUser.id,
       isAdministrator: false
     }
     updateChatRoomMembersRequest(requestData, props.updateChatRoomList)
@@ -49,15 +54,13 @@ const JoinButton = (props: {
 // チャットルームの設定ボタンを表示する。
 const SettingButton = (props: {
   room: ChatRoom
-  user: User
   isAdmin: boolean
 }): JSX.Element => {
   const room = props.room
-  const user = props.user
   const navigate = useNavigate()
 
   // チャットルームのオーナー or 管理者でない場合、設定ボタンを表示しない。
-  if (!(isOwner(user, room) || props.isAdmin)) return <></>
+  if (!(isLoginUserOwner(room) || props.isAdmin)) return <></>
 
   return (
     <>
@@ -65,7 +68,7 @@ const SettingButton = (props: {
         variant="outline-info"
         onClick={() => {
           navigate('/chatroom', {
-            state: { room, user }
+            state: { room }
           })
         }}
       >
@@ -79,14 +82,14 @@ const SettingButton = (props: {
 // chatRoomMemberの情報を取得する。
 // 取得した情報をモジュール渡し、各コンポーネントにて出力の判断を行う。
 export const ChatListDisplay = (props: {
-  user: User
   roomList: ChatRoom[]
   updateChatRoomList: () => void
 }): ReactElement => {
+  const { loginUser } = useContext(GlobalContext)
   const [roomMembersAll, setRoomMembersAll] = useState<ChatRoomMember[]>([])
   useEffect(() => {
     getChatRoomMembersRequest(setRoomMembersAll)
-  }, [props.roomList, props.user])
+  }, [props.roomList, loginUser])
 
   return (
     <ul>
@@ -95,17 +98,17 @@ export const ChatListDisplay = (props: {
         const isRoomMemberBool: boolean =
           roomMembersAll
             .filter((item) => item.chatRoomId === room.id)
-            .filter((item) => item.userId === props.user.id).length > 0
+            .filter((item) => item.userId === loginUser.id).length > 0
 
-        const isBannedBool: boolean = isBanned(props.user, room, roomMembersAll)
-        const isAdminBool: boolean = isAdmin(props.user, room, roomMembersAll)
-        const isOwnerBool: boolean = isOwner(props.user, room)
+        const isBannedBool: boolean = isBanned(loginUser, room, roomMembersAll)
+        const isAdminBool: boolean = isAdmin(loginUser, room, roomMembersAll)
+        const isOwnerBool: boolean = isOwner(loginUser, room)
 
         const deleteButton: JSX.Element =
           isRoomMemberBool && !isBannedBool ? (
             <DeleteMemberButton
               room={room}
-              member={props.user}
+              member={loginUser}
               onClickCallback={props.updateChatRoomList}
               msg={'Leave from the room'}
             ></DeleteMemberButton>
@@ -124,23 +127,17 @@ export const ChatListDisplay = (props: {
             <AdminIcon isAdmin={isAdminBool}></AdminIcon>
             <BannedIcon isBanned={isBannedBool}></BannedIcon>
             <EnterButton
-              user={props.user}
               room={room}
               isRoomMember={isRoomMemberBool}
               isBanned={isBannedBool}
             ></EnterButton>
             <JoinButton
-              user={props.user}
               room={room}
               isRoomMember={isRoomMemberBool}
               updateChatRoomList={props.updateChatRoomList}
             ></JoinButton>
             {deleteButton}
-            <SettingButton
-              room={room}
-              user={props.user}
-              isAdmin={isAdminBool}
-            ></SettingButton>
+            <SettingButton room={room} isAdmin={isAdminBool}></SettingButton>
           </li>
         )
       })}
