@@ -1,7 +1,7 @@
 import React, { type ReactElement, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getMatches } from '../../utils/matchAxios'
-import { getAllUsersRequest } from '../../utils/userAxios'
+import { getMatches } from '../../../utils/matchAxios'
+import { getAllUsersRequest } from '../../../utils/userAxios'
 import ListGroup from 'react-bootstrap/ListGroup'
 import axios from 'axios'
 
@@ -29,7 +29,7 @@ function listMatches(matches: MatchDto[], users: User[]): ReactElement[] {
         onClick={() => {
           // マッチリスト->ゲーム をナビゲートされる人のユーザー情報は必要ないです
           navigate('/Game/', {
-            state: { matchId: match.id, userId: '', userName: '' }
+            state: match.id
           })
         }}
       >
