@@ -216,10 +216,10 @@ paths:
         200:
           description: 成功
           content:
-            text/plain:
+            image/png:
               schema:
                 type: string
-                example: hogehogebase64
+                format: binary
 
   /chatroom:
     get:
