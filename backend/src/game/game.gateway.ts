@@ -253,7 +253,7 @@ export class GameGateway {
 
   handleConnection(@ConnectedSocket() client: Socket) {
     //クライアント接続時
-    this.logger.log(`Client connected: ${client.id}`);
+    this.logger.log(`Client connected: Game Gateway: ${client.id}`);
     if (serverMatch.leftPlayer === undefined) {
       this.logger.log('first player joined');
       //creating player 1
