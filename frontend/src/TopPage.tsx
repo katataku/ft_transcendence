@@ -36,7 +36,7 @@ export function TopPage(): ReactElement {
                 setIsSignedIn(false)
               }}
             >
-              Log out
+              Sign out
             </Button>
           </p>
         </div>

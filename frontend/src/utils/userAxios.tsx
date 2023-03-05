@@ -30,6 +30,10 @@ export function getUserRequest(
 }
 
 export function signUp(obj: signUp, callback: (id: number) => void): void {
+  if (obj.password.length < 1 || obj.name.length < 1) {
+    alert('Please fill in the blanks.')
+    throw new Error()
+  }
   axios
     .post<{ id: number }>('/user', obj)
     .then((res) => {
