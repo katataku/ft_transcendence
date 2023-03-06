@@ -1,8 +1,8 @@
-name: lint Dockerfile
-run-name: lint Dockerfile by ${{ github.actor }}
+name: Build check
+run-name: Build check by ${{ github.actor }}
 on: [push]
 jobs:
-  Lint-and-Format:
+  Build-check:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
