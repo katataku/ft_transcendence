@@ -20,6 +20,9 @@ export const ChatModal = (props: {
           <Button variant="primary" onClick={props.handleKickButtonClick}>
             Kick
           </Button>
+          <Button variant="primary" onClick={() => {}}>
+            ゲーム
+          </Button>
         </Modal.Footer>
       </Modal>
     </>
