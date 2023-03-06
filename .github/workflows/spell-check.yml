@@ -9,7 +9,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Spell check backend
         working-directory: ./backend
-        run: npx cspell src/**/*.ts --yes
+        run: npx --package cspell --yes cspell src/**/*.ts
       - name: Spell check frontend
         working-directory: ./frontend
-        run: npx cspell src/**/*.tsx --yes
+        run: npx --package cspell --yes cspell rc/**/*.tsx
