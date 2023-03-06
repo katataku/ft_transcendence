@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Game, MatchList } from './Game'
 import { ChatList, Chat, ChatRoom } from './Chat'
 import { TopPage } from './TopPage'
+import { Header } from './Header'
 import { Profile } from './User'
 
 // interfaceの初期化をしろとeslintに怒られますが、Setterは初期化できないため、ここだけeslintを無視します。
@@ -42,6 +43,7 @@ export function App(): ReactElement {
     <div className="App">
       <GlobalContext.Provider value={context}>
         <BrowserRouter>
+          <Header></Header>
           <div>
             <Routes>
               <Route path="/" element={<TopPage />} />
