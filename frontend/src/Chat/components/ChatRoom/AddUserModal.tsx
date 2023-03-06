@@ -1,23 +1,20 @@
-import { useEffect, useState, type ReactElement } from 'react'
+import { useContext, useEffect, useState, type ReactElement } from 'react'
 import { Button, Modal } from 'react-bootstrap'
-import {
-  getAllUsersRequest,
-  updateChatRoomMembersRequest
-} from '../utils/requestUtils'
+import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { getAllUsersRequest, getUserRequest } from '../../../utils/userAxios'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
-const AddButton = (props: {
-  room: ChatRoom
-  member: User
-  updateMemberList: () => void
-}): JSX.Element => {
+const AddButton = (props: { member: User }): JSX.Element => {
+  const room = useContext(ChatRoomContext)
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   const handleUpdateChatRoomMembers = (): void => {
     const requestData: ChatRoomMember = {
-      chatRoomId: props.room.id,
+      chatRoomId: room.id,
       userId: props.member.id,
-      isBanned: false,
+      ban_until: undefined,
       isAdministrator: false
     }
-    updateChatRoomMembersRequest(requestData, props.updateMemberList)
+    updateChatRoomMembersRequest(requestData, updateMemberList)
   }
 
   return (
@@ -33,17 +30,45 @@ const AddButton = (props: {
 }
 
 const ALLUserDisplay = (props: {
-  room: ChatRoom
-  allUserList: User[]
-  userList: User[]
-  updateMemberList: () => void
+  chatRoomMemberList: ChatRoomMember[]
 }): ReactElement => {
+  const [allUserList, setALLUserList] = useState<User[]>([])
+  const [userList, setUserList] = useState<User[]>([])
+
+  // チャットルームに所属しているユーザーのリストを取得する。
+  const updateMemberList = (): void => {
+    setUserList([])
+    props.chatRoomMemberList.map(async (value: ChatRoomMember) => {
+      getUserRequest(value.userId, (data) => {
+        setUserList(
+          (userList) =>
+            [...userList, data]
+              .sort((a, b) => a.id - b.id)
+              .filter(
+                (element, index, arr) =>
+                  arr.map((value) => value.id).indexOf(element.id) === index
+              ) // 重複削除
+        )
+      })
+    })
+  }
+
+  useEffect(() => {
+    updateMemberList()
+  }, [props.chatRoomMemberList])
+
+  useEffect(() => {
+    // ユーザ一覧を取得する。
+    getAllUsersRequest((data) => {
+      setALLUserList(data)
+    })
+  }, [])
+
   return (
     <ul>
-      {props.allUserList
+      {allUserList
         .filter(
-          (member) =>
-            !props.userList.map((value) => value.id).includes(member.id)
+          (member) => !userList.map((value) => value.id).includes(member.id)
         )
         .map((member, index) => {
           return (
@@ -62,21 +87,10 @@ const ALLUserDisplay = (props: {
 // ユーザを選択し、追加ボタンを押すと、チャットルームにユーザを追加する。
 // チャットルームに追加したユーザは、チャットルームのメンバーとなる。
 export const AddUserModal = (props: {
-  room: ChatRoom
-  userList: User[]
   showAddUserModal: boolean
+  chatRoomMemberList: ChatRoomMember[]
   handleModalClose: () => void
-  updateMemberList: () => void
 }): ReactElement => {
-  const [allUserList, setALLUserList] = useState<User[]>([])
-
-  useEffect(() => {
-    // ユーザ一覧を取得する。
-    getAllUsersRequest((data) => {
-      setALLUserList(data)
-    })
-  }, [])
-
   return (
     <>
       <Modal show={props.showAddUserModal} onHide={props.handleModalClose}>
@@ -85,7 +99,7 @@ export const AddUserModal = (props: {
         </Modal.Header>
 
         <Modal.Body>
-          <ALLUserDisplay {...props} allUserList={allUserList}></ALLUserDisplay>
+          <ALLUserDisplay {...props}></ALLUserDisplay>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={props.handleModalClose}>

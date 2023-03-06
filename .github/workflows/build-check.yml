@@ -1,0 +1,17 @@
+name: Build check
+run-name: Build check by ${{ github.actor }}
+on: [push]
+jobs:
+  Build-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: setup
+        run: make init
+      - name: Backend build
+        working-directory: ./backend
+        run: npm run build
+      - name: Frontend build
+        working-directory: ./frontend
+        run: npm run build

@@ -1,24 +1,23 @@
+import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
-import { AdminIcon } from '../utils/AdminIcon'
-import { updateChatRoomMembersRequest } from '../utils/requestUtils'
-import { isAdmin, isOwner } from '../utils/userStatusUtils'
+import { GlobalContext } from '../../../App'
+import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
+import { isOwner, isTargetAdmin } from '../utils/userStatusUtils'
 
 const AdminMemberButton = (props: {
-  room: ChatRoom
-  member: User
-  updateMemberList: () => void
+  currentChatRoomMember: ChatRoomMember
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-info"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          isBanned: false,
+          ...props.currentChatRoomMember,
           isAdministrator: true
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       Admin
@@ -27,21 +26,18 @@ const AdminMemberButton = (props: {
 }
 
 const AdminOFFMemberButton = (props: {
-  room: ChatRoom
-  member: User
-  updateMemberList: () => void
+  currentChatRoomMember: ChatRoomMember
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-danger"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          isBanned: false,
+          ...props.currentChatRoomMember,
           isAdministrator: false
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       Admin 解除
@@ -50,27 +46,26 @@ const AdminOFFMemberButton = (props: {
 }
 
 export const AdminButton = (props: {
-  room: ChatRoom
   member: User
-  chatRoomMemberList: ChatRoomMember[]
-  updateMemberList: () => void
+  currentChatRoomMember: ChatRoomMember
 }): JSX.Element => {
-  if (isOwner(props.member, props.room)) return <></>
+  const { loginUser } = useContext(GlobalContext)
+  const room = useContext(ChatRoomContext)
 
-  const isAdminBool: boolean = isAdmin(
-    props.member,
-    props.room,
-    props.chatRoomMemberList
-  )
+  // 管理者権限の変更はオーナーしかできない
+  if (!isOwner(loginUser, room)) return <></>
 
-  return isAdminBool ? (
+  // オーナーは管理者権限を変更できない
+  if (isOwner(props.member, room)) return <></>
+
+  const isAdmin: boolean = isTargetAdmin(props.currentChatRoomMember)
+  return isAdmin ? (
     <>
-      <AdminIcon isAdmin={isAdminBool} />
-      <AdminOFFMemberButton {...props} member={props.member} />
+      <AdminOFFMemberButton {...props} />
     </>
   ) : (
     <>
-      <AdminMemberButton {...props} member={props.member} />
+      <AdminMemberButton {...props} />
     </>
   )
 }

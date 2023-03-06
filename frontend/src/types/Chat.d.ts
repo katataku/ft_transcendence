@@ -1,6 +1,5 @@
 interface ChatState {
-  user: User
-  room: string
+  room: ChatRoom
 }
 
 interface ChatListState {
@@ -9,9 +8,4 @@ interface ChatListState {
 
 interface ChatRoomState {
   room: ChatRoom
-}
-
-interface User {
-  id: number
-  name: string
 }

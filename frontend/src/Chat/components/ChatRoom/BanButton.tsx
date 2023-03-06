@@ -1,47 +1,44 @@
+import { useContext } from 'react'
 import { Button } from 'react-bootstrap'
-import { BannedIcon } from '../utils/BannedIcon'
-import { updateChatRoomMembersRequest } from '../utils/requestUtils'
-import { isBanned, isOwner } from '../utils/userStatusUtils'
+import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
+import { isOwner, isTargetBanned } from '../utils/userStatusUtils'
 
 const BanMemberButton = (props: {
-  room: ChatRoom
-  member: User
-  updateMemberList: () => void
+  currentChatRoomMember: ChatRoomMember
+  ban_until: Date
+  msg: string
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-danger"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          isBanned: true,
-          isAdministrator: false
+          ...props.currentChatRoomMember,
+          ban_until: props.ban_until
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
-      Ban
+      {props.msg}
     </Button>
   )
 }
 
 const BanOFFMemberButton = (props: {
-  room: ChatRoom
-  member: User
-  updateMemberList: () => void
+  currentChatRoomMember: ChatRoomMember
 }): JSX.Element => {
+  const updateMemberList = useContext(ChatRoomRefreshContext)
   return (
     <Button
       variant="outline-info"
       onClick={() => {
         const requestData: ChatRoomMember = {
-          chatRoomId: props.room.id,
-          userId: props.member.id,
-          isBanned: false,
-          isAdministrator: false
+          ...props.currentChatRoomMember,
+          ban_until: undefined
         }
-        updateChatRoomMembersRequest(requestData, props.updateMemberList)
+        updateChatRoomMembersRequest(requestData, updateMemberList)
       }}
     >
       Ban 解除
@@ -50,27 +47,31 @@ const BanOFFMemberButton = (props: {
 }
 
 export const BanButton = (props: {
-  room: ChatRoom
   member: User
-  chatRoomMemberList: ChatRoomMember[]
-  updateMemberList: () => void
+  currentChatRoomMember: ChatRoomMember
 }): JSX.Element => {
-  if (isOwner(props.member, props.room)) return <></>
+  const room = useContext(ChatRoomContext)
+  if (isOwner(props.member, room)) return <></>
 
-  const isBannedBool = isBanned(
-    props.member,
-    props.room,
-    props.chatRoomMemberList
-  )
-
-  return isBannedBool ? (
+  // 10秒
+  const banSec = 10
+  const isBanned: boolean = isTargetBanned(props.currentChatRoomMember)
+  return isBanned ? (
     <>
-      <BannedIcon isBanned={isBannedBool} />
-      <BanOFFMemberButton {...props} member={props.member} />
+      <BanOFFMemberButton {...props} />
     </>
   ) : (
     <>
-      <BanMemberButton {...props} member={props.member} />
+      <BanMemberButton
+        {...props}
+        ban_until={new Date(2023, 12, 31, 23, 59, 0)}
+        msg="Ban"
+      />
+      <BanMemberButton
+        {...props}
+        ban_until={new Date(Date.now() + banSec * 1000)}
+        msg="Ban 10sec"
+      />
     </>
   )
 }

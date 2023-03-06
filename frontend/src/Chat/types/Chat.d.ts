@@ -16,8 +16,8 @@ interface messageItem {
   body: JSX.Element
 }
 
-interface muteUserList {
-  muteUserId: number
-  mutedUserId: number
-  mute_until: Date
+interface blockUserList {
+  blockUserId: number
+  blockedUserId: number
+  block_until: Date
 }

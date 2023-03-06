@@ -1,13 +1,19 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FriendRequestDto,
-  UserCreateReqDto,
-  UserCreateResDto,
   UserUpdateReqDto,
   UserGetDto,
+  UserSignUpReqDto,
+  UserSignUpResDto,
+  UserSignInDto,
 } from 'src/common/dto/users.dto';
-import { Friendship, PendingFriendship, User } from '../entities/users.entity';
+import {
+  Friendship,
+  PendingFriendship,
+  User,
+  UserAvatars,
+} from '../entities/users.entity';
 import { Repository } from 'typeorm';
 import { SHA256 } from 'crypto-js';
 
@@ -20,20 +26,45 @@ export class UsersService {
     private friendshipRepository: Repository<Friendship>,
     @InjectRepository(PendingFriendship)
     private pendingRepository: Repository<PendingFriendship>,
+    @InjectRepository(UserAvatars)
+    private userAvatarsRepository: Repository<UserAvatars>,
   ) {}
 
-  async create(data: UserCreateReqDto): Promise<UserCreateResDto> {
+  async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
     const obj: User = {
       id: null,
       name: data.name,
       password: SHA256(data.password).toString(),
       createdAt: new Date(),
     };
-    const saved = await this.usersRepository.save(obj);
-    const res: UserCreateResDto = {
-      id: saved.id,
+    const user = await this.usersRepository.save(obj);
+    await this.saveAvatar(user.id, data.avatar);
+    const res: UserSignUpResDto = {
+      id: user.id,
     };
     return res;
+  }
+
+  async signInUser(data: UserSignInDto): Promise<UserGetDto> {
+    const target = await this.usersRepository.findOne({
+      where: { id: data.id },
+    });
+
+    if (target == null) {
+      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
+    }
+
+    if (SHA256(data.password).toString() !== target.password) {
+      throw new HttpException(
+        'Password is incorrect.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    } else {
+      return {
+        id: target.id,
+        name: target.name,
+      };
+    }
   }
 
   async getUsers(): Promise<UserGetDto[]> {
@@ -110,7 +141,6 @@ export class UsersService {
     for (let i = 0; i < pendings.length; ++i) {
       res.push(await this.getUserById(pendings[i].from));
     }
-    Logger.log(res);
     return res;
   }
 
@@ -126,5 +156,20 @@ export class UsersService {
       }
     }
     return res;
+  }
+
+  async saveAvatar(userId: number, data: string): Promise<number> {
+    const obj: UserAvatars = {
+      id: null,
+      userId: userId,
+      data: data,
+    };
+    return (await this.userAvatarsRepository.save(obj)).id;
+  }
+
+  async getAvatarById(userId: number): Promise<string> {
+    return (
+      await this.userAvatarsRepository.findOne({ where: { userId: userId } })
+    ).data;
   }
 }

@@ -1,50 +1,27 @@
 import axios from 'axios'
 
+axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
+
 export function getChatRoomMembersRequest(
   callback: (members: ChatRoomMember[]) => void
 ): void {
   axios
     .get<ChatRoomMember[]>('/chatRoomMembers')
     .then((response) => {
-      callback(response.data)
+      callback(
+        response.data.map((member) => {
+          return {
+            ...member,
+            ban_until:
+              member.ban_until != null ? new Date(member.ban_until) : undefined,
+            mute_until:
+              member.mute_until != null
+                ? new Date(member.mute_until)
+                : undefined
+          }
+        })
+      )
     })
-    .catch((reason) => {
-      alert('エラーです！')
-      console.log(reason)
-    })
-}
-
-export function getAllUsersRequest(callback: (users: User[]) => void): void {
-  axios
-    .get<User[]>('/user/users')
-    .then((response) => {
-      callback(response.data)
-    })
-    .catch((reason) => {
-      alert('エラーです！')
-      console.log(reason)
-    })
-}
-
-export function getUserRequest(
-  userId: number,
-  callback: (user: User) => void
-): void {
-  axios
-    .get<User>('/user/' + String(userId))
-    .then((response) => {
-      callback(response.data)
-    })
-    .catch((reason) => {
-      alert('エラーです！')
-      console.log(reason)
-    })
-}
-
-export function deleteChatRoomRequest(room: ChatRoom): void {
-  axios
-    .delete('/chatRoom/' + String(room.id))
-    .then((_response) => {})
     .catch((reason) => {
       alert('エラーです！')
       console.log(reason)

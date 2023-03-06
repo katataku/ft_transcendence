@@ -45,6 +45,11 @@ lint:
 	cd ./frontend && npm run lint && npm run format
 	cd ./backend && npm run lint && npm run format
 
+.PHONY:lint-dockerfile
+lint-dockerfile:
+	docker run --rm -i hadolint/hadolint hadolint - --style 'DL3007' < ./backend/Dockerfile
+	docker run --rm -i hadolint/hadolint hadolint - --style 'DL3007' < ./frontend/Dockerfile
+
 .PHONY:back
 back:
 	mkdir -p ${DB_STORAGE_DIR}

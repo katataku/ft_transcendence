@@ -43,3 +43,15 @@ export class PendingFriendship {
   @Column({ name: 'to' })
   to!: number;
 }
+
+@Entity({ name: 'user_avatars' })
+export class UserAvatars {
+  @PrimaryGeneratedColumn({ name: 'id' })
+  id!: number;
+
+  @Column({ name: 'user_id' })
+  userId!: number;
+
+  @Column({ name: 'data' })
+  data!: string;
+}
