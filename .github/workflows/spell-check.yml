@@ -8,8 +8,7 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Backend spell check
-        working-directory: ./backend
-        run: npx --package cspell --yes cspell lint --config .vscode/cspell.json src/**/*.ts
+        run: npx --package cspell --yes cspell lint --config .vscode/cspell.json backend/src/**/*.ts
 
   Spell-check-frontend:
     runs-on: ubuntu-latest
@@ -17,5 +16,4 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Frontend spell check
-        working-directory: ./frontend
-        run:  npx --package cspell --yes cspell lint --config .vscode/cspell.json src/**/*.tsx
+        run:  npx --package cspell --yes cspell lint --config .vscode/cspell.json frontend/src/**/*.tsx
