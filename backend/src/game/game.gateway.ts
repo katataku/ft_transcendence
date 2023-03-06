@@ -8,193 +8,50 @@ import {
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import {
-  Vector2,
-  IBall,
   IMatch,
   IPaddle,
-  IPlayer,
   EStatus,
+  IUserQueue,
+  IScore,
 } from './types/game.model';
-
-const gameWinWid = 1000;
-const gameWinHght = 600;
-const ballPx = 20;
-const winningScore = 3;
-
-const paddleSize: Vector2 = {
-  x: 8,
-  y: 100,
-};
-
-const initBall: IBall = {
-  pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 - ballPx / 2 },
-  vel: { x: -1, y: 0.5 },
-};
-
-const initLeftPaddle: IPaddle = {
-  pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 },
-  id: 'left',
-};
-
-const initRightPaddle: IPaddle = {
-  pos: {
-    x: gameWinWid - (gameWinWid / 20 + paddleSize.x),
-    y: gameWinHght / 2 - paddleSize.y / 2,
-  },
-  id: 'right',
-};
-
-const deepCopy = (obj: object): any => {
-  return JSON.parse(JSON.stringify(obj)); // deep copy of Object
-};
-
-const initLeftProfile: IPlayer = {
-  id: 1,
-  socketID: '',
-  name: 'Player1',
-  wins: 3,
-  losses: 7,
-  ready: false,
-  paddle: deepCopy(initLeftPaddle),
-  score: 0,
-};
-
-const initRightProfile: IPlayer = {
-  id: 2,
-  socketID: '',
-  name: 'Player2',
-  wins: 13,
-  losses: 17,
-  ready: false,
-  paddle: deepCopy(initRightPaddle),
-  score: 0,
-};
-
-const serverMatch: IMatch = {
-  id: 1,
-  leftPlayer: undefined,
-  rightPlayer: undefined,
-  ball: deepCopy(initBall),
-  speed: 400,
-  status: EStatus.none,
-};
+import * as GameSetting from './constants';
+import { deepCopy } from './utility';
+import { updateMatch, isMatchSet } from './logic';
+import { createMatch, postMatchResult } from './request';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
-  // ballの処理↓
-
-  private calculateTilt(relativePosBall: number): number {
-    const absValFromPaddle = Math.abs(relativePosBall);
-    let x = 0;
-    /*
-	  paddleの半分から80%だったら
-	  paddleの半分から60%だったら...
-	  xは大きくなれば傾きも大きくなる
-	*/
-    if (absValFromPaddle >= 0.9) {
-      x = 0.8;
-    } else if (absValFromPaddle >= 0.8) {
-      x = 0.6;
-    } else if (absValFromPaddle >= 0.6) {
-      x = 0.4;
-    } else if (absValFromPaddle >= 0.4) {
-      x = 0.3;
-    } else if (absValFromPaddle >= 0.2) {
-      x = 0.2;
-    } else {
-      x = absValFromPaddle;
-    }
-    return relativePosBall < 0 ? -x : x;
-  }
-
-  private handlePaddleCollision(ball: IBall, paddle: IPaddle): void {
-    const compositeVelocity = Math.sqrt(ball.vel.x ** 2 + ball.vel.y ** 2);
-    ball.vel.y = this.calculateTilt(
-      // ボールがパドルの何%で衝突したのか)
-      (ball.pos.y + ballPx / 2 - (paddle.pos.y + paddleSize.y / 2)) /
-        (paddleSize.y / 2),
-    );
-    ball.vel.x =
-      ball.vel.x < 0
-        ? Math.sqrt(compositeVelocity ** 2 - ball.vel.y ** 2)
-        : -Math.sqrt(compositeVelocity ** 2 - ball.vel.y ** 2);
-  }
-
-  private isHitPaddle(ball: IBall, paddle: IPaddle): boolean {
-    return (
-      paddle.pos.x <= ball.pos.x + ballPx &&
-      ball.pos.x <= paddle.pos.x + paddleSize.x &&
-      paddle.pos.y <= ball.pos.y + ballPx &&
-      ball.pos.y <= paddle.pos.y + paddleSize.y
-    );
-  }
-
-  private updateBall(
-    ball: IBall,
-    deltaTime: number,
-    speed: number,
-    leftPaddle: IPaddle,
-    rightPaddle: IPaddle,
-  ): IBall {
-    ball.pos.x += ball.vel.x * deltaTime * speed;
-    ball.pos.y += ball.vel.y * deltaTime * speed;
-
-    if (ball.pos.y <= 0 && ball.vel.y < 0) {
-      ball.vel.y *= -1;
-    } else if (ball.pos.y >= gameWinHght - ballPx && ball.vel.y > 0) {
-      ball.vel.y *= -1;
-    } else if (
-      // goal hit
-      ball.pos.x <= 0 ||
-      ball.pos.x >= gameWinWid - ballPx
-    ) {
-      serverMatch.status = EStatus.pause;
-      this.server.emit('updateStatus', serverMatch.status);
-      if (ball.vel.x < 0) {
-        serverMatch.rightPlayer.score++;
-      } else {
-        serverMatch.leftPlayer.score++;
-      }
-      this.server.emit('updateScore', {
-        left: serverMatch.leftPlayer.score,
-        right: serverMatch.rightPlayer.score,
-      });
-      ball.pos = deepCopy(initBall).pos;
-      ball.vel = deepCopy(initBall).vel;
-      ball.vel.x *= -1;
-    } else if (
-      // left paddle hit
-      ball.vel.x < 0 &&
-      this.isHitPaddle(ball, leftPaddle)
-    ) {
-      this.handlePaddleCollision(ball, leftPaddle);
-    } else if (
-      // right paddle hit
-      ball.vel.x > 0 &&
-      this.isHitPaddle(ball, rightPaddle)
-    ) {
-      this.handlePaddleCollision(ball, rightPaddle);
-    }
-    return ball;
-  }
-
-  // ballの処理↑
-
   @WebSocketServer()
   private server: Server;
-  private intervalId: NodeJS.Timeout;
   private logger: Logger = new Logger('GameGateway');
 
+  private serverMatches: Map<number, IMatch> = new Map<number, IMatch>();
+  private connectedClients: Map<string, Socket> = new Map<string, Socket>();
+  private userQueue: IUserQueue[] = [];
+
   afterInit(_server: Server) {
-    //初期化
     this.logger.log('初期化しました。');
+    this.loop();
   }
 
-  private countdown(seconds: number): Promise<void> {
+  handleConnection(@ConnectedSocket() client: Socket) {
+    this.logger.log(`Client connected: ${client.id}`);
+    this.connectedClients.set(client.id, client);
+  }
+
+  handleDisconnect(@ConnectedSocket() client: Socket) {
+    this.logger.log(`Client disconnected: ${client.id}`);
+    this.userQueue = this.userQueue.filter(
+      (element) => !(element.clientId === client.id),
+    );
+    this.connectedClients.delete(client.id);
+  }
+
+  private countdown(matchID: string, seconds: number): Promise<void> {
     return new Promise<void>((resolve) => {
-      this.server.emit('updateCountDown', seconds);
+      this.server.to(matchID).emit('updateCountDown', seconds);
       const intervalId = setInterval(() => {
-        this.server.emit('updateCountDown', --seconds);
+        this.server.to(matchID).emit('updateCountDown', --seconds);
 
         if (seconds === 0) {
           clearInterval(intervalId);
@@ -204,149 +61,202 @@ export class GameGateway {
     });
   }
 
-  private isMatchSet(): boolean {
-    return (
-      serverMatch.leftPlayer.score >= winningScore ||
-      serverMatch.rightPlayer.score >= winningScore
-    );
-  }
-
   private loop() {
-    let lastFrameTime = Date.now();
-    let elapsedTime = 0;
-    this.intervalId = setInterval(() => {
-      const currentTime = Date.now();
-      const deltaTime = (currentTime - lastFrameTime) / 1000;
-      lastFrameTime = currentTime;
-      if (serverMatch.status === EStatus.play)
-        serverMatch.ball = this.updateBall(
-          serverMatch.ball,
-          deltaTime,
-          serverMatch.speed,
-          serverMatch.leftPlayer.paddle,
-          serverMatch.rightPlayer.paddle,
-        );
+    setInterval(() => {
+      this.serverMatches.forEach((match, key, map) => {
+        if (match.status === EStatus.none) return;
+        const matchId = match.id.toString();
+        const currentTime = Date.now();
+        const deltaTime = (currentTime - match.lastFrameTime) / 1000;
+        match.lastFrameTime = currentTime;
+        if (match.status === EStatus.play)
+          updateMatch(
+            match,
+            deltaTime,
+            (id: string, score: IScore, status: EStatus) => {
+              this.server.to(id.toString()).emit('updateStatus', status);
+              this.server.to(id.toString()).emit('updateScore', {
+                left: score.left,
+                right: score.right,
+              });
+            },
+          );
 
-      if (serverMatch.status === EStatus.pause) {
-        elapsedTime += deltaTime;
-        if (elapsedTime >= 0.9) {
-          serverMatch.status = EStatus.play;
-          this.server.emit('updateStatus', serverMatch.status);
-          elapsedTime = 0;
+        if (match.status === EStatus.pause) {
+          match.elapsedTime += deltaTime;
+          if (match.elapsedTime >= 0.9) {
+            match.status = EStatus.play;
+            this.server.to(matchId).emit('updateStatus', match.status);
+            match.elapsedTime = 0;
+          }
         }
-      }
 
-      // クライアントにデータを送信する
-      this.server.emit('updateBall', serverMatch.ball);
-      this.server.emit('updatePaddle', {
-        leftPaddle: serverMatch.leftPlayer.paddle,
-        rightPaddle: serverMatch.rightPlayer.paddle,
+        this.server.to(matchId).emit('updateBall', match.ball);
+        this.server.to(matchId).emit('updatePaddle', {
+          leftPaddle: match.leftPlayer.paddle,
+          rightPaddle: match.rightPlayer.paddle,
+        });
+        if (isMatchSet(match.leftPlayer.score, match.rightPlayer.score)) {
+          match.status = EStatus.set;
+          this.server.to(matchId).emit('updateConnections', match);
+          this.server.to(matchId).emit('updateStatus', match.status);
+          postMatchResult({
+            id: match.id,
+            winner:
+              match.leftPlayer.score > match.rightPlayer.score
+                ? match.leftPlayer.score
+                : match.rightPlayer.score,
+          });
+          map.delete(key);
+        }
       });
-      if (this.isMatchSet()) {
-        serverMatch.status = EStatus.set;
-        this.server.emit('updateConnections', serverMatch);
-        this.server.emit('updateStatus', serverMatch.status);
-        clearInterval(this.intervalId);
-      }
     }, 1000 / 60);
   }
 
-  handleConnection(@ConnectedSocket() client: Socket) {
-    //クライアント接続時
-    this.logger.log(`Client connected: ${client.id}`);
-    if (serverMatch.leftPlayer === undefined) {
-      this.logger.log('first player joined');
-      //creating player 1
-      serverMatch.leftPlayer = deepCopy(initLeftProfile);
-      serverMatch.leftPlayer.socketID = client.id;
-      serverMatch.leftPlayer.name = client.id;
-    } else if (serverMatch.rightPlayer === undefined) {
-      this.logger.log('second player joined');
-      //creating player 2
-      serverMatch.rightPlayer = deepCopy(initRightProfile);
-      serverMatch.rightPlayer.socketID = client.id;
-      serverMatch.rightPlayer.name = client.id;
-    } else {
-      this.logger.log('too many players, bye');
+  @SubscribeMessage('matching')
+  handleMatching(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { userId: number; userName: string },
+  ): void {
+    this.userQueue.push({
+      clientId: client.id,
+      userId: data.userId,
+      userName: data.userName,
+    });
+
+    if (this.userQueue.length >= 2) {
+      const leftUser = this.userQueue.shift();
+      const rightUser = this.userQueue.shift();
+      this.server
+        .to(leftUser.clientId)
+        .to(rightUser.clientId)
+        .emit('matchFound');
+      createMatch(
+        leftUser,
+        rightUser,
+        (id: number, leftUser: IUserQueue, rightUser: IUserQueue) => {
+          const leftSocket = this.connectedClients.get(leftUser.clientId);
+          const rightSocket = this.connectedClients.get(rightUser.clientId);
+
+          this.serverMatches.set(id, deepCopy(GameSetting.initServerMatch));
+          const newMatch = this.serverMatches.get(id);
+          newMatch.id = id;
+          newMatch.leftPlayer = deepCopy(GameSetting.initLeftProfile);
+          newMatch.leftPlayer.socketID = leftSocket.id;
+          newMatch.leftPlayer.name = leftUser.userName;
+          newMatch.leftPlayer.id = leftUser.userId;
+          newMatch.rightPlayer = deepCopy(GameSetting.initRightProfile);
+          newMatch.rightPlayer.socketID = rightSocket.id;
+          newMatch.rightPlayer.name = rightUser.userName;
+          newMatch.rightPlayer.id = rightUser.userId;
+          if (leftSocket !== undefined) leftSocket.join(id.toString());
+          if (rightSocket !== undefined) rightSocket.join(id.toString());
+          this.server.to(id.toString()).emit('updateConnections', newMatch);
+        },
+      );
     }
   }
 
-  handleDisconnect(@ConnectedSocket() client: Socket) {
-    this.logger.log(`Client disconnected: ${client.id}`);
-    if (
-      serverMatch.leftPlayer === undefined ||
-      serverMatch.rightPlayer === undefined ||
-      (serverMatch.leftPlayer.socketID !== client.id &&
-        serverMatch.rightPlayer.socketID !== client.id)
-    )
-      return;
-    clearInterval(this.intervalId);
-    serverMatch.leftPlayer = undefined;
-    serverMatch.rightPlayer = undefined;
-    serverMatch.ball = deepCopy(initBall);
-    serverMatch.status = EStatus.none;
-    this.server.emit('updateConnections', serverMatch);
+  @SubscribeMessage('matchingCancel')
+  handleMatchingCancel(@MessageBody() userName: string): void {
+    this.userQueue = this.userQueue.filter(
+      (element) => !(element.userName === userName),
+    );
   }
 
   @SubscribeMessage('updatePaddle')
-  handleUpdatePaddle(@MessageBody() newPaddle: IPaddle): void {
-    if (newPaddle.id === 'left')
-      serverMatch.leftPlayer.paddle.pos = newPaddle.pos;
-    else if (newPaddle.id === 'right')
-      serverMatch.rightPlayer.paddle.pos = newPaddle.pos;
+  handleUpdatePaddle(
+    @MessageBody() data: { matchID: number; newPaddle: IPaddle },
+  ): void {
+    const match = this.serverMatches.get(data.matchID);
+    if (match === undefined) return;
+    if (data.newPaddle.id === 'left')
+      match.leftPlayer.paddle.pos = data.newPaddle.pos;
+    else if (data.newPaddle.id === 'right')
+      match.rightPlayer.paddle.pos = data.newPaddle.pos;
   }
 
   @SubscribeMessage('updatePlayerReady')
-  handleUpdatePlayerReady(@MessageBody() clientSocketID: string): void {
-    if (clientSocketID === serverMatch.leftPlayer.socketID)
-      serverMatch.leftPlayer.ready = true;
-    else if (clientSocketID === serverMatch.rightPlayer.socketID)
-      serverMatch.rightPlayer.ready = true;
+  handleUpdatePlayerReady(
+    @MessageBody() data: { matchID: number; userName: string },
+  ): void {
+    const match = this.serverMatches.get(data.matchID);
+    if (match === undefined) return;
+    if (data.userName === match.leftPlayer.name) match.leftPlayer.ready = true;
+    else if (data.userName === match.rightPlayer.name)
+      match.rightPlayer.ready = true;
 
-    this.server.emit('updateConnections', serverMatch);
+    this.server.to(data.matchID.toString()).emit('updateConnections', match);
 
-    if (serverMatch.leftPlayer.ready && serverMatch.rightPlayer.ready) {
+    if (match.leftPlayer.ready && match.rightPlayer.ready) {
       this.logger.log('game ready!');
-      serverMatch.status = EStatus.ready;
-      this.server.emit('updateStatus', serverMatch.status);
+      match.status = EStatus.ready;
+      this.server.to(match.id.toString()).emit('updateStatus', match.status);
       setTimeout((): void => {
-        this.countdown(3).then(() => {
-          serverMatch.status = EStatus.play;
-          this.server.emit('updateStatus', serverMatch.status);
-          this.loop();
+        this.countdown(match.id.toString(), 3).then(() => {
+          match.status = EStatus.play;
+          this.server
+            .to(match.id.toString())
+            .emit('updateStatus', match.status);
         });
       }, 200);
     }
   }
 
   @SubscribeMessage('updateConnections')
-  handleUpdateConnections(@ConnectedSocket() client: Socket): void {
-    if (
-      serverMatch.leftPlayer !== undefined &&
-      serverMatch.rightPlayer !== undefined
-    ) {
-      this.server.to(client.id).emit('updateConnections', serverMatch);
+  handleUpdateConnections(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { matchID: number; userName: string },
+  ): void {
+    let currentMatch = undefined;
+    for (const [_key, match] of this.serverMatches) {
+      if (
+        match.leftPlayer !== undefined &&
+        match.leftPlayer.name === data.userName
+      ) {
+        match.leftPlayer.socketID = client.id;
+        client.join(match.id.toString());
+      } else if (
+        match.rightPlayer !== undefined &&
+        match.rightPlayer.name === data.userName
+      ) {
+        match.rightPlayer.socketID = client.id;
+        client.join(match.id.toString());
+      } else if (match.id === data.matchID) {
+        // もし観戦しようとしていたら。
+        // defaultはmatch.id = 0なので観戦しようとする時だけmatch.id > 0
+        client.join(match.id.toString());
+      } else continue;
+      currentMatch = match;
+      break;
     }
+    if (currentMatch === undefined)
+      this.server.to(client.id).emit('updateConnections');
+    else this.server.to(client.id).emit('updateConnections', currentMatch);
   }
 
   @SubscribeMessage('updateSpeed')
   handleUpdateSpeed(
     @ConnectedSocket() client: Socket,
-    @MessageBody() difficultyTitle: string,
+    @MessageBody() data: { matchID: number; difficultyTitle: string },
   ): void {
-    switch (difficultyTitle) {
+    const match = this.serverMatches.get(data.matchID);
+    if (match === undefined) return;
+    switch (data.difficultyTitle) {
       case 'Easy':
-        serverMatch.speed = 400;
+        match.speed = 400;
         break;
       case 'Medium':
-        serverMatch.speed = 600;
+        match.speed = 600;
         break;
       case 'Hard':
-        serverMatch.speed = 800;
+        match.speed = 800;
         break;
       default:
         return;
     }
-    this.server.emit('updateSpeed', difficultyTitle);
+    this.server
+      .to(match.id.toString())
+      .emit('updateSpeed', data.difficultyTitle);
   }
 }

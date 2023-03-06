@@ -4,6 +4,8 @@ import DropdownButton from 'react-bootstrap/DropdownButton'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
+import Spinner from 'react-bootstrap/Spinner'
+import Button from 'react-bootstrap/Button'
 import { useAnimationFrame } from '../../hooks/useAnimationFrame'
 import '../assets/styles.css'
 import { useLocation } from 'react-router-dom'
@@ -34,12 +36,12 @@ const paddleSize: Vector2 = {
   y: 100
 }
 
-let selfID: string
 let selfName: string
+let matchID: number
 
 function Paddles(props: {
-  leftSocketID: string
-  rightSocketID: string
+  leftName: string
+  rightName: string
   leftPaddle: IPaddle
   rightPaddle: IPaddle
   status: EStatus
@@ -50,21 +52,21 @@ function Paddles(props: {
     socket.on(
       'updatePaddle',
       (data: { leftPaddle: IPaddle; rightPaddle: IPaddle }) => {
-        if (props.leftSocketID !== selfID) setLeftPaddle(data.leftPaddle)
-        if (props.rightSocketID !== selfID) setRightPaddle(data.rightPaddle)
+        if (props.leftName !== selfName) setLeftPaddle(data.leftPaddle)
+        if (props.rightName !== selfName) setRightPaddle(data.rightPaddle)
       }
     )
   }, [])
 
   useAnimationFrame((): void => {
-    if (props.leftSocketID === selfID) {
+    if (props.leftName === selfName) {
       const newPaddle = updatePaddle(leftPaddle)
       setLeftPaddle(newPaddle)
-      socket.emit('updatePaddle', newPaddle)
-    } else if (props.rightSocketID === selfID) {
+      socket.emit('updatePaddle', { matchID, newPaddle })
+    } else if (props.rightName === selfName) {
       const newPaddle = updatePaddle(rightPaddle)
       setRightPaddle(newPaddle)
-      socket.emit('updatePaddle', newPaddle)
+      socket.emit('updatePaddle', { matchID, newPaddle })
     }
   }, props.status === EStatus.set)
 
@@ -141,12 +143,11 @@ function Result(props: { score: IScore }): ReactElement {
   return <div id={`${winner}Result`}>WIN</div>
 }
 
-function SpeedPU(props: { leftID: string; status: EStatus }): ReactElement {
+function SpeedPU(props: { leftName: string; status: EStatus }): ReactElement {
   const [title, setTitle] = useState<string>('Difficulty')
 
-
   const modifySpeed = (op: string | null): void => {
-    if (props.status !== EStatus.none || selfID !== props.leftID) return
+    if (props.status !== EStatus.none || selfName !== props.leftName) return
     switch (op) {
       case 'easy':
         setTitle('Easy')
@@ -167,7 +168,7 @@ function SpeedPU(props: { leftID: string; status: EStatus }): ReactElement {
   }, [])
 
   useEffect(() => {
-    socket.emit('updateSpeed', title)
+    socket.emit('updateSpeed', { matchID, difficultyTitle: title })
   }, [title])
 
   return (
@@ -194,7 +195,6 @@ function CountDown(): ReactElement {
 
   return <div>{timer !== 0 && timer}</div>
 }
-
 
 function Score(props: { left: number; right: number }): ReactElement {
   const [scores, setScores] = useState<IScore>({
@@ -227,7 +227,7 @@ function Match(props: { match: IMatch }): ReactElement {
 
   return (
     <Col id="centerCol">
-      <SpeedPU leftID={props.match.leftPlayer.socketID} status={status} />
+      <SpeedPU leftName={props.match.leftPlayer.name} status={status} />
       <div id="match">
         <div id="boardDiv"></div>
         <Score
@@ -246,8 +246,8 @@ function Match(props: { match: IMatch }): ReactElement {
         )}
         {status !== EStatus.none && (
           <Paddles
-            leftSocketID={props.match.leftPlayer.socketID}
-            rightSocketID={props.match.rightPlayer.socketID}
+            leftName={props.match.leftPlayer.name}
+            rightName={props.match.rightPlayer.name}
             leftPaddle={props.match.leftPlayer.paddle}
             rightPaddle={props.match.rightPlayer.paddle}
             status={status}
@@ -265,13 +265,9 @@ function Ready(props: { player: IPlayer }): ReactElement {
   const matchState = useLocation().state
 
   function setReady(): void {
-    if (
-      props.player.socketID === selfID &&
-      button === grayButton &&
-      selfName === matchState.userName
-    ) {
+    if (button === grayButton && props.player.name === matchState.userName) {
       setButton(greenButton)
-      socket.emit('updatePlayerReady', props.player.socketID)
+      socket.emit('updatePlayerReady', { matchID, userName: props.player.name })
     }
   }
 
@@ -300,15 +296,48 @@ function Player(props: { player: IPlayer }): ReactElement {
   )
 }
 
-function Matching(): ReactElement {
-  function findMatch(): void {
-    socket.emit('updateConnections')
+function Matching(props: { hasResponse: boolean }): ReactElement {
+  const matchState = useLocation().state
+  const [showSpinner, setShowSpinner] = useState(false)
+  const [matchFound, setMatchFound] = useState(false)
+
+  useEffect(() => {
+    socket.on('matchFound', () => {
+      setMatchFound(true)
+    })
+  }, [])
+
+  const handleClick = (): void => {
+    setShowSpinner(true)
+    socket.emit('matching', {
+      userId: matchState.userId,
+      userName: matchState.userName
+    })
+  }
+
+  const handleCancel = (): void => {
+    setShowSpinner(false)
+    socket.emit('matchingCancel', matchState.userName)
   }
 
   return (
     <div>
-      <h1>matching...</h1>
-      <button onClick={findMatch}>updateMatch</button>
+      {props.hasResponse && (
+        <Button onClick={handleClick} disabled={showSpinner}>
+          {showSpinner ? (
+            <div>
+              <Spinner animation="border" /> matching...
+            </div>
+          ) : (
+            'play'
+          )}
+        </Button>
+      )}
+      {showSpinner && !matchFound && (
+        <Button variant="danger" onClick={handleCancel}>
+          cancel
+        </Button>
+      )}
     </div>
   )
 }
@@ -318,6 +347,7 @@ export function Game(): ReactElement {
   console.log(matchState)
 
   const [match, setMatch] = useState<IMatch | undefined>(undefined)
+  const [hasResponse, setHasResponse] = useState<boolean>(false)
 
   useEffect(() => {
     const handleOnKeyDown = (e: KeyboardEvent): void => {
@@ -330,17 +360,24 @@ export function Game(): ReactElement {
     window.addEventListener('keyup', handleOnKeyUp)
     socket.on('updateConnections', (serverMatch: IMatch) => {
       setMatch(serverMatch)
+      setHasResponse(true)
+      if (serverMatch === undefined) return
+      matchID = serverMatch.id
     })
     selfName = matchState.userName
-    socket.emit('updateConnections')
+    socket.emit('updateConnections', {
+      matchID: matchState.matchId,
+      userName: selfName
+    })
   }, [])
 
   return match === undefined ||
     match.leftPlayer === undefined ||
     match.rightPlayer === undefined ? (
-    <Matching />
+    <Matching hasResponse={hasResponse} />
   ) : (
     <Container>
+      <h1>match.id: {match.id}</h1>
       <Row id="header">
         <Player player={match.leftPlayer} />
         <Player player={match.rightPlayer} />
@@ -351,8 +388,3 @@ export function Game(): ReactElement {
     </Container>
   )
 }
-
-// 接続時
-socket.on('connect', () => {
-  selfID = socket.id
-})
