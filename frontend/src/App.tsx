@@ -3,7 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Game, MatchList } from './Game'
 import { ChatList, Chat, ChatRoom } from './Chat'
 import { TopPage } from './TopPage'
-import { Profile } from './Profile'
+import { Profile } from './User'
 
 // interfaceの初期化をしろとeslintに怒られますが、Setterは初期化できないため、ここだけeslintを無視します。
 export const GlobalContext = createContext<GlobalContext>({} as GlobalContext) // eslint-disable-line

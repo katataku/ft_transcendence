@@ -1,6 +1,6 @@
 import { useContext, type ReactElement } from 'react'
 import { useParams } from 'react-router-dom'
-import { GlobalContext } from '../../App'
+import { GlobalContext } from '../../../App'
 import { MyPage } from './MyPage'
 import { OtherUserProfile } from './OtherUserProfile'
 

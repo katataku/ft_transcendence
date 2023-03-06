@@ -1,6 +1,6 @@
 import { type ReactElement, useContext } from 'react'
 import { Button } from 'react-bootstrap'
-import { GlobalContext } from '../../App'
+import { GlobalContext } from '../../../App'
 
 export function MyPage(): ReactElement {
   const { loginUser } = useContext(GlobalContext)

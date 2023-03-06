@@ -1,7 +1,7 @@
 import { type ReactElement, useState, useEffect } from 'react'
 import { Button } from 'react-bootstrap'
 import { useParams } from 'react-router-dom'
-import { getUserRequest } from '../../utils/userAxios'
+import { getUserRequest } from '../../../utils/userAxios'
 
 export function OtherUserProfile(): ReactElement {
   const { id } = useParams()
