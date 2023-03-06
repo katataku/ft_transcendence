@@ -21,7 +21,7 @@ export class HealthCheckService {
         Logger.debug('Health Check Seeded');
       })
       .catch((err) => {
-        Logger.error('Faild to Seed:', err);
+        Logger.error('Failed to Seed:', err);
       });
   }
 
