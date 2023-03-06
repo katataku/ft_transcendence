@@ -1,22 +1,8 @@
 import { type ReactElement, useContext } from 'react'
 import { Button, Tab, Tabs } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-
-function FriendPendingList(): ReactElement {
-  return (
-    <>
-      <p>ここに招待一覧を表示する</p>
-    </>
-  )
-}
-
-function FriendList(): ReactElement {
-  return (
-    <>
-      <p>ここに友達一覧を表示する</p>
-    </>
-  )
-}
+import { FriendList } from './FriendList'
+import { FriendPendingList } from './FriendPendingList'
 
 function Settings(): ReactElement {
   return (
