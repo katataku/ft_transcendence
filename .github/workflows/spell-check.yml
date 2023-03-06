@@ -1,0 +1,15 @@
+name: Spell check
+run-name: Spell check by ${{ github.actor }}
+on: [push]
+jobs:
+  Spell-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Spell check backend
+        working-directory: ./backend
+        run: npx cspell src/**/*.ts --yes
+      - name: Spell check frontend
+        working-directory: ./frontend
+        run: npx cspell src/**/*.tsx --yes
