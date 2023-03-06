@@ -96,6 +96,7 @@ export function SignIn(): ReactElement {
             if (signUpMode) {
               signUp({ name: userName, password, avatar: image }, (res) => {
                 setLoginUser({ id: res, name: userName })
+                setIsSignedIn(true)
               })
               setIsSignedIn(true)
             } else {

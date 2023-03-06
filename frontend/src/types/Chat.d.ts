@@ -1,5 +1,5 @@
 interface ChatState {
-  room: string
+  room: ChatRoom
 }
 
 interface ChatListState {
