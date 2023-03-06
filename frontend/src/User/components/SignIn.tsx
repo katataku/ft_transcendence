@@ -2,9 +2,9 @@ import { type ReactElement, useContext } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
-import { noImage64 } from '../constants'
 import { GlobalContext } from '../../App'
 import { signIn, signUp } from '../../utils/userAxios'
+import defaultAvatar from '../../img/defaultAvatar.png'
 
 export function SignIn(): ReactElement {
   const { setLoginUser, setIsSignedIn } = useContext(GlobalContext)
@@ -12,7 +12,7 @@ export function SignIn(): ReactElement {
   const [userName, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [image, setImage] = useState<string>(noImage64)
+  const [image, setImage] = useState<string>(defaultAvatar)
 
   function toggleMode(): void {
     setSignUpMode(!signUpMode)

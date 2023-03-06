@@ -5,7 +5,7 @@ import {
   Param,
   Post,
   Delete,
-  Header,
+  Res,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -17,6 +17,7 @@ import {
   UserSignInDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
+import { Response } from 'express';
 
 @Controller('user')
 export class UsersController {
@@ -72,9 +73,17 @@ export class UsersController {
   }
 
   @Get('user_avatar/:id')
-  @Header('content-type', 'text/plain')
-  async getAvatar(@Param() param: UserIdParam): Promise<string> {
+  async getAvatar(
+    @Param() param: UserIdParam,
+    @Res() res: Response,
+  ): Promise<void> {
     const base64Data: string = await this.service.getAvatarById(param.id);
-    return base64Data;
+    const binaryData = Buffer.from(
+      base64Data.replace(/^data:image\/png;base64,/, ''),
+      'base64',
+    );
+
+    res.setHeader('Content-Type', 'image/png');
+    res.send(binaryData);
   }
 }
