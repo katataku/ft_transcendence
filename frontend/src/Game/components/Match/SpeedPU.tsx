@@ -7,16 +7,20 @@ import React, {
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Dropdown, DropdownButton } from 'react-bootstrap'
+import { GlobalContext } from '../../../App'
 
 export function SpeedPU(props: {
-  leftID: string
+  matchId: number
+  leftName: string
   status: EStatus
 }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
+  const { loginUser } = useContext(GlobalContext)
   const [title, setTitle] = useState<string>('Difficulty')
 
   const modifySpeed = (op: string | null): void => {
-    if (props.status !== EStatus.none || gameSocket.id !== props.leftID) return
+    if (props.status !== EStatus.none || loginUser.name !== props.leftName)
+      return
     switch (op) {
       case 'easy':
         setTitle('Easy')
@@ -37,7 +41,10 @@ export function SpeedPU(props: {
   }, [])
 
   useEffect(() => {
-    gameSocket.emit('updateSpeed', title)
+    gameSocket.emit('updateSpeed', {
+      matchID: props.matchId,
+      difficultyTitle: title
+    })
   }, [title])
 
   return (

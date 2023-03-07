@@ -9,7 +9,7 @@ import {
 import { deepCopy } from './utility';
 
 export const gameWinWid = 1000;
-export const gameWinHght = 600;
+export const gameWinHght = 500;
 export const ballPx = 20;
 export const winningScore = 3;
 
