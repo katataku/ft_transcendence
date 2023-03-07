@@ -15,6 +15,6 @@ interface signIn {
 }
 
 interface FriendRequestDto {
-  from: number;
-  to: number;
+  from: number
+  to: number
 }
