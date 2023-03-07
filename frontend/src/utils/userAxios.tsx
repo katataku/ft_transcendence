@@ -63,6 +63,21 @@ export async function getAvatar(userId: number): Promise<string> {
   return res.data
 }
 
+export function getFriendRequest(
+  userId: number,
+  callback: (user: User[]) => void
+): void {
+  axios
+    .get<User[]>('/user/friends/' + String(userId))
+    .then((response) => {
+      callback(response.data)
+    })
+    .catch((reason) => {
+      alert('エラーです！')
+      console.log(reason)
+    })
+}
+
 export function getFriendPendingRequest(
   userId: number,
   callback: (user: User[]) => void
