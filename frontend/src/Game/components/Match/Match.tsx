@@ -33,11 +33,11 @@ function CountDown(): ReactElement {
   return <div>{timer !== 0 && timer}</div>
 }
 
-function Score(): ReactElement {
+function Score(props: { left: number; right: number }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
   const [scores, setScores] = useState<IScore>({
-    left: 0,
-    right: 0
+    left: props.left,
+    right: props.right
   })
 
   useEffect(() => {
@@ -66,10 +66,17 @@ export function Match(props: { match: IMatch }): ReactElement {
 
   return (
     <Col id="centerCol">
-      <SpeedPU leftID={props.match.leftPlayer.socketID} status={status} />
+      <SpeedPU
+        matchId={props.match.id}
+        leftName={props.match.leftPlayer.name}
+        status={status}
+      />
       <div id="match">
         <div id="boardDiv" />
-        <Score />
+        <Score
+          left={props.match.leftPlayer.score}
+          right={props.match.rightPlayer.score}
+        />
         <div id="countDown">{status === EStatus.ready && <CountDown />}</div>
         {status === EStatus.play && <Ball ball={props.match.ball} />}
         {status === EStatus.set && <Result match={props.match} />}

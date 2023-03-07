@@ -4,19 +4,20 @@ import React, {
   useEffect,
   useContext
 } from 'react'
-import { Row, Container } from 'react-bootstrap'
+import { Row, Container, Button, Spinner } from 'react-bootstrap'
 import '../../assets/styles.css'
-// import { useLocation } from 'react-router-dom'
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Match } from '../Match/Match'
 import { Player } from './Player'
+import { GlobalContext } from '../../../App'
+import { useLocation } from 'react-router-dom'
 
 function Playing(props: { match: IMatch }): ReactElement {
   return (
     <Container>
       <Row id="header">
-        <Player player={props.match.leftPlayer} />
-        <Player player={props.match.rightPlayer} />
+        <Player matchID={props.match.id} player={props.match.leftPlayer} />
+        <Player matchID={props.match.id} player={props.match.rightPlayer} />
       </Row>
       <Row>
         <Match match={props.match} />
@@ -25,30 +26,68 @@ function Playing(props: { match: IMatch }): ReactElement {
   )
 }
 
-function Matching(): ReactElement {
+function Matching(props: { hasResponse: boolean }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
+  const { loginUser } = useContext(GlobalContext)
+  const [showSpinner, setShowSpinner] = useState(false)
+  const [matchFound, setMatchFound] = useState(false)
 
-  function findMatch(): void {
-    gameSocket.emit('updateConnections')
+  useEffect(() => {
+    gameSocket.on('matchFound', () => {
+      setMatchFound(true)
+    })
+  }, [])
+
+  const handleClick = (): void => {
+    setShowSpinner(true)
+    gameSocket.emit('matching', {
+      userId: loginUser.id,
+      userName: loginUser.name
+    })
+  }
+
+  const handleCancel = (): void => {
+    setShowSpinner(false)
+    gameSocket.emit('matchingCancel', loginUser.name)
   }
 
   return (
     <div>
-      <h1>matching...</h1>
-      <button onClick={findMatch}>updateMatch</button>
+      {props.hasResponse && (
+        <Button onClick={handleClick} disabled={showSpinner}>
+          {showSpinner ? (
+            <div>
+              <Spinner animation="border" /> matching...
+            </div>
+          ) : (
+            'play'
+          )}
+        </Button>
+      )}
+      {showSpinner && !matchFound && (
+        <Button variant="danger" onClick={handleCancel}>
+          cancel
+        </Button>
+      )}
     </div>
   )
 }
 
 export function Game(): ReactElement {
   const [match, setMatch] = useState<IMatch | undefined>(undefined)
+  const [hasResponse, setHasResponse] = useState<boolean>(false)
   const gameSocket = useContext(GameSocketContext)
+  const { loginUser } = useContext(GlobalContext)
+  const matchId = useLocation().state
 
   useEffect(() => {
-    gameSocket.emit('updateConnections')
+    gameSocket.emit('updateConnections', {
+      matchID: matchId,
+      userName: loginUser.name
+    })
     gameSocket.on('updateConnections', (serverMatch: IMatch) => {
-      // setMatch({...serverMatch, id: useLocation().state})
       setMatch(serverMatch)
+      setHasResponse(true)
     })
   }, [])
 
@@ -60,6 +99,10 @@ export function Game(): ReactElement {
     )
   }
 
-  // @ts-expect-error matchPendingはundefinedのマッチを確認してます
-  return matchPending() ? <Matching /> : <Playing match={match} />
+  return matchPending() ? (
+    <Matching hasResponse={hasResponse} />
+  ) : (
+    // @ts-expect-error matchPendingはundefinedのマッチを確認してます
+    <Playing match={match} />
+  )
 }

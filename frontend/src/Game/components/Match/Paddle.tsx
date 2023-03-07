@@ -8,6 +8,7 @@ import React, {
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { useAnimationFrame } from '../../../hooks/useAnimationFrame'
+import { GlobalContext } from '../../../App'
 type Ref = React.MutableRefObject<any>
 
 const paddleSize: Vector2 = {
@@ -55,6 +56,7 @@ export function Paddles(props: {
   status: EStatus
 }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
+  const { loginUser } = useContext(GlobalContext)
   const keydown = useRef<string>('')
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(
     props.match.leftPlayer.paddle
@@ -83,10 +85,16 @@ export function Paddles(props: {
   }, [])
 
   useAnimationFrame((): void => {
-    if (props.match.leftPlayer.socketID === gameSocket.id) {
-      gameSocket.emit('updatePaddle', updatePaddle(leftPaddle, keydown))
-    } else if (props.match.rightPlayer.socketID === gameSocket.id) {
-      gameSocket.emit('updatePaddle', updatePaddle(rightPaddle, keydown))
+    if (props.match.leftPlayer.name === loginUser.name) {
+      gameSocket.emit('updatePaddle', {
+        matchID: props.match.id,
+        newPaddle: updatePaddle(leftPaddle, keydown)
+      })
+    } else if (props.match.rightPlayer.name === loginUser.name) {
+      gameSocket.emit('updatePaddle', {
+        matchID: props.match.id,
+        newPaddle: updatePaddle(rightPaddle, keydown)
+      })
     }
   }, props.status === EStatus.set)
 

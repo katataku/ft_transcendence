@@ -46,4 +46,12 @@ export interface IMatch {
   ball: IBall;
   speed: number;
   status: EStatus;
+  lastFrameTime: number;
+  elapsedTime: number;
+}
+
+export interface IUserQueue {
+  clientId: string;
+  userId: number;
+  userName: string;
 }
