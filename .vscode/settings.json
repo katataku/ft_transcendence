@@ -1,14 +1,4 @@
 {
-    "cSpell.words": [
-        "chatlist",
-        "Hght",
-        "nestjs",
-        "openapi",
-        "ormconfig",
-        "powerup",
-        "typeorm",
-        "websockets"
-    ],
     "editor.formatOnSave": false,
     "[typescriptreact]": {
         "editor.formatOnSave": true,

@@ -9,7 +9,7 @@ import { Profile } from './User'
 // interfaceの初期化をしろとeslintに怒られますが、Setterは初期化できないため、ここだけeslintを無視します。
 export const GlobalContext = createContext<GlobalContext>({} as GlobalContext) // eslint-disable-line
 
-const localStrageKey: string = 'ft_trans_user'
+const localStorageKey: string = 'ft_trans_user'
 
 export function App(): ReactElement {
   const [loginUser, setLoginUser] = useState<User>({
@@ -26,7 +26,7 @@ export function App(): ReactElement {
   }
 
   useEffect(() => {
-    const data = localStorage.getItem(localStrageKey)
+    const data = localStorage.getItem(localStorageKey)
     if (data !== null) {
       setIsSignedIn(true)
       setLoginUser(JSON.parse(data))
@@ -35,8 +35,8 @@ export function App(): ReactElement {
 
   useEffect(() => {
     isSignedIn
-      ? localStorage.setItem(localStrageKey, JSON.stringify(loginUser))
-      : localStorage.removeItem(localStrageKey)
+      ? localStorage.setItem(localStorageKey, JSON.stringify(loginUser))
+      : localStorage.removeItem(localStorageKey)
   }, [isSignedIn])
 
   return (

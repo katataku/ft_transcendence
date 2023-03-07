@@ -1,0 +1,19 @@
+name: spell check
+run-name: spell check by ${{ github.actor }}
+on: [push]
+jobs:
+  Spell-check-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Backend spell check
+        run: npx --package cspell --yes cspell lint --config .vscode/cspell.json "backend/src/**/*.ts"
+
+  Spell-check-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: Frontend spell check
+        run:  npx --package cspell --yes cspell lint --config .vscode/cspell.json "frontend/src/**/*.tsx"

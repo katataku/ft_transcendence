@@ -58,8 +58,3 @@ export function signIn(obj: signIn, callback: (user: User) => void): void {
       }
     })
 }
-
-export async function getAvatar(userId: number): Promise<string> {
-  const res = await axios.get<string>(`/user/user_avatar/${userId}`)
-  return res.data
-}
