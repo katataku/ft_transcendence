@@ -77,3 +77,33 @@ export function getFriendPendingRequest(
       console.log(reason)
     })
 }
+
+export function updateFriendPendingRequest(
+  requestData: FriendRequestDto,
+  callback: () => void
+): void {
+  axios
+    .post('/user/friends', requestData)
+    .then((_response) => {
+      callback()
+    })
+    .catch((reason) => {
+      alert('エラーです！')
+      console.log(reason)
+    })
+}
+
+export function deleteFriendPendingRequest(
+  requestData: FriendRequestDto,
+  callback: () => void
+): void {
+  axios
+    .delete<FriendRequestDto>('/user/friends/pending', { data: requestData })
+    .then((_response) => {
+      callback()
+    })
+    .catch((reason) => {
+      alert('エラーです！')
+      console.log(reason)
+    })
+}

@@ -58,6 +58,7 @@ export class UsersController {
 
   @Post('friends')
   requestFriend(@Body() body: FriendRequestDto) {
+    console.table(body);
     return this.service.requestFriendship(body);
   }
 
@@ -70,6 +71,11 @@ export class UsersController {
   getPendingFriends(@Param() param: UserIdParam): Promise<UserGetDto[]> {
     const list = this.service.getPendingFriends(param.id);
     return list;
+  }
+
+  @Delete('friends/pending')
+  deleteFriendPending(@Body() body: FriendRequestDto) {
+    return this.service.deletePending(body);
   }
 
   @Get('user_avatar/:id')

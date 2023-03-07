@@ -1,4 +1,4 @@
-import { IsInt, IsNumberString, IsString } from 'class-validator';
+import { IsInt, IsNumber, IsNumberString, IsString } from 'class-validator';
 
 export class UserSignUpReqDto {
   @IsString()
@@ -36,8 +36,8 @@ export class UserSignInDto {
 }
 
 export class FriendRequestDto {
-  @IsNumberString()
+  @IsNumber()
   from: number;
-  @IsNumberString()
+  @IsNumber()
   to: number;
 }

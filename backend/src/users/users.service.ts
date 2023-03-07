@@ -117,21 +117,38 @@ export class UsersService {
     ) {
       return;
     }
-    pendingList.map((pending) => {
-      if (pending.to == data.from && pending.from == data.to) {
-        const friendship = new Friendship();
-        friendship.user1 = data.from;
-        friendship.user2 = data.to;
-        this.friendshipRepository.save(friendship);
-        this.pendingRepository.remove(pending);
-        return;
-      }
+
+    if (
+      pendingList.some(
+        (pending) => pending.to == data.from && pending.from == data.to,
+      )
+    ) {
+      pendingList.map((pending) => {
+        if (pending.to == data.from && pending.from == data.to) {
+          const friendship = new Friendship();
+          friendship.user1 = data.from;
+          friendship.user2 = data.to;
+          this.friendshipRepository.save(friendship);
+          this.pendingRepository.remove(pending);
+        }
+      });
+    } else {
+      const pending = new PendingFriendship();
+      pending.from = data.from;
+      pending.to = data.to;
+      await this.pendingRepository.save(pending);
+    }
+  }
+
+  async deletePending(data: FriendRequestDto): Promise<void> {
+    const pendingItem = await this.pendingRepository.findOne({
+      where: {
+        from: data.from,
+        to: data.to,
+      },
     });
 
-    const pending = new PendingFriendship();
-    pending.from = data.from;
-    pending.to = data.to;
-    await this.pendingRepository.save(pending);
+    this.pendingRepository.remove(pendingItem);
   }
 
   async getPendingFriends(id: number): Promise<UserGetDto[]> {
