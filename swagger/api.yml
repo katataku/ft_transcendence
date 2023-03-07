@@ -17,6 +17,8 @@ tags:
     description: チャット機能でのミュートユーザ情報
   - name: chatRoomMembers
     description: チャットルームの参加者情報
+  - name: chatDMMembers
+    description: DMの参加者情報
   - name: match
     description: 進行中のマッチリスト
 
@@ -432,7 +434,58 @@ paths:
       responses:
         200:
           description: 成功
-
+  /chatDMMembers/{UserId}:
+    get:
+      tags:
+        - chatDMMembers
+      summary: get chatDMMembers
+      description: チャット機能でのルームの参加者情報を取得
+      parameters:
+        - in: path
+          name: UserId
+          required: true
+          schema:
+            type: number   
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/chatDMMember'
+  /chatDMMembers:
+    post:
+      summary: update chatDMMembers
+      tags:
+        - chatDMMembers
+      description: チャット機能でのルームの参加者情報を更新
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chatDMMemberPK'
+      responses:
+        201:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/chatDMMember'
+    delete:
+      summary: delete chatDMMembers
+      tags:
+        - chatDMMembers
+      description: チャット機能でのルームの参加者情報を削除
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/chatDMMemberPK'
+      responses:
+        200:
+          description: 成功
   /match/matches:
     get:
       tags:
@@ -663,7 +716,27 @@ components:
         userId:
           type: number
           example: 1
-
+    chatDMMember:
+      type: object
+      properties:
+        user1Id:
+          type: number
+          example: 1
+        user2Id:
+          type: number
+          example: 2
+        chatRoomId:
+          type: number
+          example: 1
+    chatDMMemberPK:
+      type: object
+      properties:
+        user1Id:
+          type: number
+          example: 1
+        user2Id:
+          type: number
+          example: 2
     match_get:
       type: object
       properties:
