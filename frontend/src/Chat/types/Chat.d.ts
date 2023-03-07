@@ -21,3 +21,8 @@ interface blockUserList {
   blockedUserId: number
   block_until: Date
 }
+
+interface blockUserListPK {
+  blockUserId: number
+  blockedUserId: number
+}
