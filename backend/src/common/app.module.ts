@@ -1,3 +1,4 @@
+import { ChatDMMembers } from 'src/entities/chatDMMembers.entity';
 import { Module } from '@nestjs/common';
 import { HealthCheckModule } from '../healthCheck';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -21,6 +22,7 @@ import { ChatRoomMembersModule } from 'src/chatRoomMembers';
 import { GameModule } from '../game';
 import { Match } from '../entities/match.entity';
 import { MatchModule } from '../match';
+import { ChatDMMembersModule } from 'src/chatDMMembers';
 
 dotenv.config();
 
@@ -40,6 +42,7 @@ const options: PostgresConnectionOptions = {
     UserAvatars,
     ChatRoom,
     ChatRoomMembers,
+    ChatDMMembers,
     Match,
   ],
 
@@ -55,6 +58,7 @@ const options: PostgresConnectionOptions = {
     UsersModule,
     ChatRoomModule,
     ChatRoomMembersModule,
+    ChatDMMembersModule,
     GameModule,
     MatchModule,
   ],
