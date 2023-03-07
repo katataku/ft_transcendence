@@ -38,12 +38,12 @@ export class UsersController {
     return this.service.getUsers();
   }
 
-  @Get(':id')
+  @Get('user/:id')
   getUserById(@Param() param: UserIdParam): Promise<UserGetDto> {
     return this.service.getUserById(param.id);
   }
 
-  @Post(':id')
+  @Post('user/:id')
   updateUser(
     @Body() body: UserUpdateReqDto,
     @Param() param: UserIdParam,
@@ -51,7 +51,7 @@ export class UsersController {
     return this.service.updateUser(param.id, body);
   }
 
-  @Delete(':id')
+  @Delete('user/:id')
   deleteUser(@Param() param: UserIdParam): Promise<string> {
     return this.service.deleteUser(param.id);
   }

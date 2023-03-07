@@ -69,7 +69,7 @@ paths:
                 $ref: '#/components/schemas/users_get_res'
 
 
-  /user/{userID}:
+  /user/user/{userID}:
     get:
       tags:
         - user
