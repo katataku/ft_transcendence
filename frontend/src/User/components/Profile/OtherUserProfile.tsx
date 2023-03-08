@@ -8,7 +8,7 @@ import {
   updateChatBlockUserRequest
 } from '../../../utils/chatBlockUserAxios'
 import { updateChatDMMembersRequest } from '../../../utils/chatDMAxios'
-import { getChatRoomRequest } from '../../../utils/chatRoomAxios'
+import { getChatRoomIdRequest } from '../../../utils/chatRoomAxios'
 import { BlockIcon } from '../../../utils/Icon/BlockIcon'
 import { getUserRequest } from '../../../utils/userAxios'
 import { isBlockUser } from '../../utils/userStatusUtils'
@@ -16,33 +16,19 @@ import { isBlockUser } from '../../utils/userStatusUtils'
 function DMButton(props: { targetUser: User }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
   const navigate = useNavigate()
-  const [room, setRoom] = useState<ChatRoom>()
-  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([])
 
-  const updateRoom = (): void => {
+  const handleOnClick = (): void => {
     const requestData: ChatDMMembersPK = {
       user1Id: loginUser.id,
       user2Id: props.targetUser.id
     }
-    updateChatDMMembersRequest(requestData, (item) => {
-      chatRoomList
-        .filter((room) => room.id === item.chatRoomId)
-        .forEach((room) => {
-          setRoom(room)
+
+    updateChatDMMembersRequest(requestData, (DMMemberItem) => {
+      getChatRoomIdRequest(DMMemberItem.chatRoomId, (room: ChatRoom) => {
+        navigate('/chat', {
+          state: { room }
         })
-    })
-  }
-  useEffect(() => {
-    updateRoom()
-  }, [chatRoomList])
-
-  useEffect(() => {
-    getChatRoomRequest(setChatRoomList)
-  }, [])
-
-  const handleOnClick = (): void => {
-    navigate('/chat', {
-      state: { room }
+      })
     })
   }
 
