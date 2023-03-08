@@ -22,7 +22,7 @@ jobs:
         run: make build
 
       - name: Start services
-        run: make up -d
+        run: make up-d
 
       - name: Wait for services to start
         run: sleep 60s
