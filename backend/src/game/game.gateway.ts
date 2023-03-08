@@ -18,10 +18,14 @@ import * as GameSetting from './constants';
 import { deepCopy } from './utility';
 import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
+import { UsersService } from '../users/users.service';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
-  constructor(private readonly service: MatchService) {}
+  constructor(
+    private readonly matchService: MatchService,
+    private readonly userService: UsersService,
+  ) {}
   @WebSocketServer()
   private server: Server;
   private logger: Logger = new Logger('GameGateway');
@@ -101,17 +105,22 @@ export class GameGateway {
           match.status = EStatus.set;
           this.server.to(matchId).emit('updateConnections', match);
           this.server.to(matchId).emit('updateStatus', match.status);
-          this.service
+          const winner =
+            match.leftPlayer.score > match.rightPlayer.score
+              ? match.leftPlayer
+              : match.rightPlayer;
+          const loser =
+            winner === match.leftPlayer ? match.leftPlayer : match.rightPlayer;
+          this.matchService
             .postMatchResult({
               id: match.id,
-              winner:
-                match.leftPlayer.score > match.rightPlayer.score
-                  ? match.leftPlayer.score
-                  : match.rightPlayer.score,
+              winner: winner.id,
             })
             .catch((reason) => {
               this.logger.log(reason);
             });
+          this.userService.updateMatchHistory(winner.id, 'wins');
+          this.userService.updateMatchHistory(loser.id, 'losses');
           map.delete(key);
         }
       });
@@ -119,10 +128,10 @@ export class GameGateway {
   }
 
   @SubscribeMessage('matching')
-  handleMatching(
+  async handleMatching(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { userId: number; userName: string },
-  ): void {
+  ): Promise<void> {
     this.userQueue.push({
       clientId: client.id,
       userId: data.userId,
@@ -136,7 +145,7 @@ export class GameGateway {
         .to(leftUser.clientId)
         .to(rightUser.clientId)
         .emit('matchFound');
-      this.service
+      this.matchService
         .createMatch({
           id: 0,
           p1: leftUser.userId,

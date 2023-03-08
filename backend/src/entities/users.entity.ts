@@ -55,3 +55,15 @@ export class UserAvatars {
   @Column({ name: 'data' })
   data!: string;
 }
+
+@Entity({ name: 'match_history' })
+export class MatchHistory {
+  @PrimaryGeneratedColumn({ name: 'id' })
+  userId!: number;
+
+  @Column({ name: 'wins' })
+  wins!: number;
+
+  @Column({ name: 'losses' })
+  losses!: number;
+}

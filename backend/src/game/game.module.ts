@@ -3,9 +3,26 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Match } from 'src/entities/match.entity';
 import { MatchService } from 'src/match/match.service';
 import { GameGateway } from './game.gateway';
+import {
+  Friendship,
+  MatchHistory,
+  PendingFriendship,
+  User,
+  UserAvatars,
+} from '../entities/users.entity';
+import { UsersService } from '../users/users.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Match])],
-  providers: [GameGateway, MatchService],
+  imports: [
+    TypeOrmModule.forFeature([
+      User,
+      Friendship,
+      PendingFriendship,
+      UserAvatars,
+      Match,
+      MatchHistory,
+    ]),
+  ],
+  providers: [GameGateway, MatchService, UsersService],
 })
 export class GameModule {}

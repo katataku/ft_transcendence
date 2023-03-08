@@ -7,9 +7,11 @@ import {
   UserSignUpReqDto,
   UserSignUpResDto,
   UserSignInDto,
+  MatchHistoryDto,
 } from 'src/common/dto/users.dto';
 import {
   Friendship,
+  MatchHistory,
   PendingFriendship,
   User,
   UserAvatars,
@@ -28,6 +30,8 @@ export class UsersService {
     private pendingRepository: Repository<PendingFriendship>,
     @InjectRepository(UserAvatars)
     private userAvatarsRepository: Repository<UserAvatars>,
+    @InjectRepository(MatchHistory)
+    private matchHistoryRepository: Repository<MatchHistory>,
   ) {}
 
   async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
@@ -39,6 +43,7 @@ export class UsersService {
     };
     const user = await this.usersRepository.save(obj);
     await this.saveAvatar(user.id, data.avatar);
+    await this.saveMatchHistory(user.id);
     const res: UserSignUpResDto = {
       id: user.id,
     };
@@ -188,5 +193,30 @@ export class UsersService {
     return (
       await this.userAvatarsRepository.findOne({ where: { userId: userId } })
     ).data;
+  }
+
+  async saveMatchHistory(userId: number): Promise<void> {
+    await this.matchHistoryRepository.save({
+      userId: userId,
+      wins: 0,
+      losses: 0,
+    });
+  }
+
+  async getMatchHistoryRow(userId: number): Promise<MatchHistory> {
+    return await this.matchHistoryRepository.findOne({
+      where: { userId: userId },
+    });
+  }
+
+  async getMatchHistory(userId: number): Promise<MatchHistoryDto> {
+    const data = await this.getMatchHistoryRow(userId);
+    return { wins: data.wins, losses: data.losses };
+  }
+
+  async updateMatchHistory(userId: number, type: string): Promise<void> {
+    const data: MatchHistory = await this.getMatchHistoryRow(userId);
+    data[type] = data[type]++;
+    await this.matchHistoryRepository.save(data);
   }
 }

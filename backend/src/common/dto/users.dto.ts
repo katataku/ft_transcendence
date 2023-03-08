@@ -41,3 +41,10 @@ export class FriendRequestDto {
   @IsNumber()
   to: number;
 }
+
+export class MatchHistoryDto {
+  @IsNumber()
+  wins: number;
+  @IsNumber()
+  losses: number;
+}
