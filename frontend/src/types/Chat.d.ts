@@ -11,12 +11,12 @@ interface ChatRoomState {
 }
 
 interface ChatDMMembers {
-  user1Id: number;
-  user2Id: number;
-  chatRoomId: number;
+  user1Id: number
+  user2Id: number
+  chatRoomId: number
 }
 
 interface ChatDMMembersPK {
-  user1Id: number;
-  user2Id: number;
+  user1Id: number
+  user2Id: number
 }
