@@ -29,6 +29,11 @@ up:
 	mkdir -p ${DB_STORAGE_DIR}
 	${DC_CMD} ${DC_OPTIONS} up
 
+.PHONY:up-d
+up-d:
+	mkdir -p ${DB_STORAGE_DIR}
+	${DC_CMD} ${DC_OPTIONS} up -d
+
 .PHONY:down
 down:
 	${DC_CMD} ${DC_OPTIONS} down
