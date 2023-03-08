@@ -1,15 +1,53 @@
 import { type ReactElement, useState, useEffect, useContext } from 'react'
 import { Button } from 'react-bootstrap'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { GlobalContext } from '../../../App'
 import {
   deleteChatBlockUserRequest,
   getChatBlockUserRequest,
   updateChatBlockUserRequest
 } from '../../../utils/chatBlockUserAxios'
+import { updateChatDMMembersRequest } from '../../../utils/chatDMAxios'
+import { getChatRoomRequest } from '../../../utils/chatRoomAxios'
 import { BlockIcon } from '../../../utils/Icon/BlockIcon'
 import { getUserRequest } from '../../../utils/userAxios'
 import { isBlockUser } from '../../utils/userStatusUtils'
+
+function DMButton(props: { targetUser: User }): ReactElement {
+  const { loginUser } = useContext(GlobalContext)
+  const navigate = useNavigate()
+  const [room, setRoom] = useState<ChatRoom>()
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([])
+
+  const updateRoom = (): void => {
+    const requestData: ChatDMMembersPK = {
+      user1Id: loginUser.id,
+      user2Id: props.targetUser.id
+    }
+    updateChatDMMembersRequest(requestData, (item) => {
+      chatRoomList
+        .filter((room) => room.id === item.chatRoomId)
+        .forEach((room) => {
+          setRoom(room)
+        })
+    })
+  }
+  useEffect(() => {
+    updateRoom()
+  }, [chatRoomList])
+
+  useEffect(() => {
+    getChatRoomRequest(setChatRoomList)
+  }, [])
+
+  const handleOnClick = (): void => {
+    navigate('/chat', {
+      state: { room }
+    })
+  }
+
+  return <Button onClick={handleOnClick}>このユーザとDMを開始</Button>
+}
 
 function BlockButton(props: { targetUser: User }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
@@ -86,7 +124,7 @@ export function OtherUserProfile(): ReactElement {
         <Button>このユーザをフレンドに招待するボタンになる予定</Button>
       </p>
       <p>
-        <Button>このユーザとDMを開始するボタンになる予定</Button>
+        <DMButton targetUser={targetUser}></DMButton>
       </p>
       <p>
         <BlockButton targetUser={targetUser}></BlockButton>
