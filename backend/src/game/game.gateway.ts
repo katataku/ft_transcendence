@@ -110,7 +110,7 @@ export class GameGateway {
               ? match.leftPlayer
               : match.rightPlayer;
           const loser =
-            winner === match.leftPlayer ? match.leftPlayer : match.rightPlayer;
+            winner === match.leftPlayer ? match.rightPlayer : match.leftPlayer;
           this.matchService
             .postMatchResult({
               id: match.id,

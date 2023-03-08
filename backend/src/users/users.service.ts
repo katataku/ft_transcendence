@@ -216,7 +216,7 @@ export class UsersService {
 
   async updateMatchHistory(userId: number, type: string): Promise<void> {
     const data: MatchHistory = await this.getMatchHistoryRow(userId);
-    data[type] = data[type]++;
+    data[type] = data[type] + 1;
     await this.matchHistoryRepository.save(data);
   }
 }

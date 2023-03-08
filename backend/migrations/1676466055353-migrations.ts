@@ -12,6 +12,9 @@ export class migrations1676466055353 implements MigrationInterface {
   makeInsertMatchSQL = (p1: number, p2: number) =>
     `INSERT INTO public.match(p1, p2, winner) VALUES(` + p1 + `,` + p2 + `,0)`;
 
+  makeInsertMatchHistSQL = (id: number) =>
+    `INSERT INTO public.match_history(id, wins, losses) VALUES(` + id + `,0,0)`;
+
   public async up(queryRunner: QueryRunner): Promise<void> {
     const passHash = SHA256('password').toString();
     await queryRunner.query(this.makeInsertUserSQL('guest1', passHash));
@@ -20,6 +23,12 @@ export class migrations1676466055353 implements MigrationInterface {
     await queryRunner.query(this.makeInsertUserSQL('guest4', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest5', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest6', passHash));
+    await queryRunner.query(this.makeInsertMatchHistSQL(1));
+    await queryRunner.query(this.makeInsertMatchHistSQL(2));
+    await queryRunner.query(this.makeInsertMatchHistSQL(3));
+    await queryRunner.query(this.makeInsertMatchHistSQL(4));
+    await queryRunner.query(this.makeInsertMatchHistSQL(5));
+    await queryRunner.query(this.makeInsertMatchHistSQL(6));
     await queryRunner.query(this.makeInsertMatchSQL(1, 2));
     await queryRunner.query(this.makeInsertMatchSQL(3, 4));
     await queryRunner.query(this.makeInsertMatchSQL(5, 6));
