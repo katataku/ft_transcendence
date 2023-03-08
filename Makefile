@@ -66,3 +66,8 @@ migrate:
 .PHONY:revert
 revert:
 	docker exec -it back npm run typeorm:revert
+
+.PHONY:cypress-run
+cypress-run:
+	cd ./cypress && npm install && npm run cypress:run
+

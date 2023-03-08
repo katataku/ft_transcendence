@@ -19,6 +19,7 @@ export const CreateRoomButton = (props: {
         handleModalClose={handleModalClose}
       ></CreateChatRoomModal>
       <Button
+        data-cy="create-room-button"
         onClick={() => {
           setShowCreateRoomModal(true)
         }}

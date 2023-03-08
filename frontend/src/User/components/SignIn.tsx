@@ -115,6 +115,7 @@ export function SignIn(): ReactElement {
           ['guest1', 'guest2', 'guest3', 'guest4'].map((name, index) => (
             <p key={index}>
               <Button
+                data-cy={`login-as-${name}`}
                 variant="warning"
                 onClick={() => {
                   setLoginUser({ id: index + 1, name })
