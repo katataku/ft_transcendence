@@ -38,12 +38,12 @@ export class UsersController {
     return this.service.getUsers();
   }
 
-  @Get(':id')
+  @Get('user/:id')
   getUserById(@Param() param: UserIdParam): Promise<UserGetDto> {
     return this.service.getUserById(param.id);
   }
 
-  @Post(':id')
+  @Post('user/:id')
   updateUser(
     @Body() body: UserUpdateReqDto,
     @Param() param: UserIdParam,
@@ -51,13 +51,14 @@ export class UsersController {
     return this.service.updateUser(param.id, body);
   }
 
-  @Delete(':id')
+  @Delete('user/:id')
   deleteUser(@Param() param: UserIdParam): Promise<string> {
     return this.service.deleteUser(param.id);
   }
 
   @Post('friends')
   requestFriend(@Body() body: FriendRequestDto) {
+    console.table(body);
     return this.service.requestFriendship(body);
   }
 
@@ -70,6 +71,11 @@ export class UsersController {
   getPendingFriends(@Param() param: UserIdParam): Promise<UserGetDto[]> {
     const list = this.service.getPendingFriends(param.id);
     return list;
+  }
+
+  @Delete('friends/pending')
+  deleteFriendPending(@Body() body: FriendRequestDto) {
+    return this.service.deletePending(body);
   }
 
   @Get('user_avatar/:id')

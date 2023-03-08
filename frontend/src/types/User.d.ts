@@ -13,3 +13,8 @@ interface signIn {
   id: number
   password: string
 }
+
+interface FriendRequestDto {
+  from: number
+  to: number
+}
