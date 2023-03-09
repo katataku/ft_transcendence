@@ -26,7 +26,7 @@ export function SignIn(): ReactElement {
 
   useEffect(() => {
     console.log(image)
-  },[image])
+  }, [image])
 
   return (
     <div style={{ margin: '50px 100px', textAlign: 'center' }}>

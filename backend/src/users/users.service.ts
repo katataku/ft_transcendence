@@ -29,7 +29,7 @@ export class UsersService {
     @InjectRepository(UserAvatars)
     private userAvatarsRepository: Repository<UserAvatars>,
   ) {
-    this.saveAvatar(0, 'DEFAULT_AVATAR')
+    this.saveAvatar(0, 'DEFAULT_AVATAR');
   }
 
   async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {

@@ -6,7 +6,6 @@ import {
   Post,
   Delete,
   Res,
-  Logger,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -19,9 +18,8 @@ import {
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 import { Response } from 'express';
-import * as fs from 'fs'
+import * as fs from 'fs';
 import { promisify } from 'util';
-
 
 @Controller('user')
 export class UsersController {
@@ -92,8 +90,8 @@ export class UsersController {
     if (base64Data == 'DEFAULT_AVATAR') {
       const readFile = promisify(fs.readFile);
       const buffer = await readFile(`${process.cwd()}/image/defaultAvatar.png`);
-      res.send(buffer)
-      return
+      res.send(buffer);
+      return;
     }
 
     const binaryData = Buffer.from(
