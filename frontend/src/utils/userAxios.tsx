@@ -1,4 +1,5 @@
 import axios, { type AxiosError } from 'axios'
+import { defaultAvatar } from '../User/components/SignIn'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
@@ -34,6 +35,10 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
     alert('Please fill in the blanks.')
     throw new Error()
   }
+  if (obj.avatar === defaultAvatar) {
+    obj.avatar = 'DEFAULT_AVATAR'
+  }
+
   axios
     .post<{ id: number }>('/user', obj)
     .then((res) => {

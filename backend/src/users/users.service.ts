@@ -16,7 +16,6 @@ import {
 } from '../entities/users.entity';
 import { Repository } from 'typeorm';
 import { SHA256 } from 'crypto-js';
-import { readDefaultAvatar } from 'src/common/img/readDefaultAvatar';
 
 @Injectable()
 export class UsersService {
@@ -30,9 +29,7 @@ export class UsersService {
     @InjectRepository(UserAvatars)
     private userAvatarsRepository: Repository<UserAvatars>,
   ) {
-    readDefaultAvatar().then((res) => {
-      this.saveAvatar(0, res);
-    });
+    this.saveAvatar(0, 'DEFAULT_AVATAR')
   }
 
   async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
