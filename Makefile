@@ -29,6 +29,11 @@ up:
 	mkdir -p ${DB_STORAGE_DIR}
 	${DC_CMD} ${DC_OPTIONS} up
 
+.PHONY:up-d
+up-d:
+	mkdir -p ${DB_STORAGE_DIR}
+	${DC_CMD} ${DC_OPTIONS} up -d
+
 .PHONY:down
 down:
 	${DC_CMD} ${DC_OPTIONS} down
@@ -66,3 +71,8 @@ migrate:
 .PHONY:revert
 revert:
 	docker exec -it back npm run typeorm:revert
+
+.PHONY:cypress-run
+cypress-run:
+	cd ./cypress && npm install && npm run cypress:run
+

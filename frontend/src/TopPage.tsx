@@ -25,7 +25,11 @@ export function TopPage(): ReactElement {
             height={300}
           />
           <p>
-            <Link to="chatlist" state={{ ChatListState }}>
+            <Link
+              data-cy="link-to-chatlist"
+              to="chatlist"
+              state={{ ChatListState }}
+            >
               Move to ChatList
             </Link>
           </p>
