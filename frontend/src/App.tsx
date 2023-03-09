@@ -26,18 +26,18 @@ export function App(): ReactElement {
   }
 
   useEffect(() => {
-    isSignedIn
-      ? localStorage.setItem(localStorageKey, JSON.stringify(loginUser))
-      : localStorage.removeItem(localStorageKey)
-  }, [isSignedIn])
-
-  useEffect(() => {
     const data = localStorage.getItem(localStorageKey)
     if (data !== null) {
       setIsSignedIn(true)
       setLoginUser(JSON.parse(data))
     }
   }, [])
+
+  useEffect(() => {
+    isSignedIn
+      ? localStorage.setItem(localStorageKey, JSON.stringify(loginUser))
+      : localStorage.removeItem(localStorageKey)
+  }, [isSignedIn])
 
   return (
     <div className="App">
