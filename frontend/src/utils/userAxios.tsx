@@ -1,4 +1,5 @@
 import axios, { type AxiosError } from 'axios'
+import { defaultAvatar } from '../User/components/SignIn'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
@@ -19,7 +20,7 @@ export function getUserRequest(
   callback: (user: User) => void
 ): void {
   axios
-    .get<User>('/user/user/' + String(userId))
+    .get<User>('/user/' + String(userId))
     .then((response) => {
       callback(response.data)
     })
@@ -34,8 +35,12 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
     alert('Please fill in the blanks.')
     throw new Error()
   }
+  if (obj.avatar === defaultAvatar) {
+    obj.avatar = 'DEFAULT_AVATAR'
+  }
+
   axios
-    .post<{ id: number }>('/user/user', obj)
+    .post<{ id: number }>('/user', obj)
     .then((res) => {
       callback(res.data.id)
     })
@@ -46,7 +51,7 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
 
 export function signIn(obj: signIn, callback: (user: User) => void): void {
   axios
-    .post<User>('/user/user/sign_in', obj)
+    .post<User>('/user/sign_in', obj)
     .then((res) => {
       callback(res.data)
     })
@@ -116,6 +121,21 @@ export function deleteFriendPendingRequest(
     .delete<FriendRequestDto>('/user/friends/pending', { data: requestData })
     .then((_response) => {
       callback()
+    })
+    .catch((reason) => {
+      alert('エラーです！')
+      console.log(reason)
+    })
+}
+
+export function getFriendsRequest(
+  userId: number,
+  callback: (user: User[]) => void
+): void {
+  axios
+    .get<User[]>('/user/friends/' + String(userId))
+    .then((response) => {
+      callback(response.data)
     })
     .catch((reason) => {
       alert('エラーです！')

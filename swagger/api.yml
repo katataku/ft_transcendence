@@ -71,7 +71,7 @@ paths:
                 $ref: '#/components/schemas/users_get_res'
 
 
-  /user/user/{userID}:
+  /user/{userID}:
     get:
       tags:
         - user
@@ -109,7 +109,7 @@ paths:
               schema:
                 type: string
                 example: OK
-    post:
+    put:
       tags:
         - user
       summary: update user
