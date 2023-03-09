@@ -2,6 +2,37 @@ import axios from 'axios'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
+export function getChatRoomRequest(
+  callback: (value: ChatRoom[]) => void
+): void {
+  axios
+    .get<ChatRoom[]>('/chatRoom')
+    .then((response) => {
+      callback(response.data)
+    })
+    .catch(() => {
+      alert('エラーです！')
+    })
+}
+
+export function getChatRoomIdRequest(
+  roomId: number,
+  callback: (value: ChatRoom) => void
+): void {
+  axios
+    .get<ChatRoom[]>('/chatRoom')
+    .then((response) => {
+      response.data
+        .filter((room) => room.id === roomId)
+        .forEach((room) => {
+          callback(room)
+        })
+    })
+    .catch(() => {
+      alert('エラーです！')
+    })
+}
+
 export function deleteChatRoomRequest(room: ChatRoom): void {
   axios
     .delete('/chatRoom/' + String(room.id))
