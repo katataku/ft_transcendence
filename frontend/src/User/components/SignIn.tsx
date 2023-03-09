@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
 import { signIn, signUp } from '../../utils/userAxios'
-import { defaultAvatar } from '..'
+import defaultAvatar from '../../img/defaultAvatar.png'
 
 export function SignIn(): ReactElement {
   const { setLoginUser, setIsSignedIn } = useContext(GlobalContext)
