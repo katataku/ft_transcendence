@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FriendRequestDto,
@@ -30,9 +30,9 @@ export class UsersService {
     @InjectRepository(UserAvatars)
     private userAvatarsRepository: Repository<UserAvatars>,
   ) {
-    readDefaultAvatar().then(res => {
-      this.saveAvatar(0, res)
-    })
+    readDefaultAvatar().then((res) => {
+      this.saveAvatar(0, res);
+    });
   }
 
   async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
