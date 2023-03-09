@@ -187,8 +187,10 @@ export class UsersService {
   }
 
   async getAvatarById(userId: number): Promise<string> {
-    return (
-      await this.userAvatarsRepository.findOne({ where: { userId: userId } })
-    ).data;
+    const res = await this.userAvatarsRepository.findOne({ where: { userId: userId } })
+    if (!res) {
+      throw new HttpException('Avatar Not Found.', HttpStatus.NOT_FOUND);
+    }
+    return res.data;
   }
 }
