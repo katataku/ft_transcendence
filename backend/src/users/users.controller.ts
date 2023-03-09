@@ -23,7 +23,7 @@ import { Response } from 'express';
 export class UsersController {
   constructor(private service: UsersService) {}
 
-  @Post()
+  @Post('user')
   signUp(@Body() body: UserSignUpReqDto): Promise<UserSignUpResDto> {
     return this.service.createUser(body);
   }
