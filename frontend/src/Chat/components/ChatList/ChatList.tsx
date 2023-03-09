@@ -15,8 +15,7 @@ axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 export function ChatList(): ReactElement {
   const [roomList, setRoomList] = React.useState<ChatRoom[]>([])
 
-  const state: ChatListState = useLocation().state
-  const kicked: boolean = state?.kicked ?? false
+  const { kicked }: ChatListState = useLocation().state
 
   const updateChatRoomList = (): void => {
     axios
