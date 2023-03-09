@@ -104,7 +104,6 @@ export function SignIn(): ReactElement {
                 setLoginUser({ id: res, name: userName })
                 setIsSignedIn(true)
               })
-              setIsSignedIn(true)
             } else {
               signIn({ id: Number(userName), password }, (res) => {
                 setLoginUser({ id: res.id, name: res.name })
