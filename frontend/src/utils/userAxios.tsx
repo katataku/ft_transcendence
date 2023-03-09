@@ -19,7 +19,7 @@ export function getUserRequest(
   callback: (user: User) => void
 ): void {
   axios
-    .get<User>('/user/user/' + String(userId))
+    .get<User>('/user/' + String(userId))
     .then((response) => {
       callback(response.data)
     })
@@ -35,7 +35,7 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
     throw new Error()
   }
   axios
-    .post<{ id: number }>('/user/user', obj)
+    .post<{ id: number }>('/user', obj)
     .then((res) => {
       callback(res.data.id)
     })
@@ -46,7 +46,7 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
 
 export function signIn(obj: signIn, callback: (user: User) => void): void {
   axios
-    .post<User>('/user/user/sign_in', obj)
+    .post<User>('/user/sign_in', obj)
     .then((res) => {
       callback(res.data)
     })

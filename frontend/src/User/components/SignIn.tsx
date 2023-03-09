@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
 import { signIn, signUp } from '../../utils/userAxios'
-import defaultAvatar from '../../img/defaultAvatar.png'
+import { BaseURL } from '../../constants'
 
 export function SignIn(): ReactElement {
   const { setLoginUser, setIsSignedIn } = useContext(GlobalContext)
@@ -12,7 +12,7 @@ export function SignIn(): ReactElement {
   const [userName, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [showPassword, setShowPassword] = useState<boolean>(false)
-  const [image, setImage] = useState<string>(defaultAvatar)
+  const [image, setImage] = useState<string>(`${BaseURL}/user/user_avatar/0`)
 
   function toggleMode(): void {
     setSignUpMode(!signUpMode)

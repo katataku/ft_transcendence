@@ -23,7 +23,7 @@ import { Response } from 'express';
 export class UsersController {
   constructor(private service: UsersService) {}
 
-  @Post('user')
+  @Post()
   signUp(@Body() body: UserSignUpReqDto): Promise<UserSignUpResDto> {
     return this.service.createUser(body);
   }
@@ -38,12 +38,12 @@ export class UsersController {
     return this.service.getUsers();
   }
 
-  @Get('user/:id')
+  @Get(':id')
   getUserById(@Param() param: UserIdParam): Promise<UserGetDto> {
     return this.service.getUserById(param.id);
   }
 
-  @Post('user/:id')
+  @Post(':id')
   updateUser(
     @Body() body: UserUpdateReqDto,
     @Param() param: UserIdParam,
@@ -51,7 +51,7 @@ export class UsersController {
     return this.service.updateUser(param.id, body);
   }
 
-  @Delete('user/:id')
+  @Delete(':id')
   deleteUser(@Param() param: UserIdParam): Promise<string> {
     return this.service.deleteUser(param.id);
   }
