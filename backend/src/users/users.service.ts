@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FriendRequestDto,
@@ -16,6 +16,7 @@ import {
 } from '../entities/users.entity';
 import { Repository } from 'typeorm';
 import { SHA256 } from 'crypto-js';
+import { readDefaultAvatar } from 'src/common/img/readDefaultAvatar';
 
 @Injectable()
 export class UsersService {
@@ -28,7 +29,11 @@ export class UsersService {
     private pendingRepository: Repository<PendingFriendship>,
     @InjectRepository(UserAvatars)
     private userAvatarsRepository: Repository<UserAvatars>,
-  ) {}
+  ) {
+    readDefaultAvatar().then(res => {
+      this.saveAvatar(0, res)
+    })
+  }
 
   async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
     const obj: User = {
