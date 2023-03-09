@@ -6,6 +6,7 @@ import {
   Post,
   Delete,
   Res,
+  Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -45,10 +46,10 @@ export class UsersController {
     return this.service.getUserById(param.id);
   }
 
-  @Post(':id')
+  @Put(':id')
   updateUser(
-    @Body() body: UserUpdateReqDto,
     @Param() param: UserIdParam,
+    @Body() body: UserUpdateReqDto,
   ): Promise<UserGetDto> {
     return this.service.updateUser(param.id, body);
   }

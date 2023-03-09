@@ -109,7 +109,7 @@ paths:
               schema:
                 type: string
                 example: OK
-    post:
+    put:
       tags:
         - user
       summary: update user
