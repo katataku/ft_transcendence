@@ -119,8 +119,8 @@ export class GameGateway {
             .catch((reason) => {
               this.logger.log(reason);
             });
-          this.userService.updateMatchHistory(winner.id, 'wins');
-          this.userService.updateMatchHistory(loser.id, 'losses');
+          this.userService.updateUserMatchHistory(winner.id, 'wins');
+          this.userService.updateUserMatchHistory(loser.id, 'losses');
           map.delete(key);
         }
       });
