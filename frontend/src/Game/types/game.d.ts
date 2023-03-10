@@ -2,8 +2,7 @@ interface IPlayer {
   id: UPlayer
   socketID: string
   name: string
-  wins: number
-  losses: number
+  matchHistory: UserMatchHistoryDto;
   ready: boolean
   score: number
   paddle: IPaddle

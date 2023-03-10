@@ -19,6 +19,7 @@ import { deepCopy } from './utility';
 import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
 import { UsersService } from '../users/users.service';
+import { UserMatchHistoryDto } from '../common/dto/users.dto';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
@@ -128,10 +129,10 @@ export class GameGateway {
   }
 
   @SubscribeMessage('matching')
-  handleMatching(
+  async handleMatching(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { userId: number; userName: string },
-  ): void {
+  ): Promise<void> {
     this.userQueue.push({
       clientId: client.id,
       userId: data.userId,
@@ -141,6 +142,10 @@ export class GameGateway {
     if (this.userQueue.length >= 2) {
       const leftUser = this.userQueue.shift();
       const rightUser = this.userQueue.shift();
+      const leftHist: UserMatchHistoryDto =
+        await this.userService.getUserMatchHistory(leftUser.userId);
+      const rightHist: UserMatchHistoryDto =
+        await this.userService.getUserMatchHistory(rightUser.userId);
       this.server
         .to(leftUser.clientId)
         .to(rightUser.clientId)
@@ -163,10 +168,12 @@ export class GameGateway {
           newMatch.leftPlayer.socketID = leftSocket.id;
           newMatch.leftPlayer.name = leftUser.userName;
           newMatch.leftPlayer.id = leftUser.userId;
+          newMatch.leftPlayer.matchHistory = leftHist;
           newMatch.rightPlayer = deepCopy(GameSetting.initRightProfile);
           newMatch.rightPlayer.socketID = rightSocket.id;
           newMatch.rightPlayer.name = rightUser.userName;
           newMatch.rightPlayer.id = rightUser.userId;
+          newMatch.rightPlayer.matchHistory = rightHist;
           if (leftSocket !== undefined) leftSocket.join(res.id.toString());
           if (rightSocket !== undefined) rightSocket.join(res.id.toString());
           this.server.to(res.id.toString()).emit('updateConnections', newMatch);
