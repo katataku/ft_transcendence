@@ -41,8 +41,14 @@ export function Player(props: {
       <div className="border">
         <h4>Match History</h4>
         <h6>
-          wins:<span className="text-success">{props.player.matchHistory.wins} </span>
-          losses:<span className="text-danger">{props.player.matchHistory.losses}</span>
+          wins:
+          <span className="text-success">
+            {props.player.matchHistory.wins}{' '}
+          </span>
+          losses:
+          <span className="text-danger">
+            {props.player.matchHistory.losses}
+          </span>
         </h6>
       </div>
     </Col>
