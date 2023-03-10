@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Logger } from '@nestjs/common';
 import {
   FriendRequestDto,
   UserUpdateReqDto,
