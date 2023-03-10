@@ -5,7 +5,7 @@ import {
   User,
   PendingFriendship,
   UserAvatars,
-  MatchHistory,
+  UserMatchHistory,
 } from '../entities/users.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -17,7 +17,7 @@ import { UsersService } from './users.service';
       Friendship,
       PendingFriendship,
       UserAvatars,
-      MatchHistory,
+      UserMatchHistory,
     ]),
   ],
   controllers: [UsersController],

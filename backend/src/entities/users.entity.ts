@@ -56,8 +56,8 @@ export class UserAvatars {
   data!: string;
 }
 
-@Entity({ name: 'match_history' })
-export class MatchHistory {
+@Entity({ name: 'user_match_history' })
+export class UserMatchHistory {
   @PrimaryGeneratedColumn({ name: 'id' })
   userId!: number;
 

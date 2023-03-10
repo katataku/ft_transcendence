@@ -5,7 +5,7 @@ import { MatchService } from 'src/match/match.service';
 import { GameGateway } from './game.gateway';
 import {
   Friendship,
-  MatchHistory,
+  UserMatchHistory,
   PendingFriendship,
   User,
   UserAvatars,
@@ -20,7 +20,7 @@ import { UsersService } from '../users/users.service';
       PendingFriendship,
       UserAvatars,
       Match,
-      MatchHistory,
+      UserMatchHistory,
     ]),
   ],
   providers: [GameGateway, MatchService, UsersService],

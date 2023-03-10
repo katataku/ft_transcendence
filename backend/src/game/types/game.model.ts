@@ -1,4 +1,4 @@
-import { MatchHistoryDto } from '../../common/dto/users.dto';
+import { UserMatchHistoryDto } from '../../common/dto/users.dto';
 
 export interface Vector2 {
   x: number;
@@ -26,7 +26,7 @@ export interface IPlayer {
   id: number;
   socketID: string;
   name: string;
-  matchHistory: MatchHistoryDto;
+  matchHistory: UserMatchHistoryDto;
   ready: boolean;
   score: number;
   paddle: IPaddle;

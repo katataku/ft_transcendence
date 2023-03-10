@@ -14,7 +14,7 @@ import {
   User,
   PendingFriendship,
   UserAvatars,
-  MatchHistory,
+  UserMatchHistory,
 } from 'src/entities/users.entity';
 import { ChatRoom } from 'src/entities/chatRoom.entity';
 import { ChatRoomModule } from 'src/chatRoom';
@@ -41,7 +41,7 @@ const options: PostgresConnectionOptions = {
     Friendship,
     PendingFriendship,
     UserAvatars,
-    MatchHistory,
+    UserMatchHistory,
     ChatRoom,
     ChatRoomMembers,
     ChatDMMembers,

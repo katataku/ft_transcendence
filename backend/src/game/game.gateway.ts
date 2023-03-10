@@ -128,10 +128,10 @@ export class GameGateway {
   }
 
   @SubscribeMessage('matching')
-  async handleMatching(
+  handleMatching(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { userId: number; userName: string },
-  ): Promise<void> {
+  ): void {
     this.userQueue.push({
       clientId: client.id,
       userId: data.userId,

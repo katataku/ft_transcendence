@@ -42,7 +42,7 @@ export class FriendRequestDto {
   to: number;
 }
 
-export class MatchHistoryDto {
+export class UserMatchHistoryDto {
   @IsNumber()
   wins: number;
   @IsNumber()

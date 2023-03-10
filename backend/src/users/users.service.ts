@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@nestjs/common';
 import {
   FriendRequestDto,
   UserUpdateReqDto,
@@ -7,11 +8,11 @@ import {
   UserSignUpReqDto,
   UserSignUpResDto,
   UserSignInDto,
-  MatchHistoryDto,
+  UserMatchHistoryDto,
 } from 'src/common/dto/users.dto';
 import {
   Friendship,
-  MatchHistory,
+  UserMatchHistory,
   PendingFriendship,
   User,
   UserAvatars,
@@ -30,8 +31,8 @@ export class UsersService {
     private pendingRepository: Repository<PendingFriendship>,
     @InjectRepository(UserAvatars)
     private userAvatarsRepository: Repository<UserAvatars>,
-    @InjectRepository(MatchHistory)
-    private matchHistoryRepository: Repository<MatchHistory>,
+    @InjectRepository(UserMatchHistory)
+    private matchHistoryRepository: Repository<UserMatchHistory>,
   ) {
     this.saveAvatar(0, 'DEFAULT_AVATAR');
   }
@@ -209,19 +210,19 @@ export class UsersService {
     });
   }
 
-  async getMatchHistoryRow(userId: number): Promise<MatchHistory> {
+  async getMatchHistoryRow(userId: number): Promise<UserMatchHistory> {
     return await this.matchHistoryRepository.findOne({
       where: { userId: userId },
     });
   }
 
-  async getMatchHistory(userId: number): Promise<MatchHistoryDto> {
+  async getMatchHistory(userId: number): Promise<UserMatchHistoryDto> {
     const data = await this.getMatchHistoryRow(userId);
     return { wins: data.wins, losses: data.losses };
   }
 
   async updateMatchHistory(userId: number, type: string): Promise<void> {
-    const data: MatchHistory = await this.getMatchHistoryRow(userId);
+    const data: UserMatchHistory = await this.getMatchHistoryRow(userId);
     data[type] = data[type] + 1;
     await this.matchHistoryRepository.save(data);
   }
