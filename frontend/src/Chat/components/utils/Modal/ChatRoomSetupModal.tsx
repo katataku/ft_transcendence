@@ -97,6 +97,7 @@ export const ChatRoomSetupModal = (props: {
             Close
           </Button>
           <Button
+            data-cy="chat-room-submit-button"
             variant="primary"
             onClick={handleSubmitOnClick}
             disabled={publicId === 'protected' && password === ''}

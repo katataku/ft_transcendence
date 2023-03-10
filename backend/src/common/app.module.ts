@@ -24,6 +24,7 @@ import { GameModule } from '../game';
 import { Match } from '../entities/match.entity';
 import { MatchModule } from '../match';
 import { ChatDMMembersModule } from 'src/chatDMMembers';
+import { OnlineStatusModule } from 'src/onlineStatus';
 
 dotenv.config();
 
@@ -63,6 +64,7 @@ const options: PostgresConnectionOptions = {
     ChatDMMembersModule,
     GameModule,
     MatchModule,
+    OnlineStatusModule,
   ],
 })
 export class AppModule {}
