@@ -1,3 +1,3 @@
-import { OnlineStatusModule } from './onliineStatus.module';
+import { OnlineStatusModule } from './onlineStatus.module';
 
 export { OnlineStatusModule };
