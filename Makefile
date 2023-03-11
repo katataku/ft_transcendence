@@ -61,30 +61,28 @@ back:
 	${DC_CMD} ${DC_OPTIONS} up db backend swagger swagger-editor
 
 .PHONY:create
-create:
+create:wait-until-backend-ready
 	docker exec -it back npm run typeorm:create
 
 .PHONY:migrate
-migrate:
-	docker exec -it back npm run typeorm:run
-
-.PHONY:migrate-without-tty
-migrate-without-tty:
+migrate:wait-until-backend-ready
 	docker exec back npm run typeorm:run
 
+
 .PHONY:revert
-revert:
+revert:wait-until-backend-ready
 	docker exec -it back npm run typeorm:revert
 
 .PHONY:cypress-run
-cypress-run:
+cypress-run:wait-until-frontend-ready
 	cd ./cypress && npm install && npm run cypress:run
 
-.PHONY:wait-until-server-start
-wait-until-server-start:
-	chmod +x scripts/wait-until-curl-OK.sh
-	scripts/wait-until-curl-OK.sh
+BACKEND_HEALTHCHECK_URL=localhost:3001/health
+.PHONY:wait-until-backend-ready
+wait-until-backend-ready:
+	until (curl -i ${BACKEND_HEALTHCHECK_URL} | grep "200 OK") do sleep 10; done
 
-.PHONY:wait-and-cypress-run
-wait-and-cypress-run: wait-until-server-start cypress-run
-
+FRONTEND_HEALTHCHECK_URL=localhost:3000
+.PHONY:wait-until-frontend-ready
+wait-until-frontend-ready:wait-until-backend-ready
+	until (curl -i ${FRONTEND_HEALTHCHECK_URL} | grep "200 OK") do sleep 10; done

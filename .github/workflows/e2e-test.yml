@@ -28,10 +28,10 @@ jobs:
         run: make up-d
 
       - name: Wait for server to start
-        run: make wait-until-server-start
+        run: make wait-until-frontend-ready
 
       - name: migration
-        run: make migrate-without-tty
+        run: make migrate
 
       - name: Run end-to-end tests
         run: make cypress-run
