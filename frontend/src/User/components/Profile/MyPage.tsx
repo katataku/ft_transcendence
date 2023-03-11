@@ -1,4 +1,4 @@
-import {type ReactElement, useContext, useEffect, useState} from 'react'
+import { type ReactElement, useContext, useEffect, useState } from 'react'
 import { Button, Tab, Tabs } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 import { FriendList } from './FriendList'
