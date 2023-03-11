@@ -18,3 +18,8 @@ interface FriendRequestDto {
   from: number
   to: number
 }
+
+interface UserMatchHistoryDto {
+  wins: number
+  losses: number
+}

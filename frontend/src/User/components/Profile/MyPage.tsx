@@ -1,8 +1,10 @@
-import { type ReactElement, useContext } from 'react'
+import {type ReactElement, useContext, useState} from 'react'
 import { Button, Tab, Tabs } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 import { FriendList } from './FriendList'
 import { FriendPendingList } from './FriendPendingList'
+import {MatchHistory} from "../../../components/MatchHistory";
+import {getMatchHistoryById} from "../../../utils/userAxios";
 
 function Settings(): ReactElement {
   return (
@@ -22,11 +24,16 @@ function Settings(): ReactElement {
 
 export function MyPage(): ReactElement {
   const { loginUser } = useContext(GlobalContext)
+  const [matchHistory, setMatchHistory] = useState({wins: 0, losses: 0})
+  getMatchHistoryById(loginUser.id, setMatchHistory)
+
+  console.log(loginUser.id)
   return (
     <>
       <h2>My page</h2>
       <p>ID : {loginUser.id}</p>
       <p>NAME: {loginUser.name}</p>
+      <MatchHistory matchHistory={matchHistory} />
 
       <Tabs
         defaultActiveKey="Settings"
