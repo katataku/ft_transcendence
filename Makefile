@@ -76,3 +76,11 @@ revert:
 cypress-run:
 	cd ./cypress && npm install && npm run cypress:run
 
+.PHONY:wait-until-server-start
+wait-until-server-start:
+	chmod +x scripts/wait-until-curl-OK.sh
+	scripts/wait-until-curl-OK.sh
+
+.PHONY:wait-and-cypress-run
+wait-and-cypress-run: wait-until-server-start cypress-run
+
