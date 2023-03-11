@@ -12,6 +12,7 @@ export class migrations1676466055353 implements MigrationInterface {
   makeInsertMatchSQL = (p1: number, p2: number) =>
     `INSERT INTO public.match(p1, p2, winner) VALUES(` + p1 + `,` + p2 + `,0)`;
 
+
   makeInsertUsrMatchHistSQL = (wins: number, losses: number) =>
     `INSERT INTO public.user_match_history(wins, losses) VALUES(` +
     wins +
