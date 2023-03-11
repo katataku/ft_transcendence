@@ -1,4 +1,4 @@
-import { type ReactElement, useContext, useState } from 'react'
+import {type ReactElement, useContext, useEffect, useState} from 'react'
 import { Button, Tab, Tabs } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 import { FriendList } from './FriendList'
@@ -25,9 +25,12 @@ function Settings(): ReactElement {
 export function MyPage(): ReactElement {
   const { loginUser } = useContext(GlobalContext)
   const [matchHistory, setMatchHistory] = useState({ wins: 0, losses: 0 })
-  getMatchHistoryById(loginUser.id, setMatchHistory)
 
-  console.log(loginUser.id)
+  useEffect(() => {
+    console.log(loginUser.id)
+    getMatchHistoryById(loginUser.id, setMatchHistory)
+  }, [])
+
   return (
     <>
       <h2>My page</h2>
