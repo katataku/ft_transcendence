@@ -8,5 +8,6 @@ import { MatchService } from './match.service';
   imports: [TypeOrmModule.forFeature([Match])],
   controllers: [MatchController],
   providers: [MatchService],
+  exports: [TypeOrmModule],
 })
 export class MatchModule {}
