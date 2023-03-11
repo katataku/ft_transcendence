@@ -68,6 +68,10 @@ create:
 migrate:
 	docker exec -it back npm run typeorm:run
 
+.PHONY:migrate-without-tty
+migrate-without-tty:
+	docker exec back npm run typeorm:run
+
 .PHONY:revert
 revert:
 	docker exec -it back npm run typeorm:revert
