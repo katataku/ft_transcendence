@@ -68,7 +68,6 @@ create:wait-until-backend-ready
 migrate:wait-until-backend-ready
 	docker exec back npm run typeorm:run
 
-
 .PHONY:revert
 revert:wait-until-backend-ready
 	docker exec -it back npm run typeorm:revert
