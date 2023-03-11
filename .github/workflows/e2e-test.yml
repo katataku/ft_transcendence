@@ -21,8 +21,11 @@ jobs:
       - name: Build Docker images
         run: make build
 
+      - name: setup
+        run: make init
+
       - name: Start services
-        run: make up
+        run: make up-d
 
       - name: Wait for server to start
         run: make wait-until-server-start
