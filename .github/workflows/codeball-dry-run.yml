@@ -1,5 +1,8 @@
 name: Codeball
-on: [pull_request]
+on:
+  pull_request: {}
+  pull_request_review_comment:
+    types: [created, edited]
 
 jobs:
   codeball_job:
