@@ -18,11 +18,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Build Docker images
-        run: make build
-
       - name: setup
         run: make init
+
+      - name: Build Docker images
+        run: make build
 
       - name: Start services
         run: make up-d
@@ -35,6 +35,3 @@ jobs:
 
       - name: Run end-to-end tests
         run: make cypress-run
-
-      - name: Stop services
-        run: docker-compose down
