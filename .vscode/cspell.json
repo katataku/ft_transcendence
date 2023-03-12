@@ -9,6 +9,7 @@
         "typeorm",
         "websockets",
         "matchlist",
+        "Codeball",
         "pendings"
     ]
 }
