@@ -164,7 +164,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/friends_get_res'
-
+    delete:
+      tags:
+        - user
+      summary: delete friend
+      parameters:
+        - name: userID
+          required: true
+          description: id
+          in: path
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/friends_delete_req'
+      responses:
+        200:
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: OK
   /user/friends:
     post:
       tags:
@@ -637,6 +659,13 @@ components:
         to:
           type: integer
           example: 2
+    friends_delete_req:
+      type: object
+      properties:
+        friendUserId:
+          type: integer
+          example: 2
+
 
     chat_room_res:
       type: object
