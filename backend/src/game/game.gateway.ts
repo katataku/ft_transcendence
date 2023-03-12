@@ -132,7 +132,11 @@ export class GameGateway {
     }, 1000 / 60);
   }
 
-  private createMatch(leftUser: IUserQueue, rightUser: IUserQueue) {
+  private async createMatch(leftUser: IUserQueue, rightUser: IUserQueue) {
+    const leftHist: UserMatchHistoryDto =
+      await this.userService.getUserMatchHistory(leftUser.userId);
+    const rightHist: UserMatchHistoryDto =
+      await this.userService.getUserMatchHistory(rightUser.userId);
     this.matchService
       .createMatch({
         id: 0,
@@ -143,10 +147,6 @@ export class GameGateway {
       .then((res) => {
         const leftSocket = this.connectedClients.get(leftUser.clientId);
         const rightSocket = this.connectedClients.get(rightUser.clientId);
-        const leftHist: UserMatchHistoryDto =
-          await this.userService.getUserMatchHistory(leftUser.userId);
-        const rightHist: UserMatchHistoryDto =
-          await this.userService.getUserMatchHistory(rightUser.userId);
         this.serverMatches.set(res.id, deepCopy(GameSetting.initServerMatch));
         const newMatch = this.serverMatches.get(res.id);
         newMatch.id = res.id;
