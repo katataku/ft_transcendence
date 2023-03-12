@@ -113,6 +113,27 @@ export function updateFriendPendingRequest(
     })
 }
 
+export function deleteFriendRequest(
+  userID: number,
+  friendID: number,
+  callback: () => void
+): void {
+  const requestData: UserFriendDeleteRequestDto = {
+    friendUserId: friendID
+  }
+  axios
+    .delete<UserFriendDeleteRequestDto>('/user/friends/' + String(userID), {
+      data: requestData
+    })
+    .then((_response) => {
+      callback()
+    })
+    .catch((reason) => {
+      alert('エラーです！')
+      console.log(reason)
+    })
+}
+
 export function deleteFriendPendingRequest(
   requestData: FriendRequestDto,
   callback: () => void
