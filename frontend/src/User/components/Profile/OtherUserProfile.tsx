@@ -13,6 +13,7 @@ import { BlockIcon } from '../../../utils/Icon/BlockIcon'
 import { FriendIcon } from '../../../utils/Icon/FriendIcon'
 import {
   deleteFriendPendingRequest,
+  deleteFriendRequest,
   getFriendPendingRequest,
   getFriendsRequest,
   getUserRequest,
@@ -142,12 +143,20 @@ export function FriendInvitationButton(props: {
     })
   }
 
+  const sendFriendDeleteRequest = (): void => {
+    deleteFriendRequest(loginUser.id, props.targetUser.id, () => {
+      alert('フレンドを削除しました！')
+      updateIsFriend()
+      updateIsPending()
+    })
+  }
+
   if (isFriend) {
     return (
       <>
         <FriendIcon isFriend={isFriend}></FriendIcon>
-        <Button variant="danger" onClick={() => {}}>
-          フレンドを削除ボタンになる予定
+        <Button variant="danger" onClick={sendFriendDeleteRequest}>
+          フレンドを削除
         </Button>
       </>
     )

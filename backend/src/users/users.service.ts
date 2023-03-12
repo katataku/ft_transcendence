@@ -115,6 +115,21 @@ export class UsersService {
     return this.usersRepository.remove(target) ? 'OK' : '...';
   }
 
+  async deleteFriend(id: number, friendId: number): Promise<string> {
+    const user1 = Math.min(id, friendId);
+    const user2 = Math.max(id, friendId);
+    const target = await this.friendshipRepository.findOne({
+      where: {
+        user1: user1,
+        user2: user2,
+      },
+    });
+    if (target == null) {
+      throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
+    }
+    return this.friendshipRepository.remove(target) ? 'OK' : '...';
+  }
+
   async requestFriendship(data: FriendRequestDto): Promise<void> {
     const pendingList = await this.pendingRepository.find();
     if (
@@ -132,9 +147,11 @@ export class UsersService {
     ) {
       pendingList.map((pending) => {
         if (pending.to == data.from && pending.from == data.to) {
+          const user1 = Math.min(data.from, data.to);
+          const user2 = Math.max(data.from, data.to);
           const friendship = new Friendship();
-          friendship.user1 = data.from;
-          friendship.user2 = data.to;
+          friendship.user1 = user1;
+          friendship.user2 = user2;
           this.friendshipRepository.save(friendship);
           this.pendingRepository.remove(pending);
         }
