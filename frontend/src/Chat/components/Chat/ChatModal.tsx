@@ -6,6 +6,7 @@ export const ChatModal = (props: {
   targetUser: User
   handleModalClose: () => void
   handleKickButtonClick: () => void
+  handleInviteButtonClick: () => void
 }): ReactElement => {
   return (
     <>
@@ -20,7 +21,7 @@ export const ChatModal = (props: {
           <Button variant="primary" onClick={props.handleKickButtonClick}>
             Kick
           </Button>
-          <Button variant="primary" onClick={() => {}}>
+          <Button variant="primary" onClick={props.handleInviteButtonClick}>
             ゲーム
           </Button>
         </Modal.Footer>

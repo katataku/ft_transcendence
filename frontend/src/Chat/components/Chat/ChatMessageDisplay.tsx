@@ -4,6 +4,7 @@ import { ChatModal } from './ChatModal'
 import { getChatBlockUserRequest } from '../../../utils/chatBlockUserAxios'
 import { GlobalContext } from '../../../App'
 import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { GameSocketContext } from '../../../Game/utils/gameSocketContext'
 
 // 非表示にするユーザの一覧を取得する。
 // 一覧は、非表示にするユーザのIDの配列である。
@@ -65,6 +66,7 @@ export const MessageDisplay = (props: {
   SendKickEvent: (userId: number) => void
 }): ReactElement => {
   const { loginUser } = useContext(GlobalContext)
+  const gameSocket = useContext(GameSocketContext)
   const [showModal, setShowModal] = useState(false)
   const [targetUser, setTargetUser] = useState<User>({ id: 0, name: '' })
 
@@ -75,6 +77,13 @@ export const MessageDisplay = (props: {
   const handleKickButtonClick = (): void => {
     props.SendKickEvent(targetUser.id)
     setShowModal(false)
+  }
+
+  const handleInviteButtonClick = (): void => {
+    gameSocket.emit('inviteMatching', {
+      inviter: loginUser.name,
+      invitee: targetUser.name
+    })
   }
 
   const makeItem = (item: messageEventType): messageItem => {
@@ -123,6 +132,7 @@ export const MessageDisplay = (props: {
         targetUser={targetUser}
         handleModalClose={handleModalClose}
         handleKickButtonClick={handleKickButtonClick}
+        handleInviteButtonClick={handleInviteButtonClick}
       ></ChatModal>
       <div className="line__container">
         <div className="line__contents">

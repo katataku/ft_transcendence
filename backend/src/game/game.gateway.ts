@@ -28,6 +28,10 @@ export class GameGateway {
 
   private serverMatches: Map<number, IMatch> = new Map<number, IMatch>();
   private connectedClients: Map<string, Socket> = new Map<string, Socket>();
+  private connectedUsers: Map<string, IUserQueue> = new Map<
+    string,
+    IUserQueue
+  >();
   private userQueue: IUserQueue[] = [];
 
   afterInit(_server: Server) {
@@ -118,6 +122,36 @@ export class GameGateway {
     }, 1000 / 60);
   }
 
+  private createMatch(leftUser: IUserQueue, rightUser: IUserQueue) {
+    this.service
+      .createMatch({
+        id: 0,
+        p1: leftUser.userId,
+        p2: rightUser.userId,
+        winner: 0,
+      })
+      .then((res) => {
+        const leftSocket = this.connectedClients.get(leftUser.clientId);
+        const rightSocket = this.connectedClients.get(rightUser.clientId);
+
+        this.serverMatches.set(res.id, deepCopy(GameSetting.initServerMatch));
+        const newMatch = this.serverMatches.get(res.id);
+        newMatch.id = res.id;
+        newMatch.leftPlayer = deepCopy(GameSetting.initLeftProfile);
+        newMatch.leftPlayer.socketID = leftSocket.id;
+        newMatch.leftPlayer.name = leftUser.userName;
+        newMatch.leftPlayer.id = leftUser.userId;
+        newMatch.rightPlayer = deepCopy(GameSetting.initRightProfile);
+        newMatch.rightPlayer.socketID = rightSocket.id;
+        newMatch.rightPlayer.name = rightUser.userName;
+        newMatch.rightPlayer.id = rightUser.userId;
+        if (leftSocket !== undefined) leftSocket.join(res.id.toString());
+        if (rightSocket !== undefined) rightSocket.join(res.id.toString());
+        this.server.to(res.id.toString()).emit('updateConnections', newMatch);
+      })
+      .catch((reason) => this.logger.log(reason));
+  }
+
   @SubscribeMessage('matching')
   handleMatching(
     @ConnectedSocket() client: Socket,
@@ -136,33 +170,7 @@ export class GameGateway {
         .to(leftUser.clientId)
         .to(rightUser.clientId)
         .emit('matchFound');
-      this.service
-        .createMatch({
-          id: 0,
-          p1: leftUser.userId,
-          p2: rightUser.userId,
-          winner: 0,
-        })
-        .then((res) => {
-          const leftSocket = this.connectedClients.get(leftUser.clientId);
-          const rightSocket = this.connectedClients.get(rightUser.clientId);
-
-          this.serverMatches.set(res.id, deepCopy(GameSetting.initServerMatch));
-          const newMatch = this.serverMatches.get(res.id);
-          newMatch.id = res.id;
-          newMatch.leftPlayer = deepCopy(GameSetting.initLeftProfile);
-          newMatch.leftPlayer.socketID = leftSocket.id;
-          newMatch.leftPlayer.name = leftUser.userName;
-          newMatch.leftPlayer.id = leftUser.userId;
-          newMatch.rightPlayer = deepCopy(GameSetting.initRightProfile);
-          newMatch.rightPlayer.socketID = rightSocket.id;
-          newMatch.rightPlayer.name = rightUser.userName;
-          newMatch.rightPlayer.id = rightUser.userId;
-          if (leftSocket !== undefined) leftSocket.join(res.id.toString());
-          if (rightSocket !== undefined) rightSocket.join(res.id.toString());
-          this.server.to(res.id.toString()).emit('updateConnections', newMatch);
-        })
-        .catch((reason) => this.logger.log(reason));
+      this.createMatch(leftUser, rightUser);
     }
   }
 
@@ -171,6 +179,45 @@ export class GameGateway {
     this.userQueue = this.userQueue.filter(
       (element) => !(element.userName === userName),
     );
+  }
+
+  @SubscribeMessage('loggedIn')
+  handleLoggedIn(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() loginUser: { id: number; name: string },
+  ): void {
+    this.connectedUsers.set(loginUser.name, {
+      userId: loginUser.id,
+      userName: loginUser.name,
+      clientId: client.id,
+    });
+    // deleteは認証ができてから
+  }
+
+  @SubscribeMessage('inviteMatching')
+  handleInviteMatching(
+    @ConnectedSocket() client: Socket,
+    @MessageBody()
+    data: { inviter: string; invitee: string },
+  ): void {
+    const invitee = this.connectedUsers.get(data.invitee);
+    if (invitee === undefined) return;
+    this.server.to(invitee.clientId).emit('inviteMatching', data.inviter);
+  }
+
+  @SubscribeMessage('inviteAccepted')
+  handleInviteAccepted(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { inviter: string; invitee: string },
+  ): void {
+    const inviter = this.connectedUsers.get(data.inviter);
+    const invitee = this.connectedUsers.get(data.invitee);
+    if (inviter === undefined || invitee === undefined) {
+      this.logger.log('招待マッチングが成立しませんでした');
+      return;
+    }
+    this.server.to(inviter.clientId).to(invitee.clientId).emit('navigate');
+    this.createMatch(inviter, invitee);
   }
 
   @SubscribeMessage('updatePaddle')
