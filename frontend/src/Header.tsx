@@ -1,9 +1,12 @@
 import { useContext, type ReactElement } from 'react'
-import { Container, Navbar } from 'react-bootstrap'
+import { Container, Navbar, Image } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import { GlobalContext } from './App'
+import { BaseURL } from './constants'
 
 export function Header(): ReactElement {
   const { loginUser } = useContext(GlobalContext)
+  const imageURL = `${BaseURL}/user/user_avatar/${loginUser.id}`
 
   const loginNameText =
     loginUser.id === 0 ? (
@@ -22,6 +25,13 @@ export function Header(): ReactElement {
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end"></Navbar.Collapse>
         {loginNameText}
+        <Link to={'profile/' + String(loginUser.id)}>
+          <Image
+            src={`${imageURL}`}
+            style={{ borderRadius: '50%', margin: '30px' }}
+            height={50}
+          />
+        </Link>
       </Container>
     </Navbar>
   )
