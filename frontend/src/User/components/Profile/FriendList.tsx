@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState, type ReactElement } from 'react'
+import { Link } from 'react-router-dom'
 import { GlobalContext } from '../../../App'
 import { getFriendRequest } from '../../../utils/userAxios'
 
@@ -22,7 +23,9 @@ export function FriendList(): ReactElement {
       {friendList.map((user, index) => {
         return (
           <div key={index}>
-            <p>{user.name}</p>
+            <p>
+              <Link to={'/profile/' + String(user.id)}>{user.name}</Link>
+            </p>
           </div>
         )
       })}
