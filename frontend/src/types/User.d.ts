@@ -20,5 +20,5 @@ interface FriendRequestDto {
 }
 
 interface UserFriendDeleteRequestDto {
-  friendUserId: number;
+  friendUserId: number
 }
