@@ -76,15 +76,15 @@ revert:wait-until-backend-ready
 cypress-run:wait-until-frontend-ready
 	cd ./cypress && npm install && npm run cypress:run
 
-BACKEND_HEALTHCHECK_URL=localhost:3001/health
+BACKEND_HEALTH_CHECK_URL=localhost:3001/health
 .PHONY:wait-until-backend-ready
 wait-until-backend-ready:
-	until (curl -i ${BACKEND_HEALTHCHECK_URL} | grep "200 OK") do sleep 10; done
+	until (curl -i ${BACKEND_HEALTH_CHECK_URL} | grep "200 OK") do sleep 10; done
 
-FRONTEND_HEALTHCHECK_URL=localhost:3000
+FRONTEND_HEALTH_CHECK_URL=localhost:3000
 .PHONY:wait-until-frontend-ready
 wait-until-frontend-ready:wait-until-backend-ready
-	until (curl -i ${FRONTEND_HEALTHCHECK_URL} | grep "200 OK") do sleep 10; done
+	until (curl -i ${FRONTEND_HEALTH_CHECK_URL} | grep "200 OK") do sleep 10; done
 
 .PHONY:spell-check
 spell-check:
