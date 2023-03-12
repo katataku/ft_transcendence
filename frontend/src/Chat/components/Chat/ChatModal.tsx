@@ -1,5 +1,6 @@
 import { type ReactElement } from 'react'
 import { Button, Modal } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
 
 export const ChatModal = (props: {
   showModal: boolean
@@ -7,6 +8,12 @@ export const ChatModal = (props: {
   handleModalClose: () => void
   handleKickButtonClick: () => void
 }): ReactElement => {
+  const navigate = useNavigate()
+
+  const handleNavigateToProfile = (): void => {
+    navigate('/profile/' + String(props.targetUser.id))
+  }
+
   return (
     <>
       <Modal show={props.showModal} onHide={props.handleModalClose}>
@@ -16,6 +23,9 @@ export const ChatModal = (props: {
         <Modal.Footer>
           <Button variant="secondary" onClick={props.handleModalClose}>
             Close
+          </Button>
+          <Button variant="primary" onClick={handleNavigateToProfile}>
+            プロフィール
           </Button>
           <Button variant="primary" onClick={props.handleKickButtonClick}>
             Kick
