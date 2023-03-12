@@ -18,10 +18,15 @@ import * as GameSetting from './constants';
 import { deepCopy } from './utility';
 import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
+import { UsersService } from '../users/users.service';
+import { UserMatchHistoryDto } from '../common/dto/users.dto';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
-  constructor(private readonly service: MatchService) {}
+  constructor(
+    private readonly matchService: MatchService,
+    private readonly userService: UsersService,
+  ) {}
   @WebSocketServer()
   private server: Server;
   private logger: Logger = new Logger('GameGateway');
@@ -105,17 +110,22 @@ export class GameGateway {
           match.status = EStatus.set;
           this.server.to(matchId).emit('updateConnections', match);
           this.server.to(matchId).emit('updateStatus', match.status);
-          this.service
+          const winner =
+            match.leftPlayer.score > match.rightPlayer.score
+              ? match.leftPlayer
+              : match.rightPlayer;
+          const loser =
+            winner === match.leftPlayer ? match.rightPlayer : match.leftPlayer;
+          this.matchService
             .postMatchResult({
               id: match.id,
-              winner:
-                match.leftPlayer.score > match.rightPlayer.score
-                  ? match.leftPlayer.score
-                  : match.rightPlayer.score,
+              winner: winner.id,
             })
             .catch((reason) => {
               this.logger.log(reason);
             });
+          this.userService.updateUserMatchHistory(winner.id, 'wins');
+          this.userService.updateUserMatchHistory(loser.id, 'losses');
           map.delete(key);
         }
       });
@@ -123,7 +133,7 @@ export class GameGateway {
   }
 
   private createMatch(leftUser: IUserQueue, rightUser: IUserQueue) {
-    this.service
+    this.matchService
       .createMatch({
         id: 0,
         p1: leftUser.userId,
@@ -133,7 +143,10 @@ export class GameGateway {
       .then((res) => {
         const leftSocket = this.connectedClients.get(leftUser.clientId);
         const rightSocket = this.connectedClients.get(rightUser.clientId);
-
+        const leftHist: UserMatchHistoryDto =
+          await this.userService.getUserMatchHistory(leftUser.userId);
+        const rightHist: UserMatchHistoryDto =
+          await this.userService.getUserMatchHistory(rightUser.userId);
         this.serverMatches.set(res.id, deepCopy(GameSetting.initServerMatch));
         const newMatch = this.serverMatches.get(res.id);
         newMatch.id = res.id;
@@ -141,10 +154,12 @@ export class GameGateway {
         newMatch.leftPlayer.socketID = leftSocket.id;
         newMatch.leftPlayer.name = leftUser.userName;
         newMatch.leftPlayer.id = leftUser.userId;
+        newMatch.leftPlayer.matchHistory = leftHist;
         newMatch.rightPlayer = deepCopy(GameSetting.initRightProfile);
         newMatch.rightPlayer.socketID = rightSocket.id;
         newMatch.rightPlayer.name = rightUser.userName;
         newMatch.rightPlayer.id = rightUser.userId;
+        newMatch.rightPlayer.matchHistory = rightHist;
         if (leftSocket !== undefined) leftSocket.join(res.id.toString());
         if (rightSocket !== undefined) rightSocket.join(res.id.toString());
         this.server.to(res.id.toString()).emit('updateConnections', newMatch);
@@ -153,10 +168,10 @@ export class GameGateway {
   }
 
   @SubscribeMessage('matching')
-  handleMatching(
+  async handleMatching(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { userId: number; userName: string },
-  ): void {
+  ): Promise<void> {
     this.userQueue.push({
       clientId: client.id,
       userId: data.userId,

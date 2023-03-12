@@ -14,6 +14,7 @@ import {
   User,
   PendingFriendship,
   UserAvatars,
+  UserMatchHistory,
 } from 'src/entities/users.entity';
 import { ChatRoom } from 'src/entities/chatRoom.entity';
 import { ChatRoomModule } from 'src/chatRoom';
@@ -23,6 +24,7 @@ import { GameModule } from '../game';
 import { Match } from '../entities/match.entity';
 import { MatchModule } from '../match';
 import { ChatDMMembersModule } from 'src/chatDMMembers';
+import { OnlineStatusModule } from 'src/onlineStatus';
 
 dotenv.config();
 
@@ -40,6 +42,7 @@ const options: PostgresConnectionOptions = {
     Friendship,
     PendingFriendship,
     UserAvatars,
+    UserMatchHistory,
     ChatRoom,
     ChatRoomMembers,
     ChatDMMembers,
@@ -61,6 +64,7 @@ const options: PostgresConnectionOptions = {
     ChatDMMembersModule,
     GameModule,
     MatchModule,
+    OnlineStatusModule,
   ],
 })
 export class AppModule {}
