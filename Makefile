@@ -85,3 +85,7 @@ FRONTEND_HEALTHCHECK_URL=localhost:3000
 .PHONY:wait-until-frontend-ready
 wait-until-frontend-ready:wait-until-backend-ready
 	until (curl -i ${FRONTEND_HEALTHCHECK_URL} | grep "200 OK") do sleep 10; done
+
+.PHONY:spell-check
+spell-check:
+	npx --package cspell --yes cspell lint --config .vscode/cspell.json "." --gitignore --show-suggestions
