@@ -48,6 +48,11 @@ export function Notification(): ReactElement {
     gameSocket.on('inviteMatching', (inviter: string) => {
       toast(<GameContent inviterName={inviter} />)
     })
+
+    return () => {
+      gameSocket.off('navigate')
+      gameSocket.off('inviteMatching')
+    }
   }, [])
 
   return (
