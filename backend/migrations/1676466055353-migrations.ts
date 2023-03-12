@@ -9,9 +9,13 @@ export class migrations1676466055353 implements MigrationInterface {
     pass +
     `');`;
 
+  makeInsertAvatarSQL = (id: number) =>
+    `INSERT INTO public.user_avatars(user_id, data) VALUES(` +
+    id +
+    `, 'DEFAULT_AVATAR');`;
+
   makeInsertMatchSQL = (p1: number, p2: number) =>
     `INSERT INTO public.match(p1, p2, winner) VALUES(` + p1 + `,` + p2 + `,0)`;
-
 
   makeInsertUsrMatchHistSQL = (wins: number, losses: number) =>
     `INSERT INTO public.user_match_history(wins, losses) VALUES(` +
@@ -32,6 +36,11 @@ export class migrations1676466055353 implements MigrationInterface {
     await queryRunner.query(this.makeInsertUsrMatchHistSQL(7777, 0));
     await queryRunner.query(this.makeInsertMatchSQL(1, 2));
     await queryRunner.query(this.makeInsertMatchSQL(3, 4));
+
+    await queryRunner.query(this.makeInsertAvatarSQL(1));
+    await queryRunner.query(this.makeInsertAvatarSQL(2));
+    await queryRunner.query(this.makeInsertAvatarSQL(3));
+    await queryRunner.query(this.makeInsertAvatarSQL(4));
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

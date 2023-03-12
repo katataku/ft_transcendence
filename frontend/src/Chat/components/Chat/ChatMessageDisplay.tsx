@@ -4,6 +4,7 @@ import { ChatModal } from './ChatModal'
 import { getChatBlockUserRequest } from '../../../utils/chatBlockUserAxios'
 import { GlobalContext } from '../../../App'
 import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { BaseURL } from '../../../constants'
 
 // 非表示にするユーザの一覧を取得する。
 // 一覧は、非表示にするユーザのIDの配列である。
@@ -78,10 +79,6 @@ export const MessageDisplay = (props: {
   }
 
   const makeItem = (item: messageEventType): messageItem => {
-    // 暫定的にいらすとやのURLを設定している。
-    // 将来的にはプロフィール画像の設定されている42CDNのURLを設定する。
-    const imageURL: string =
-      'https://1.bp.blogspot.com/-SWOiphrHWnI/XWS5x7MYwHI/AAAAAAABUXA/i_PRL_Atr08ayl9sZy9-x0uoY4zV2d5xwCLcBGAs/s1600/pose_dance_ukareru_man.png'
     const outerClassName: string =
       loginUser.id === item.user.id ? 'line__right' : 'line__left'
     const innerClassName: string =
@@ -92,7 +89,7 @@ export const MessageDisplay = (props: {
       ) : (
         <figure>
           <img
-            src={imageURL}
+            src={`${BaseURL}/user/user_avatar/${item.user.id}`}
             onClick={() => {
               setTargetUser(item.user)
               setShowModal(true)
