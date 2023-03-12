@@ -7,7 +7,6 @@ import { Image } from 'react-bootstrap'
 import { BaseURL } from './constants'
 
 export function TopPage(): ReactElement {
-  const ChatListState: ChatListState = { kicked: false }
   const { loginUser, isSignedIn, setIsSignedIn } = useContext(GlobalContext)
 
   // マッチリスト・プロフィル・チャット->ゲームに行くとmatchIdは必要があります。
@@ -25,11 +24,7 @@ export function TopPage(): ReactElement {
             height={300}
           />
           <p>
-            <Link
-              data-cy="link-to-chatlist"
-              to="chatlist"
-              state={{ ChatListState }}
-            >
+            <Link data-cy="link-to-chatlist" to="chatlist">
               Move to ChatList
             </Link>
           </p>
