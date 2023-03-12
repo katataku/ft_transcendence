@@ -10,6 +10,7 @@
         "websockets",
         "matchlist",
         "Codeball",
-        "pendings"
+        "pendings",
+		"toastify"
     ]
 }
