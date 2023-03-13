@@ -163,3 +163,17 @@ export function getFriendsRequest(
       console.log(reason)
     })
 }
+
+export function getMatchHistoryById(
+  id: number,
+  callback: (matchHistory: UserMatchHistoryDto) => void
+): void {
+  axios
+    .get<UserMatchHistoryDto>('/user/match_history/' + String(id))
+    .then((response) => {
+      callback(response.data)
+    })
+    .catch((err) => {
+      alert(err)
+    })
+}

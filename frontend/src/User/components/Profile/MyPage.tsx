@@ -1,12 +1,20 @@
-import { type ReactElement, useContext } from 'react'
+import {type ReactElement, useContext, useEffect, useState} from 'react'
 import { Button, Tab, Tabs, Image } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 import { FriendList } from './FriendList'
 import { FriendPendingList } from './FriendPendingList'
 import { BaseURL } from '../../../constants'
+import {getMatchHistoryById} from "../../../utils/userAxios";
+import {MatchHistory} from "../../../components/MatchHistory";
 
 function Settings(): ReactElement {
   const { loginUser } = useContext(GlobalContext)
+  const [matchHist, setMatchHist] = useState({wins: 0, losses: 0})
+
+  useEffect(() => {
+    getMatchHistoryById(loginUser.id, setMatchHist)
+  }, [])
+
   return (
     <>
       <p>
@@ -16,7 +24,9 @@ function Settings(): ReactElement {
           height={300}
         />
       </p>
-      <p>Gameの成績・Match Historyを表示する</p>
+      <p>
+        <MatchHistory matchHistory={matchHist} />
+      </p>
 
       <p>
         <Button>自分のプロフィールを編集できるボタンになる予定</Button>
