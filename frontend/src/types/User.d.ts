@@ -22,3 +22,8 @@ interface FriendRequestDto {
 interface UserFriendDeleteRequestDto {
   friendUserId: number
 }
+
+interface UserMatchHistoryDto {
+  wins: number
+  losses: number
+}

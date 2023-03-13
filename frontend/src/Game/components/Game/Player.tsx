@@ -2,6 +2,7 @@ import React, { type ReactElement, useContext, useState } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Col } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
+import { MatchHistory } from '../../../components/MatchHistory'
 
 function Ready(props: { matchID: number; player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
@@ -39,17 +40,7 @@ export function Player(props: {
         <Ready matchID={props.matchID} player={props.player} />
       </div>
       <div className="border">
-        <h4>Match History</h4>
-        <h6>
-          wins:
-          <span className="text-success">
-            {props.player.matchHistory.wins}{' '}
-          </span>
-          losses:
-          <span className="text-danger">
-            {props.player.matchHistory.losses}
-          </span>
-        </h6>
+        <MatchHistory matchHistory={props.player.matchHistory} />
       </div>
     </Col>
   )

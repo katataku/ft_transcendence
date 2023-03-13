@@ -17,6 +17,7 @@ import {
   UserSignUpResDto,
   UserSignInDto,
   UserFriendDeleteRequestDto,
+  UserMatchHistoryDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 import { Response } from 'express';
@@ -109,5 +110,12 @@ export class UsersController {
       'base64',
     );
     res.send(binaryData);
+  }
+
+  @Get('match_history/:id')
+  async getUserMatchHistory(
+    @Param() param: UserIdParam,
+  ): Promise<UserMatchHistoryDto> {
+    return await this.service.getUserMatchHistory(param.id);
   }
 }
