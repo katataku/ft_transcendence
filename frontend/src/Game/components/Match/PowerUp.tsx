@@ -12,7 +12,12 @@ import { GlobalContext } from '../../../App'
 const speedOpts = { Easy: 'Slow', Medium: 'Medium', Hard: 'Fast'}
 const paddleOpts = { Easy: 'Long', Medium: 'Short', Hard: 'Tiny'}
 
-function PowerUpDropDown(props: {status: EStatus, leftName: string, title: string, setTitle: Setter<string> }): ReactElement {
+function PowerUpDropDown(props: {
+  status: EStatus,
+  leftName: string,
+  title: string,
+  setTitle: Setter<string>
+}): ReactElement {
   const { loginUser } = useContext(GlobalContext)
   const [opts, _setOpts] = useState(props.title === 'Speed' ? speedOpts : paddleOpts)
 
@@ -81,10 +86,18 @@ export function PowerUp(props: {
   return (
     <Row>
       <Col>
-        <PowerUpDropDown status={props.status} leftName={props.leftName} title={speed} setTitle={setSpeed} />
+        <PowerUpDropDown
+          status={props.status}
+          leftName={props.leftName}
+          title={speed}
+          setTitle={setSpeed} />
       </Col>
       <Col>
-        <PowerUpDropDown status={props.status} leftName={props.leftName} title={paddle} setTitle={setPaddle} />
+        <PowerUpDropDown
+          status={props.status}
+          leftName={props.leftName}
+          title={paddle}
+          setTitle={setPaddle} />
       </Col>
     </Row>
   )
