@@ -11,7 +11,6 @@ import { ChatRoomContext, ChatRoomRefreshContext } from '../utils/context'
 
 const DeleteRoomButton = (): JSX.Element => {
   const navigate = useNavigate()
-  const chatListState: ChatListState = { kicked: false }
   const room = useContext(ChatRoomContext)
   const isLoginUserOwnerBool: boolean = isLoginUserOwner(room)
   if (!isLoginUserOwnerBool) return <></>
@@ -24,9 +23,7 @@ const DeleteRoomButton = (): JSX.Element => {
         // 100ms後に更新する
         // 削除した直後に更新すると、削除したルームが表示されてしまうため。。。
         setTimeout(() => {
-          navigate('/chatlist', {
-            state: { chatListState }
-          })
+          navigate('/chatlist')
         }, 100)
       }}
     >

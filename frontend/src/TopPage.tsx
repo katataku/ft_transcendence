@@ -5,7 +5,6 @@ import { SignIn } from './User/components/SignIn'
 import { GlobalContext } from './App'
 
 export function TopPage(): ReactElement {
-  const ChatListState: ChatListState = { kicked: false }
   const { loginUser, isSignedIn, setIsSignedIn } = useContext(GlobalContext)
 
   // マッチリスト・プロフィル・チャット->ゲームに行くとmatchIdは必要があります。
@@ -16,11 +15,7 @@ export function TopPage(): ReactElement {
       {isSignedIn ? (
         <div>
           <p>
-            <Link
-              data-cy="link-to-chatlist"
-              to="chatlist"
-              state={{ ChatListState }}
-            >
+            <Link data-cy="link-to-chatlist" to="chatlist">
               Move to ChatList
             </Link>
           </p>

@@ -1,10 +1,18 @@
-import { type ReactElement, useState, createContext, useEffect } from 'react'
+import {
+  type ReactElement,
+  useState,
+  createContext,
+  useEffect,
+  useContext
+} from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { Game, MatchList } from './Game'
 import { ChatList, Chat, ChatRoom } from './Chat'
 import { TopPage } from './TopPage'
 import { Header } from './Header'
 import { Profile } from './User'
+import { Notification } from './Notification'
+import { GameSocketContext } from './Game/utils/gameSocketContext'
 
 // interfaceの初期化をしろとeslintに怒られますが、Setterは初期化できないため、ここだけeslintを無視します。
 export const GlobalContext = createContext<GlobalContext>({} as GlobalContext) // eslint-disable-line
@@ -17,6 +25,7 @@ export function App(): ReactElement {
     name: ''
   })
   const [isSignedIn, setIsSignedIn] = useState<boolean>(false)
+  const gameSocket = useContext(GameSocketContext)
 
   const context: GlobalContext = {
     loginUser,
@@ -34,9 +43,12 @@ export function App(): ReactElement {
   }, [])
 
   useEffect(() => {
-    isSignedIn
-      ? localStorage.setItem(localStorageKey, JSON.stringify(loginUser))
-      : localStorage.removeItem(localStorageKey)
+    if (isSignedIn) {
+      localStorage.setItem(localStorageKey, JSON.stringify(loginUser))
+      gameSocket.emit('loggedIn', loginUser)
+    } else {
+      localStorage.removeItem(localStorageKey)
+    }
   }, [isSignedIn])
 
   return (
@@ -44,6 +56,7 @@ export function App(): ReactElement {
       <GlobalContext.Provider value={context}>
         <BrowserRouter>
           <Header></Header>
+          <Notification />
           <div>
             <Routes>
               <Route path="/" element={<TopPage />} />
