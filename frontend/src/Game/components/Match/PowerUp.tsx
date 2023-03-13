@@ -9,7 +9,11 @@ import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Dropdown, DropdownButton } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 
-function PowerUpDropDown(props: {status: EStatus, leftName: string, setTitle: Setter<string> }): ReactElement {
+function PowerUpDropDown(props: {
+  status: EStatus
+  leftName: string
+  setTitle: Setter<string>
+}): ReactElement {
   const { loginUser } = useContext(GlobalContext)
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || loginUser.name !== props.leftName)
@@ -65,6 +69,10 @@ export function PowerUp(props: {
   }, [title])
 
   return (
-    <PowerUpDropDown status={props.status} leftName={props.leftName} setTitle={setTitle} />
+    <PowerUpDropDown
+      status={props.status}
+      leftName={props.leftName}
+      setTitle={setTitle}
+    />
   )
 }
