@@ -15,13 +15,14 @@ import {
   deleteFriendPendingRequest,
   deleteFriendRequest,
   getFriendPendingRequest,
-  getFriendsRequest, getMatchHistoryById,
+  getFriendsRequest,
+  getMatchHistoryById,
   getUserRequest,
   updateFriendPendingRequest
 } from '../../../utils/userAxios'
 import { isBlockUser } from '../../utils/userStatusUtils'
 import { BaseURL } from '../../../constants'
-import {MatchHistory} from "../../../components/MatchHistory";
+import { MatchHistory } from '../../../components/MatchHistory'
 
 function DMButton(props: { targetUser: User }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
@@ -183,7 +184,7 @@ export function OtherUserProfile(): ReactElement {
   const { id } = useParams()
 
   const [targetUser, setTargetUser] = useState<User>()
-  const [matchHist, setMatchHist] = useState({wins: 0, losses: 0})
+  const [matchHist, setMatchHist] = useState({ wins: 0, losses: 0 })
 
   useEffect(() => {
     getUserRequest(Number(id), (user) => {

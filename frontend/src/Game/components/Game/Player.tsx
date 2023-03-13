@@ -2,7 +2,7 @@ import React, { type ReactElement, useContext, useState } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Col } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-import {MatchHistory} from "../../../components/MatchHistory";
+import { MatchHistory } from '../../../components/MatchHistory'
 
 function Ready(props: { matchID: number; player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
