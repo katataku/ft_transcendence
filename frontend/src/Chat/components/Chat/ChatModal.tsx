@@ -10,6 +10,7 @@ export const ChatModal = (props: {
   targetUser: User
   handleModalClose: () => void
   handleKickButtonClick: () => void
+  handleInviteButtonClick: () => void
 }): ReactElement => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const { loginUser } = useContext(GlobalContext)
@@ -57,7 +58,7 @@ export const ChatModal = (props: {
             プロフィール
           </Button>
           {kickButton}
-          <Button variant="primary" onClick={() => {}}>
+          <Button variant="primary" onClick={props.handleInviteButtonClick}>
             ゲーム
           </Button>
         </Modal.Footer>
