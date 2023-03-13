@@ -125,6 +125,7 @@ export const MessageDisplay = (props: {
   return (
     <>
       <ChatModal
+        {...props}
         showModal={showModal}
         targetUser={targetUser}
         handleModalClose={handleModalClose}

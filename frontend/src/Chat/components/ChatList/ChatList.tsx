@@ -1,6 +1,5 @@
 import * as React from 'react'
 import '../../assets/styles.css'
-import { useLocation } from 'react-router-dom'
 import { useEffect, type ReactElement } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { ChatListDisplay } from './ChatListDisplay'
@@ -12,8 +11,6 @@ import { getChatRoomRequest } from '../../../utils/chatRoomAxios'
 // 更新のための関数をこちらで定義し、各モジュールで使用する。
 export function ChatList(): ReactElement {
   const [roomList, setRoomList] = React.useState<ChatRoom[]>([])
-
-  const { kicked }: ChatListState = useLocation().state
 
   const updateChatRoomList = (): void => {
     // ここでroomListを更新する。
@@ -29,7 +26,7 @@ export function ChatList(): ReactElement {
 
   return (
     <>
-      <AlertElement kicked={kicked}></AlertElement>
+      <AlertElement></AlertElement>
       <div className="Chat">
         <ChatListDisplay
           roomList={roomList}

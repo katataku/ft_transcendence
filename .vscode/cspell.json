@@ -9,6 +9,12 @@
         "typeorm",
         "websockets",
         "matchlist",
+        "signin",
+        "Foles",
+        "hadolint",
+        "fclean",
+        "swaggerapi",
+        "webfonts",
         "Codeball",
         "pendings",
         "toastify"

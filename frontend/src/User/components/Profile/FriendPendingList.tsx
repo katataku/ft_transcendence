@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState, type ReactElement } from 'react'
 import { Button } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
 import { GlobalContext } from '../../../App'
 import {
   deleteFriendPendingRequest,
@@ -71,7 +72,7 @@ export function FriendPendingList(): ReactElement {
         return (
           <div key={index}>
             <p>
-              {user.name}
+              <Link to={'/profile/' + String(user.id)}>{user.name}</Link>
               <AcceptButton
                 targetUserId={user.id}
                 updateFriendPendingList={updateFriendPendingList}

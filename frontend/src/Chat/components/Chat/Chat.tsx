@@ -6,6 +6,7 @@ import { type ReactElement } from 'react'
 import { MessageDisplay } from './ChatMessageDisplay'
 import { MessageSend } from './ChatMessageSend'
 import { GlobalContext } from '../../../App'
+import { chatListKickAlertLocalStorageKey } from '../../../constants'
 
 const ServerURL: string = process.env.REACT_APP_BACKEND_WEBSOCKET_BASE_URL ?? ''
 const socket = io(ServerURL)
@@ -33,9 +34,12 @@ export function Chat(): ReactElement {
 
   const handleKickEvent = (item: kickEventType): void => {
     console.log('kick received:' + JSON.stringify(item))
-    const ChatListState: ChatListState = { kicked: true }
     if (item.room === room.name && item.userId === loginUser.id) {
-      navigate('/chatlist', { state: ChatListState })
+      localStorage.setItem(
+        chatListKickAlertLocalStorageKey,
+        JSON.stringify({ kicked: true })
+      )
+      navigate('/chatlist')
     }
   }
 

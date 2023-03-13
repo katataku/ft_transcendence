@@ -1,5 +1,5 @@
 import { type ReactElement, useState, useEffect, useContext } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button, Image } from 'react-bootstrap'
 import { useNavigate, useParams } from 'react-router-dom'
 import { GlobalContext } from '../../../App'
 import {
@@ -13,12 +13,14 @@ import { BlockIcon } from '../../../utils/Icon/BlockIcon'
 import { FriendIcon } from '../../../utils/Icon/FriendIcon'
 import {
   deleteFriendPendingRequest,
+  deleteFriendRequest,
   getFriendPendingRequest,
   getFriendsRequest,
   getUserRequest,
   updateFriendPendingRequest
 } from '../../../utils/userAxios'
 import { isBlockUser } from '../../utils/userStatusUtils'
+import { BaseURL } from '../../../constants'
 
 function DMButton(props: { targetUser: User }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
@@ -141,12 +143,20 @@ export function FriendInvitationButton(props: {
     })
   }
 
+  const sendFriendDeleteRequest = (): void => {
+    deleteFriendRequest(loginUser.id, props.targetUser.id, () => {
+      alert('フレンドを削除しました！')
+      updateIsFriend()
+      updateIsPending()
+    })
+  }
+
   if (isFriend) {
     return (
       <>
         <FriendIcon isFriend={isFriend}></FriendIcon>
-        <Button variant="danger" onClick={() => {}}>
-          フレンドを削除ボタンになる予定
+        <Button variant="danger" onClick={sendFriendDeleteRequest}>
+          フレンドを削除
         </Button>
       </>
     )
@@ -184,7 +194,13 @@ export function OtherUserProfile(): ReactElement {
       <h2>Other User Profile</h2>
       <p>ID : {targetUser.id}</p>
       <p>NAME: {targetUser.name}</p>
-      <p>ここにプロフィール画像を表示する</p>
+      <p>
+        <Image
+          src={`${BaseURL}/user/user_avatar/${targetUser.id}`}
+          style={{ borderRadius: '50%', margin: '30px' }}
+          height={300}
+        />
+      </p>
       <p>Gameの成績・Match Historyを表示する</p>
       <p>current statusを表示する(online, offline, in a game,など).</p>
 
