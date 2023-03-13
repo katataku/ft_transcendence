@@ -330,4 +330,15 @@ export class GameGateway {
       .to(match.id.toString())
       .emit('updateSpeed', data.difficultyTitle);
   }
+
+  @SubscribeMessage('updatePaddle')
+  handlePaddlePU(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() data: { matchID: number; difficultyTitle: string },
+  ): void {
+    const match = this.serverMatches.get(data.matchID);
+    this.server
+      .to(match.id.toString())
+      .emit('updatePaddle', data.difficultyTitle);
+  }
 }
