@@ -16,6 +16,7 @@ import {
   UserSignUpReqDto,
   UserSignUpResDto,
   UserSignInDto,
+  UserFriendDeleteRequestDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 import { Response } from 'express';
@@ -57,6 +58,14 @@ export class UsersController {
   @Delete(':id')
   deleteUser(@Param() param: UserIdParam): Promise<string> {
     return this.service.deleteUser(param.id);
+  }
+
+  @Delete('friends/:id')
+  deleteFriend(
+    @Param() param: UserIdParam,
+    @Body() body: UserFriendDeleteRequestDto,
+  ): Promise<string> {
+    return this.service.deleteFriend(param.id, body.friendUserId);
   }
 
   @Post('friends')

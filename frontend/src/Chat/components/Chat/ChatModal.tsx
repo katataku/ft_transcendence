@@ -2,6 +2,7 @@ import { useContext, useEffect, useState, type ReactElement } from 'react'
 import { Button, Modal } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
+import { useNavigate } from 'react-router-dom'
 
 export const ChatModal = (props: {
   room: ChatRoom
@@ -36,6 +37,11 @@ export const ChatModal = (props: {
   ) : (
     <></>
   )
+  const navigate = useNavigate()
+
+  const handleNavigateToProfile = (): void => {
+    navigate('/profile/' + String(props.targetUser.id))
+  }
 
   return (
     <>
@@ -46,6 +52,9 @@ export const ChatModal = (props: {
         <Modal.Footer>
           <Button variant="secondary" onClick={props.handleModalClose}>
             Close
+          </Button>
+          <Button variant="primary" onClick={handleNavigateToProfile}>
+            プロフィール
           </Button>
           {kickButton}
           <Button variant="primary" onClick={() => {}}>

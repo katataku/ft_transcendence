@@ -48,3 +48,8 @@ export class UserMatchHistoryDto {
   @IsNumber()
   losses: number;
 }
+
+export class UserFriendDeleteRequestDto {
+  @IsNumber()
+  friendUserId: number;
+}

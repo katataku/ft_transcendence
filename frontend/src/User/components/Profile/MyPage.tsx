@@ -1,13 +1,21 @@
 import { type ReactElement, useContext } from 'react'
-import { Button, Tab, Tabs } from 'react-bootstrap'
+import { Button, Tab, Tabs, Image } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 import { FriendList } from './FriendList'
 import { FriendPendingList } from './FriendPendingList'
+import { BaseURL } from '../../../constants'
 
 function Settings(): ReactElement {
+  const { loginUser } = useContext(GlobalContext)
   return (
     <>
-      <p>ここにプロフィール画像を表示する</p>
+      <p>
+        <Image
+          src={`${BaseURL}/user/user_avatar/${loginUser.id}`}
+          style={{ borderRadius: '50%', margin: '30px' }}
+          height={300}
+        />
+      </p>
       <p>Gameの成績・Match Historyを表示する</p>
 
       <p>
