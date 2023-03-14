@@ -9,6 +9,6 @@ export class AuthController {
   @Get('42/:code')
   async auth42(@Param() param: Auth42Param): Promise<string> {
     const token = await this.service.request42AuthToken(param.code);
-    return token
+    return token;
   }
 }
