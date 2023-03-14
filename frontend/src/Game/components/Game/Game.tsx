@@ -52,22 +52,40 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
       {props.hasResponse && (
-        <Button onClick={handleClick} disabled={showSpinner}>
-          {showSpinner ? (
-            <div>
-              <Spinner animation="border" /> matching...
+        <div style={{ textAlign: 'center', marginTop: 30 }}>
+          <h1 style={{ fontSize: 100 }}>PONG</h1>
+          <p style={{ fontSize: 20, marginTop: 30 }}>
+            Use the arrow keys to move the paddle
+          </p>
+          <Button
+            onClick={handleClick}
+            disabled={showSpinner}
+            style={{ fontSize: 30, marginTop: 20 }}
+          >
+            {showSpinner ? (
+              <div>
+                <Spinner animation="border" /> matching...
+              </div>
+            ) : (
+              'Play'
+            )}
+          </Button>
+          {showSpinner && !matchFound && (
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: 20
+              }}
+            >
+              <Button variant="danger" onClick={handleCancel}>
+                Cancel
+              </Button>
             </div>
-          ) : (
-            'play'
           )}
-        </Button>
-      )}
-      {showSpinner && !matchFound && (
-        <Button variant="danger" onClick={handleCancel}>
-          cancel
-        </Button>
+        </div>
       )}
     </div>
   )

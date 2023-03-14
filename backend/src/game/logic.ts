@@ -1,6 +1,5 @@
 import { EStatus, IBall, IMatch, IPaddle, IScore } from './types/game.model';
 import * as GameSetting from './constants';
-import { deepCopy } from './utility';
 
 function calculateTilt(relativePosBall: number): number {
   const absValFromPaddle = Math.abs(relativePosBall);
@@ -50,6 +49,20 @@ function isHitPaddle(ball: IBall, paddle: IPaddle): boolean {
   );
 }
 
+function isHitWall(ball: IBall): boolean {
+  return (
+    (ball.pos.y <= 0 && ball.vel.y < 0) ||
+    (ball.pos.y >= GameSetting.gameWinHght - GameSetting.ballPx &&
+      ball.vel.y > 0)
+  );
+}
+
+function isHitGoal(ball: IBall): boolean {
+  return (
+    ball.pos.x <= 0 || ball.pos.x >= GameSetting.gameWinWid - GameSetting.ballPx
+  );
+}
+
 export function updateMatch(
   match: IMatch,
   deltaTime: number,
@@ -58,18 +71,9 @@ export function updateMatch(
   match.ball.pos.x += match.ball.vel.x * deltaTime * match.speed;
   match.ball.pos.y += match.ball.vel.y * deltaTime * match.speed;
 
-  if (match.ball.pos.y <= 0 && match.ball.vel.y < 0) {
+  if (isHitWall(match.ball)) {
     match.ball.vel.y *= -1;
-  } else if (
-    match.ball.pos.y >= GameSetting.gameWinHght - GameSetting.ballPx &&
-    match.ball.vel.y > 0
-  ) {
-    match.ball.vel.y *= -1;
-  } else if (
-    // goal hit
-    match.ball.pos.x <= 0 ||
-    match.ball.pos.x >= GameSetting.gameWinWid - GameSetting.ballPx
-  ) {
+  } else if (isHitGoal(match.ball)) {
     match.status = EStatus.pause;
     if (match.ball.vel.x < 0) {
       match.rightPlayer.score++;
@@ -81,9 +85,7 @@ export function updateMatch(
       { left: match.leftPlayer.score, right: match.rightPlayer.score },
       match.status,
     );
-    match.ball.pos = deepCopy(GameSetting.initBall).pos;
-    match.ball.vel = deepCopy(GameSetting.initBall).vel;
-    match.ball.vel.x *= -1;
+    match.ball = GameSetting.initBall(match.ball.vel.x * -1);
   } else if (
     match.ball.vel.x < 0 &&
     isHitPaddle(match.ball, match.leftPlayer.paddle)
