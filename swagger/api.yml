@@ -592,9 +592,10 @@ paths:
         200:
           description: 成功
           content:
-            application/json:
+            text/plain:
               schema:
-                $ref: '#components/schemas/auth42_res'
+                type: string
+                example: hogehoge_token
 
 components:
   schemas:
@@ -818,10 +819,3 @@ components:
         winner:
           type: number
           example: 1
-
-    auth42_res:
-      type: object
-      properties:
-        token:
-          type: string
-          example: hogehogetoken
