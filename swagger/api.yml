@@ -21,6 +21,8 @@ tags:
     description: DMの参加者情報
   - name: match
     description: 進行中のマッチリスト
+  - name: auth
+    description: 認証
 
 paths:
   /health:
@@ -573,6 +575,27 @@ paths:
       responses:
         200:
           description: 成功
+
+  /auth/42/{code}:
+    get:
+      tags: 
+        - auth
+      summary: 42による認証
+      parameters:
+        - name: code
+          required: true
+          description: 認証code
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: token
 
 components:
   schemas:

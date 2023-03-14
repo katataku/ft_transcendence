@@ -1,10 +1,11 @@
-import { type ReactElement, useContext, useEffect } from 'react'
+import { type ReactElement, useContext } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
 import { signIn, signUp } from '../../utils/userAxios'
 import { BaseURL } from '../../constants'
+import { authenticateWith42 } from '../../Auth/auth'
 
 export const defaultAvatar = `${BaseURL}/user/user_avatar/0`
 
@@ -23,10 +24,6 @@ export function SignIn(): ReactElement {
   function toggleShowPassword(): void {
     setShowPassword(!showPassword)
   }
-
-  useEffect(() => {
-    console.log(image)
-  }, [image])
 
   return (
     <div style={{ margin: '50px 100px', textAlign: 'center' }}>
@@ -113,6 +110,10 @@ export function SignIn(): ReactElement {
           }}
         >
           Submit
+        </Button>
+        <br />
+        <Button style={{ margin: '10px' }} onClick={authenticateWith42}>
+          Sign up with 42
         </Button>
 
         {

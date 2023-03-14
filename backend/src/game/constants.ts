@@ -18,10 +18,16 @@ export const paddleSize: Vector2 = {
   y: 100,
 };
 
-export const initBall: IBall = {
-  pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 - ballPx / 2 },
-  vel: { x: -1, y: 0.5 },
-};
+function getRandomNumberInRange(): number {
+  return Math.random() - 0.5;
+}
+
+export function initBall(velX = -1): IBall {
+  return {
+    pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 - ballPx / 2 },
+    vel: { x: velX, y: getRandomNumberInRange() },
+  };
+}
 
 export const initLeftPaddle: IPaddle = {
   pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 },
@@ -60,7 +66,7 @@ export const initServerMatch: IMatch = {
   id: 0,
   leftPlayer: undefined,
   rightPlayer: undefined,
-  ball: deepCopy(initBall),
+  ball: initBall(),
   speed: 400,
   status: EStatus.none,
   lastFrameTime: Date.now(),

@@ -16,11 +16,13 @@ import {
   deleteFriendRequest,
   getFriendPendingRequest,
   getFriendsRequest,
+  getMatchHistoryById,
   getUserRequest,
   updateFriendPendingRequest
 } from '../../../utils/userAxios'
 import { isBlockUser } from '../../utils/userStatusUtils'
 import { BaseURL } from '../../../constants'
+import { MatchHistory } from '../../../components/MatchHistory'
 
 function DMButton(props: { targetUser: User }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
@@ -182,10 +184,12 @@ export function OtherUserProfile(): ReactElement {
   const { id } = useParams()
 
   const [targetUser, setTargetUser] = useState<User>()
+  const [matchHist, setMatchHist] = useState({ wins: 0, losses: 0 })
 
   useEffect(() => {
     getUserRequest(Number(id), (user) => {
       setTargetUser(user)
+      getMatchHistoryById(user.id, setMatchHist)
     })
   }, [])
   if (targetUser == null) return <></>
@@ -201,7 +205,9 @@ export function OtherUserProfile(): ReactElement {
           height={300}
         />
       </p>
-      <p>Gameの成績・Match Historyを表示する</p>
+      <p>
+        <MatchHistory matchHistory={matchHist} />
+      </p>
       <p>current statusを表示する(online, offline, in a game,など).</p>
 
       <p>

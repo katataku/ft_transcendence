@@ -13,6 +13,7 @@ import { Header } from './Header'
 import { Profile } from './User'
 import { Notification } from './Notification'
 import { GameSocketContext } from './Game/utils/gameSocketContext'
+import { Auth42callback } from './Auth/callback'
 
 // interfaceの初期化をしろとeslintに怒られますが、Setterは初期化できないため、ここだけeslintを無視します。
 export const GlobalContext = createContext<GlobalContext>({} as GlobalContext) // eslint-disable-line
@@ -66,6 +67,7 @@ export function App(): ReactElement {
               <Route path="/chatlist" element={<ChatList />} />
               <Route path="/chatroom" element={<ChatRoom />} />
               <Route path="/profile/:id" element={<Profile />} />
+              <Route path="/callback" element={<Auth42callback />} />
             </Routes>
           </div>
         </BrowserRouter>
