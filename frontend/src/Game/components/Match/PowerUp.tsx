@@ -6,20 +6,22 @@ import React, {
   useState
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import {Dropdown, DropdownButton, Row, Col} from 'react-bootstrap'
+import { Dropdown, DropdownButton, Row, Col } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 
-const speedOpts = { Easy: 'Slow', Medium: 'Medium', Hard: 'Fast'}
-const paddleOpts = { Easy: 'Long', Medium: 'Short', Hard: 'Tiny'}
+const speedOpts = { Easy: 'Slow', Medium: 'Medium', Hard: 'Fast' }
+const paddleOpts = { Easy: 'Long', Medium: 'Short', Hard: 'Tiny' }
 
 function PowerUpDropDown(props: {
-  status: EStatus,
-  leftName: string,
-  title: string,
+  status: EStatus
+  leftName: string
+  title: string
   setTitle: Setter<string>
 }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
-  const [opts, _setOpts] = useState(props.title === 'Speed' ? speedOpts : paddleOpts)
+  const [opts, _setOpts] = useState(
+    props.title === 'Speed' ? speedOpts : paddleOpts
+  )
 
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || loginUser.name !== props.leftName)
@@ -38,16 +40,16 @@ function PowerUpDropDown(props: {
   }
 
   return (
-        <DropdownButton
-          id="dropdown-basic-button"
-          variant="info"
-          title={props.title}
-          onSelect={modifySpeed}
-        >
-          <Dropdown.Item eventKey="Easy">Easy</Dropdown.Item>
-          <Dropdown.Item eventKey="Medium">Medium</Dropdown.Item>
-          <Dropdown.Item eventKey="Hard">Hard</Dropdown.Item>
-        </DropdownButton>
+    <DropdownButton
+      id="dropdown-basic-button"
+      variant="info"
+      title={props.title}
+      onSelect={modifySpeed}
+    >
+      <Dropdown.Item eventKey="Easy">Easy</Dropdown.Item>
+      <Dropdown.Item eventKey="Medium">Medium</Dropdown.Item>
+      <Dropdown.Item eventKey="Hard">Hard</Dropdown.Item>
+    </DropdownButton>
   )
 }
 
@@ -88,14 +90,16 @@ export function PowerUp(props: {
           status={props.status}
           leftName={props.leftName}
           title={speed}
-          setTitle={setSpeed} />
+          setTitle={setSpeed}
+        />
       </Col>
       <Col>
         <PowerUpDropDown
           status={props.status}
           leftName={props.leftName}
           title={paddle}
-          setTitle={setPaddle} />
+          setTitle={setPaddle}
+        />
       </Col>
     </Row>
   )
