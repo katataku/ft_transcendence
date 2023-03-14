@@ -57,7 +57,7 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
         <div style={{ textAlign: 'center', marginTop: 30 }}>
           <h1 style={{ fontSize: 100 }}>PONG</h1>
           <p style={{ fontSize: 20, marginTop: 30 }}>
-            Use arrow keys to move the paddle
+            Use the arrow keys to move the paddle
           </p>
           <Button
             onClick={handleClick}
