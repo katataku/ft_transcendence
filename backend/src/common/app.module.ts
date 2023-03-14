@@ -66,7 +66,7 @@ const options: PostgresConnectionOptions = {
     GameModule,
     MatchModule,
     OnlineStatusModule,
-    AuthModule
+    AuthModule,
   ],
 })
 export class AppModule {}
