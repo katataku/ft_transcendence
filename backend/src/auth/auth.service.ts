@@ -4,8 +4,8 @@ import axios from 'axios';
 @Injectable()
 export class AuthService {
   async request42AuthToken(code: string): Promise<string> {
-    const clientId = process.env.FTAPI_CLIENT_ID;
-    const clientSecret = process.env.FTAPI_CLIENT_SECRET;
+    const clientId = process.env.FT_API_CLIENT_ID;
+    const clientSecret = process.env.FT_API_CLIENT_SECRET;
     const url = 'https://api.intra.42.fr/oauth/token';
     const redirectURI = 'http://localhost:3000/callback';
 

@@ -1,5 +1,5 @@
 const clientId =
-  'u-s4t2ud-1ed845d5be5a95148cf45897b0b6cad7f77a31d4a224938f7d0054c0ca039c35'
+  'u-s4t2ud-ea9deabfb4de552b9d618e65dc6b9f2cf3cc3afe0d38613404f898ac5b43da6b'
 const redirectURI = 'http://localhost:3000/callback'
 const authURL = `https://api.intra.42.fr/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectURI}&response_type=code`
 

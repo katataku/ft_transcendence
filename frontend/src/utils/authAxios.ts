@@ -7,7 +7,6 @@ export function request42AuthToken(
   axios
     .get(`/auth/42/${authCode}`)
     .then((res) => {
-      console.log(res.data)
       callback(res.data)
     })
     .catch((err: AxiosError) => {
