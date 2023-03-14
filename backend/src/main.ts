@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './common/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as BodyParser from 'body-parser';
-import * as dotenv from 'dotenv'
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
