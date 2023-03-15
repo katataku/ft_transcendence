@@ -63,24 +63,35 @@ export function PowerUp(props: {
   const [paddle, setPaddle] = useState<string>('Paddle')
 
   useEffect(() => {
-    gameSocket.on('updateSpeed', (difficultyTitle: string) => {
-      setSpeed(difficultyTitle)
+    gameSocket.on('updatePowerUp', (data: {type: string, difficulty: string}) => {
+      switch (data.type) {
+        case 'speed':
+          setSpeed(data.difficulty)
+          break
+        case 'paddle':
+          setPaddle(data.difficulty)
+          break
+      }
     })
   }, [])
 
   useEffect(() => {
-    gameSocket.emit('updateSpeed', {
+    gameSocket.emit('updatePowerUp', {
       matchID: props.matchId,
-      difficultyTitle: speed
+      type: 'speed',
+      opts: speedOpts,
+      difficulty: speed
     })
   }, [speed])
 
-  /* useEffect(() => {
-    gameSocket.emit('updatePaddlePU', {
+  useEffect(() => {
+    gameSocket.emit('updatePowerUp', {
       matchID: props.matchId,
-      difficultyTitle: speed
+      type: 'paddle',
+      opts: paddleOpts,
+      difficulty: paddle
     })
-  }, [paddle]) */
+  }, [paddle])
 
   return (
     <Row>

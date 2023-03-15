@@ -1,5 +1,5 @@
 import { EStatus, IMatch, IPaddle, IScore } from './types/game.model';
-import * as GameSetting from './constants';
+import { initBall } from './constants';
 
 function calculateTilt(relativePosBall: number): number {
   const absValFromPaddle = Math.abs(relativePosBall);
@@ -88,7 +88,7 @@ export function updateMatch(
       { left: match.leftPlayer.score, right: match.rightPlayer.score },
       match.status,
     );
-    match.ball = GameSetting.initBall(match.ball.vel.x * -1);
+    match.ball = initBall(match.ball.vel.x * -1);
   } else if (
     match.ball.vel.x < 0 &&
     isHitPaddle(match, match.leftPlayer.paddle)

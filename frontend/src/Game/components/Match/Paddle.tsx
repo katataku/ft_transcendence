@@ -11,12 +11,12 @@ import { useAnimationFrame } from '../../../hooks/useAnimationFrame'
 import { GlobalContext } from '../../../App'
 type Ref = React.MutableRefObject<any>
 
-const paddleSize: Vector2 = {
+const initPaddleSize: Vector2 = {
   x: 8,
   y: 100
 }
 
-function updatePaddle(paddle: IPaddle, keydown: Ref): IPaddle {
+function updatePaddle(paddle: IPaddle, keydown: Ref, paddleSize: Vector2): IPaddle {
   const paddleSpeed: number = 10
   const gameWinHght: number = 500
 
@@ -35,13 +35,13 @@ function updatePaddle(paddle: IPaddle, keydown: Ref): IPaddle {
   return paddle
 }
 
-function DrawPaddle(props: { paddle: IPaddle }): ReactElement {
+function DrawPaddle(props: { paddle: IPaddle, paddleSize: Vector2}): ReactElement {
   return (
     <div
       style={{
         backgroundColor: 'white',
-        width: `${paddleSize.x}px`,
-        height: `${paddleSize.y}px`,
+        width: `${props.paddleSize.x}px`,
+        height: `${props.paddleSize.y}px`,
         position: 'absolute',
         top: `${props.paddle.pos.y}px`,
         left: `${props.paddle.pos.x}px`
@@ -64,6 +64,7 @@ export function Paddles(props: {
   const [rightPaddle, setRightPaddle] = useState<IPaddle>(
     props.match.rightPlayer.paddle
   )
+  const [paddleSize, setPaddleSize] = useState<Vector2>(initPaddleSize)
 
   const handleOnKeyDown = (e: KeyboardEvent): void => {
     keydown.current = e.code
@@ -77,9 +78,10 @@ export function Paddles(props: {
     window.addEventListener('keyup', handleOnKeyUp)
     gameSocket.on(
       'updatePaddle',
-      (data: { leftPaddle: IPaddle; rightPaddle: IPaddle }) => {
+      (data: { leftPaddle: IPaddle; rightPaddle: IPaddle, paddleSize: Vector2 }) => {
         setLeftPaddle(data.leftPaddle)
         setRightPaddle(data.rightPaddle)
+        setPaddleSize(data.paddleSize)
       }
     )
   }, [])
@@ -88,20 +90,20 @@ export function Paddles(props: {
     if (props.match.leftPlayer.name === loginUser.name) {
       gameSocket.emit('updatePaddle', {
         matchID: props.match.id,
-        newPaddle: updatePaddle(leftPaddle, keydown)
+        newPaddle: updatePaddle(leftPaddle, keydown, paddleSize)
       })
     } else if (props.match.rightPlayer.name === loginUser.name) {
       gameSocket.emit('updatePaddle', {
         matchID: props.match.id,
-        newPaddle: updatePaddle(rightPaddle, keydown)
+        newPaddle: updatePaddle(rightPaddle, keydown, paddleSize)
       })
     }
   }, props.status === EStatus.set)
 
   return (
     <>
-      <DrawPaddle paddle={leftPaddle} />
-      <DrawPaddle paddle={rightPaddle} />
+      <DrawPaddle paddle={leftPaddle} paddleSize={paddleSize}/>
+      <DrawPaddle paddle={rightPaddle} paddleSize={paddleSize}/>
     </>
   )
 }
