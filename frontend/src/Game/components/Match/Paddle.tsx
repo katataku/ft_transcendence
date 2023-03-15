@@ -16,7 +16,11 @@ const initPaddleSize: Vector2 = {
   y: 100
 }
 
-function updatePaddle(paddle: IPaddle, keydown: Ref, paddleSize: Vector2): IPaddle {
+function updatePaddle(
+  paddle: IPaddle,
+  keydown: Ref,
+  paddleSize: Vector2
+): IPaddle {
   const paddleSpeed: number = 10
   const gameWinHght: number = 500
 
@@ -35,7 +39,10 @@ function updatePaddle(paddle: IPaddle, keydown: Ref, paddleSize: Vector2): IPadd
   return paddle
 }
 
-function DrawPaddle(props: { paddle: IPaddle, paddleSize: Vector2}): ReactElement {
+function DrawPaddle(props: {
+  paddle: IPaddle
+  paddleSize: Vector2
+}): ReactElement {
   return (
     <div
       style={{
@@ -78,7 +85,11 @@ export function Paddles(props: {
     window.addEventListener('keyup', handleOnKeyUp)
     gameSocket.on(
       'updatePaddle',
-      (data: { leftPaddle: IPaddle; rightPaddle: IPaddle, paddleSize: Vector2 }) => {
+      (data: {
+        leftPaddle: IPaddle
+        rightPaddle: IPaddle
+        paddleSize: Vector2
+      }) => {
         setLeftPaddle(data.leftPaddle)
         setRightPaddle(data.rightPaddle)
         setPaddleSize(data.paddleSize)
@@ -102,8 +113,8 @@ export function Paddles(props: {
 
   return (
     <>
-      <DrawPaddle paddle={leftPaddle} paddleSize={paddleSize}/>
-      <DrawPaddle paddle={rightPaddle} paddleSize={paddleSize}/>
+      <DrawPaddle paddle={leftPaddle} paddleSize={paddleSize} />
+      <DrawPaddle paddle={rightPaddle} paddleSize={paddleSize} />
     </>
   )
 }

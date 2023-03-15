@@ -63,16 +63,19 @@ export function PowerUp(props: {
   const [paddle, setPaddle] = useState<string>('Paddle')
 
   useEffect(() => {
-    gameSocket.on('updatePowerUp', (data: {type: string, difficulty: string}) => {
-      switch (data.type) {
-        case 'speed':
-          setSpeed(data.difficulty)
-          break
-        case 'paddle':
-          setPaddle(data.difficulty)
-          break
+    gameSocket.on(
+      'updatePowerUp',
+      (data: { type: string; difficulty: string }) => {
+        switch (data.type) {
+          case 'speed':
+            setSpeed(data.difficulty)
+            break
+          case 'paddle':
+            setPaddle(data.difficulty)
+            break
+        }
       }
-    })
+    )
   }, [])
 
   useEffect(() => {
