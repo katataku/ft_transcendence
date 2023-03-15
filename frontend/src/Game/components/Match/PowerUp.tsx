@@ -28,13 +28,13 @@ function PowerUpDropDown(props: {
       return
     switch (op) {
       case opts.Easy:
-        props.setTitle('Easy')
+        props.setTitle(opts.Easy)
         break
       case opts.Medium:
-        props.setTitle('Medium')
+        props.setTitle(opts.Medium)
         break
       case opts.Hard:
-        props.setTitle('Hard')
+        props.setTitle(opts.Hard)
         break
     }
   }
@@ -46,9 +46,9 @@ function PowerUpDropDown(props: {
       title={props.title}
       onSelect={modifySpeed}
     >
-      <Dropdown.Item eventKey="Easy">Easy</Dropdown.Item>
-      <Dropdown.Item eventKey="Medium">Medium</Dropdown.Item>
-      <Dropdown.Item eventKey="Hard">Hard</Dropdown.Item>
+      <Dropdown.Item eventKey={opts.Easy}>{opts.Easy}</Dropdown.Item>
+      <Dropdown.Item eventKey={opts.Medium}>{opts.Medium}</Dropdown.Item>
+      <Dropdown.Item eventKey={opts.Hard}>{opts.Hard}</Dropdown.Item>
     </DropdownButton>
   )
 }
@@ -76,12 +76,12 @@ export function PowerUp(props: {
     })
   }, [speed])
 
-  useEffect(() => {
-    gameSocket.emit('updatePaddle', {
+  /* useEffect(() => {
+    gameSocket.emit('updatePaddlePU', {
       matchID: props.matchId,
       difficultyTitle: speed
     })
-  }, [paddle])
+  }, [paddle]) */
 
   return (
     <Row>

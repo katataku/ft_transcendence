@@ -106,7 +106,7 @@ export class GameGateway {
           leftPaddle: match.leftPlayer.paddle,
           rightPaddle: match.rightPlayer.paddle,
         });
-        if (isMatchSet(match.leftPlayer.score, match.rightPlayer.score)) {
+        if (isMatchSet(match)) {
           match.status = EStatus.set;
           this.server.to(matchId).emit('updateConnections', match);
           this.server.to(matchId).emit('updateStatus', match.status);
@@ -314,13 +314,13 @@ export class GameGateway {
     const match = this.serverMatches.get(data.matchID);
     if (match === undefined) return;
     switch (data.difficultyTitle) {
-      case 'Easy':
+      case 'Slow':
         match.speed = 400;
         break;
       case 'Medium':
         match.speed = 600;
         break;
-      case 'Hard':
+      case 'Fast':
         match.speed = 800;
         break;
       default:
@@ -331,7 +331,7 @@ export class GameGateway {
       .emit('updateSpeed', data.difficultyTitle);
   }
 
-  @SubscribeMessage('updatePaddle')
+  /* @SubscribeMessage('updatePaddlePU')
   handlePaddlePU(
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { matchID: number; difficultyTitle: string },
@@ -339,6 +339,6 @@ export class GameGateway {
     const match = this.serverMatches.get(data.matchID);
     this.server
       .to(match.id.toString())
-      .emit('updatePaddle', data.difficultyTitle);
-  }
+      .emit('updatePaddlePU', data.difficultyTitle);
+  } */
 }

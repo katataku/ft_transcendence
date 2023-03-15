@@ -1,21 +1,15 @@
-import {
-  EStatus,
-  IBall,
-  IMatch,
-  IPaddle,
-  IPlayer,
-  Vector2,
-} from './types/game.model';
+import { EStatus, IBall, IMatch, IPaddle, IPlayer } from './types/game.model';
 import { deepCopy } from './utility';
 
-export const gameWinWid = 1000;
-export const gameWinHght = 500;
-export const ballPx = 20;
-export const winningScore = 3;
-
-export const paddleSize: Vector2 = {
-  x: 8,
-  y: 100,
+const settings = {
+  winWid: 1000,
+  winHght: 500,
+  ballPx: 20,
+  winScore: 3,
+  paddleSize: {
+    x: 8,
+    y: 100,
+  },
 };
 
 function getRandomNumberInRange(): number {
@@ -24,20 +18,26 @@ function getRandomNumberInRange(): number {
 
 export function initBall(velX = -1): IBall {
   return {
-    pos: { x: gameWinWid / 2 - ballPx / 2, y: gameWinHght / 2 - ballPx / 2 },
+    pos: {
+      x: settings.winWid / 2 - settings.ballPx / 2,
+      y: settings.winHght / 2 - settings.ballPx / 2,
+    },
     vel: { x: velX, y: getRandomNumberInRange() },
   };
 }
 
 export const initLeftPaddle: IPaddle = {
-  pos: { x: gameWinWid / 20, y: gameWinHght / 2 - paddleSize.y / 2 },
+  pos: {
+    x: settings.winWid / 20,
+    y: settings.winHght / 2 - settings.paddleSize.y / 2,
+  },
   id: 'left',
 };
 
 export const initRightPaddle: IPaddle = {
   pos: {
-    x: gameWinWid - (gameWinWid / 20 + paddleSize.x),
-    y: gameWinHght / 2 - paddleSize.y / 2,
+    x: settings.winWid - (settings.winWid / 20 + settings.paddleSize.x),
+    y: settings.winHght / 2 - settings.paddleSize.y / 2,
   },
   id: 'right',
 };
@@ -71,4 +71,5 @@ export const initServerMatch: IMatch = {
   status: EStatus.none,
   lastFrameTime: Date.now(),
   elapsedTime: 0,
+  settings: settings,
 };

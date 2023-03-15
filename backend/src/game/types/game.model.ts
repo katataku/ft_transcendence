@@ -40,6 +40,14 @@ export enum EStatus {
   set = 4,
 }
 
+export interface IMatchSettings {
+  winWid: number;
+  winHght: number;
+  ballPx: number;
+  winScore: number;
+  paddleSize: Vector2;
+}
+
 export interface IMatch {
   id: number;
   leftPlayer: IPlayer;
@@ -49,6 +57,7 @@ export interface IMatch {
   status: EStatus;
   lastFrameTime: number;
   elapsedTime: number;
+  settings: IMatchSettings;
 }
 
 export interface IUserQueue {
