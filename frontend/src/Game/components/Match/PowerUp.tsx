@@ -66,7 +66,6 @@ export function PowerUp(props: {
     gameSocket.on('updateSpeed', (difficultyTitle: string) => {
       setSpeed(difficultyTitle)
     })
-
   }, [])
 
   useEffect(() => {
