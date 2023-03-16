@@ -9,10 +9,14 @@ import React, {
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { useAnimationFrame } from '../../../hooks/useAnimationFrame'
 import { GlobalContext } from '../../../App'
-import { MatchSettings } from '../../utils/constants';
+import { MatchSettings } from '../../utils/constants'
 type Ref = React.MutableRefObject<any>
 
-function updatePaddle(paddle: IPaddle, keydown: Ref, paddleSize: Vector2): IPaddle {
+function updatePaddle(
+  paddle: IPaddle,
+  keydown: Ref,
+  paddleSize: Vector2
+): IPaddle {
   const paddleSpeed: number = 10
 
   switch (keydown.current) {
@@ -104,8 +108,8 @@ export function Paddles(props: {
 
   return (
     <>
-      <DrawPaddle paddle={leftPaddle} paddleSize={paddleSize.current}/>
-      <DrawPaddle paddle={rightPaddle} paddleSize={paddleSize.current}/>
+      <DrawPaddle paddle={leftPaddle} paddleSize={paddleSize.current} />
+      <DrawPaddle paddle={rightPaddle} paddleSize={paddleSize.current} />
     </>
   )
 }

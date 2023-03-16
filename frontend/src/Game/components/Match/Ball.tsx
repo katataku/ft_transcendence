@@ -5,7 +5,7 @@ import React, {
   useState
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { MatchSettings } from '../../utils/constants';
+import { MatchSettings } from '../../utils/constants'
 
 export function Ball(props: { ball: IBall }): ReactElement {
   const gameSocket = useContext(GameSocketContext)

@@ -8,6 +8,6 @@ export const MatchSettings = {
   winScore: 3,
   paddleSize: {
     x: 8,
-    y: 100,
-  },
-};
+    y: 100
+  }
+}

@@ -8,7 +8,7 @@ import React, {
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Dropdown, DropdownButton, Row, Col } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-import { SpeedOpts, PaddleOpts } from "../../utils/constants";
+import { SpeedOpts, PaddleOpts } from '../../utils/constants'
 
 function PowerUpDropDown(props: {
   status: EStatus
