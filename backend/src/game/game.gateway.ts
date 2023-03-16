@@ -314,21 +314,19 @@ export class GameGateway {
     data: {
       matchID: number;
       type: string;
-      opts: { Easy: string; Medium: string; Hard: string };
       difficulty: string;
     },
   ): void {
     const match = this.serverMatches.get(data.matchID);
+
     if (match === undefined) return;
+
     switch (data.type) {
       case 'speed':
-        match.speed = decideSpeed(data.difficulty, data.opts);
+        match.speed = decideSpeed(data.difficulty);
         break;
       case 'paddle':
-        match.settings.paddleSize = decidePaddleSize(
-          data.difficulty,
-          data.opts,
-        );
+        match.settings.paddleSize = decidePaddleSize(data.difficulty);
         match.leftPlayer.paddle.pos.y =
           match.settings.winHght / 2 - match.settings.paddleSize.y / 2;
         match.rightPlayer.paddle.pos.x =
