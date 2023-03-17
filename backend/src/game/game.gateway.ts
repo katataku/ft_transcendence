@@ -15,7 +15,7 @@ import {
   IScore,
 } from './types/game.model';
 import * as GameSetting from './constants';
-import { deepCopy } from './utility';
+import { decidePaddleSize, decideSpeed, deepCopy } from './utility';
 import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
 import { UsersService } from '../users/users.service';
@@ -105,8 +105,9 @@ export class GameGateway {
         this.server.to(matchId).emit('updatePaddle', {
           leftPaddle: match.leftPlayer.paddle,
           rightPaddle: match.rightPlayer.paddle,
+          paddleSize: match.settings.paddleSize,
         });
-        if (isMatchSet(match.leftPlayer.score, match.rightPlayer.score)) {
+        if (isMatchSet(match)) {
           match.status = EStatus.set;
           this.server.to(matchId).emit('updateConnections', match);
           this.server.to(matchId).emit('updateStatus', match.status);
@@ -306,28 +307,42 @@ export class GameGateway {
     else this.server.to(client.id).emit('updateConnections', currentMatch);
   }
 
-  @SubscribeMessage('updateSpeed')
+  @SubscribeMessage('updatePowerUp')
   handleUpdateSpeed(
     @ConnectedSocket() client: Socket,
-    @MessageBody() data: { matchID: number; difficultyTitle: string },
+    @MessageBody()
+    data: {
+      matchID: number;
+      type: string;
+      difficulty: string;
+    },
   ): void {
     const match = this.serverMatches.get(data.matchID);
+
     if (match === undefined) return;
-    switch (data.difficultyTitle) {
-      case 'Easy':
-        match.speed = 400;
+
+    switch (data.type) {
+      case 'speed':
+        match.speed = decideSpeed(data.difficulty);
         break;
-      case 'Medium':
-        match.speed = 600;
+      case 'paddle':
+        match.settings.paddleSize = decidePaddleSize(data.difficulty);
+        match.leftPlayer.paddle.pos.y =
+          match.settings.winHght / 2 - match.settings.paddleSize.y / 2;
+        match.rightPlayer.paddle.pos.x =
+          match.settings.winWid -
+          (match.settings.winWid / 20 + match.settings.paddleSize.x);
+        match.rightPlayer.paddle.pos.y =
+          match.settings.winHght / 2 - match.settings.paddleSize.y / 2;
         break;
-      case 'Hard':
-        match.speed = 800;
-        break;
+      /* case 'endScore':
+        match.settings.winScore = decideWinScore();
+        break; */
       default:
-        return;
+        break;
     }
     this.server
       .to(match.id.toString())
-      .emit('updateSpeed', data.difficultyTitle);
+      .emit('updatePowerUp', { type: data.type, difficulty: data.difficulty });
   }
 }

@@ -9,23 +9,22 @@ import React, {
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { useAnimationFrame } from '../../../hooks/useAnimationFrame'
 import { GlobalContext } from '../../../App'
+import { MatchSettings } from '../../utils/constants'
 type Ref = React.MutableRefObject<any>
 
-const paddleSize: Vector2 = {
-  x: 8,
-  y: 100
-}
-
-function updatePaddle(paddle: IPaddle, keydown: Ref): IPaddle {
+function updatePaddle(
+  paddle: IPaddle,
+  keydown: Ref,
+  paddleSize: Vector2
+): IPaddle {
   const paddleSpeed: number = 10
-  const gameWinHght: number = 500
 
   switch (keydown.current) {
     case 'ArrowUp':
       if (paddle.pos.y >= paddleSpeed) paddle.pos.y += -paddleSpeed
       break
     case 'ArrowDown':
-      if (paddle.pos.y <= gameWinHght - paddleSize.y - paddleSpeed) {
+      if (paddle.pos.y <= MatchSettings.winHght - paddleSize.y - paddleSpeed) {
         paddle.pos.y += paddleSpeed
       }
       break
@@ -35,13 +34,16 @@ function updatePaddle(paddle: IPaddle, keydown: Ref): IPaddle {
   return paddle
 }
 
-function DrawPaddle(props: { paddle: IPaddle }): ReactElement {
+function DrawPaddle(props: {
+  paddle: IPaddle
+  paddleSize: Vector2
+}): ReactElement {
   return (
     <div
       style={{
         backgroundColor: 'white',
-        width: `${paddleSize.x}px`,
-        height: `${paddleSize.y}px`,
+        width: `${props.paddleSize.x}px`,
+        height: `${props.paddleSize.y}px`,
         position: 'absolute',
         top: `${props.paddle.pos.y}px`,
         left: `${props.paddle.pos.x}px`
@@ -58,6 +60,7 @@ export function Paddles(props: {
   const gameSocket = useContext(GameSocketContext)
   const { loginUser } = useContext(GlobalContext)
   const keydown = useRef<string>('')
+  const paddleSize = useRef<Vector2>(MatchSettings.paddleSize)
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(
     props.match.leftPlayer.paddle
   )
@@ -77,9 +80,14 @@ export function Paddles(props: {
     window.addEventListener('keyup', handleOnKeyUp)
     gameSocket.on(
       'updatePaddle',
-      (data: { leftPaddle: IPaddle; rightPaddle: IPaddle }) => {
+      (data: {
+        leftPaddle: IPaddle
+        rightPaddle: IPaddle
+        paddleSize: Vector2
+      }) => {
         setLeftPaddle(data.leftPaddle)
         setRightPaddle(data.rightPaddle)
+        paddleSize.current = data.paddleSize
       }
     )
   }, [])
@@ -88,20 +96,20 @@ export function Paddles(props: {
     if (props.match.leftPlayer.name === loginUser.name) {
       gameSocket.emit('updatePaddle', {
         matchID: props.match.id,
-        newPaddle: updatePaddle(leftPaddle, keydown)
+        newPaddle: updatePaddle(leftPaddle, keydown, paddleSize.current)
       })
     } else if (props.match.rightPlayer.name === loginUser.name) {
       gameSocket.emit('updatePaddle', {
         matchID: props.match.id,
-        newPaddle: updatePaddle(rightPaddle, keydown)
+        newPaddle: updatePaddle(rightPaddle, keydown, paddleSize.current)
       })
     }
   }, props.status === EStatus.set)
 
   return (
     <>
-      <DrawPaddle paddle={leftPaddle} />
-      <DrawPaddle paddle={rightPaddle} />
+      <DrawPaddle paddle={leftPaddle} paddleSize={paddleSize.current} />
+      <DrawPaddle paddle={rightPaddle} paddleSize={paddleSize.current} />
     </>
   )
 }

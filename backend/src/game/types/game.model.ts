@@ -40,6 +40,14 @@ export enum EStatus {
   set = 4,
 }
 
+export interface IMatchSettings {
+  winWid: number;
+  winHght: number;
+  ballPx: number;
+  winScore: number;
+  paddleSize: Vector2;
+}
+
 export interface IMatch {
   id: number;
   leftPlayer: IPlayer;
@@ -49,6 +57,7 @@ export interface IMatch {
   status: EStatus;
   lastFrameTime: number;
   elapsedTime: number;
+  settings: IMatchSettings;
 }
 
 export interface IUserQueue {
@@ -56,3 +65,20 @@ export interface IUserQueue {
   userId: number;
   userName: string;
 }
+
+/* export class Paddle {
+  pos: Vector2;
+  id: string;
+
+  constructor(settings: IMatchSettings, id: string) {
+    this.id = id;
+    if (this.id === 'left') {
+      this.pos.x = settings.winWid / 20;
+      this.pos.y = settings.winHght / 2 - settings.paddleSize.y / 2;
+    } else if (this.id === 'right') {
+      this.pos.x =
+        settings.winWid - (settings.winWid / 20 + settings.paddleSize.x);
+      this.pos.y = settings.winHght / 2 - settings.paddleSize.y / 2;
+    }
+  }
+} */
