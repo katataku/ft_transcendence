@@ -38,8 +38,8 @@ function handlePaddleCollision(match: IMatch, paddle: IPaddle): void {
   );
   match.ball.vel.x =
     match.ball.vel.x < 0
-      ? Math.sqrt(compositeVelocity ** 2 - match.ball.vel.y ** 2)
-      : -Math.sqrt(compositeVelocity ** 2 - match.ball.vel.y ** 2);
+      ? Math.sqrt(Math.abs(compositeVelocity ** 2 - match.ball.vel.y ** 2))
+      : -Math.sqrt(Math.abs(compositeVelocity ** 2 - match.ball.vel.y ** 2));
 }
 
 function isHitPaddle(match: IMatch, paddle: IPaddle): boolean {
