@@ -14,6 +14,7 @@ const settings = {
 
 export const SpeedOpts = { Easy: 'Slow', Medium: 'Medium', Hard: 'Fast' };
 export const PaddleOpts = { Easy: 'Long', Medium: 'Short', Hard: 'Tiny' };
+export const EndScoreOpts = { Easy: 'ez', Medium: 'md', Hard: 'hd' };
 
 function getRandomNumberInRange(): number {
   return Math.random() - 0.5;

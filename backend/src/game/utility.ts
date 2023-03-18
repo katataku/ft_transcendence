@@ -1,5 +1,5 @@
 import { Vector2 } from './types/game.model';
-import { PaddleOpts, SpeedOpts } from './constants';
+import { PaddleOpts, SpeedOpts, EndScoreOpts } from './constants';
 
 export const deepCopy = (obj: object): any => {
   return JSON.parse(JSON.stringify(obj));
@@ -32,5 +32,20 @@ export function decidePaddleSize(difficulty: string): Vector2 {
       return { x: 8, y: 40 };
     default:
       return { x: 8, y: 100 };
+  }
+}
+
+export function decideEndScore(difficulty: string): number {
+  const opts = EndScoreOpts;
+
+  switch (difficulty) {
+    case opts.Easy:
+      return 3;
+    case opts.Medium:
+      return 10;
+    case opts.Hard:
+      return 100;
+    default:
+      return 3;
   }
 }

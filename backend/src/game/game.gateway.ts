@@ -15,7 +15,12 @@ import {
   IScore,
 } from './types/game.model';
 import * as GameSetting from './constants';
-import { decidePaddleSize, decideSpeed, deepCopy } from './utility';
+import {
+  decideEndScore,
+  decidePaddleSize,
+  decideSpeed,
+  deepCopy,
+} from './utility';
 import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
 import { UsersService } from '../users/users.service';
@@ -308,7 +313,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('updatePowerUp')
-  handleUpdateSpeed(
+  handlePowerUp(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: {
@@ -328,10 +333,8 @@ export class GameGateway {
       case 'paddle':
         match.settings.paddleSize = decidePaddleSize(data.difficulty);
         break;
-      /* case 'endScore':
-        match.settings.winScore = decideWinScore();
-        break; */
-      default:
+      case 'endScore':
+        match.settings.winScore = decideEndScore(data.difficulty);
         break;
     }
     this.server

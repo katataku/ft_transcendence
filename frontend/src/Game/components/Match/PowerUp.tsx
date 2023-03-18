@@ -8,7 +8,7 @@ import React, {
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Dropdown, DropdownButton, Row, Col } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-import { SpeedOpts, PaddleOpts } from '../../utils/constants'
+import {SpeedOpts, PaddleOpts, EndScoreOpts} from '../../utils/constants'
 
 function PowerUpDropDown(props: {
   status: EStatus
@@ -17,7 +17,7 @@ function PowerUpDropDown(props: {
   setTitle: Setter<string>
 }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
-  const opts = props.title === 'Speed' ? SpeedOpts : PaddleOpts
+  const opts = props.title === 'Speed' ? SpeedOpts : props.title === 'Paddle' ? PaddleOpts : EndScoreOpts
 
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || loginUser.name !== props.leftName)
@@ -57,6 +57,7 @@ export function PowerUp(props: {
   const gameSocket = useContext(GameSocketContext)
   const [speed, setSpeed] = useState<string>('Speed')
   const [paddle, setPaddle] = useState<string>('Paddle')
+  const [endScore, setEndScore] = useState<string>('endScore')
 
   useEffect(() => {
     gameSocket.on(
@@ -68,6 +69,9 @@ export function PowerUp(props: {
             break
           case 'paddle':
             setPaddle(data.difficulty)
+            break
+          case 'endScore':
+            setEndScore(data.difficulty)
             break
         }
       }
@@ -90,6 +94,15 @@ export function PowerUp(props: {
     })
   }, [paddle])
 
+  useEffect(() => {
+    gameSocket.emit('updatePowerUp', {
+      matchID: props.matchId,
+      type: 'endScore',
+      difficulty: endScore
+    })
+  }, [endScore])
+
+
   return (
     <Row>
       <Col>
@@ -106,6 +119,14 @@ export function PowerUp(props: {
           leftName={props.leftName}
           title={paddle}
           setTitle={setPaddle}
+        />
+      </Col>
+      <Col>
+        <PowerUpDropDown
+          status={props.status}
+          leftName={props.leftName}
+          title={endScore}
+          setTitle={setEndScore}
         />
       </Col>
     </Row>
