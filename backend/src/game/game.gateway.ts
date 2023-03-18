@@ -327,13 +327,6 @@ export class GameGateway {
         break;
       case 'paddle':
         match.settings.paddleSize = decidePaddleSize(data.difficulty);
-        match.leftPlayer.paddle.pos.y =
-          match.settings.winHght / 2 - match.settings.paddleSize.y / 2;
-        match.rightPlayer.paddle.pos.x =
-          match.settings.winWid -
-          (match.settings.winWid / 20 + match.settings.paddleSize.x);
-        match.rightPlayer.paddle.pos.y =
-          match.settings.winHght / 2 - match.settings.paddleSize.y / 2;
         break;
       /* case 'endScore':
         match.settings.winScore = decideWinScore();
