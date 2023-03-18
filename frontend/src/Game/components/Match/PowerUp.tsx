@@ -8,7 +8,7 @@ import React, {
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Dropdown, DropdownButton, Row, Col } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-import {SpeedOpts, PaddleOpts, EndScoreOpts} from '../../utils/constants'
+import { SpeedOpts, PaddleOpts, EndScoreOpts } from '../../utils/constants'
 
 function PowerUpDropDown(props: {
   status: EStatus
@@ -17,7 +17,12 @@ function PowerUpDropDown(props: {
   setTitle: Setter<string>
 }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
-  const opts = props.title === 'Speed' ? SpeedOpts : props.title === 'Paddle' ? PaddleOpts : EndScoreOpts
+  const opts =
+    props.title === 'Speed'
+      ? SpeedOpts
+      : props.title === 'Paddle'
+      ? PaddleOpts
+      : EndScoreOpts
 
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || loginUser.name !== props.leftName)
@@ -101,7 +106,6 @@ export function PowerUp(props: {
       difficulty: endScore
     })
   }, [endScore])
-
 
   return (
     <Row>
