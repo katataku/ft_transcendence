@@ -38,8 +38,8 @@ function handlePaddleCollision(match: IMatch, paddle: IPaddle): void {
   );
   match.ball.vel.x =
     match.ball.vel.x < 0
-      ? Math.sqrt(Math.abs(compositeVelocity ** 2 - match.ball.vel.y ** 2))
-      : -Math.sqrt(Math.abs(compositeVelocity ** 2 - match.ball.vel.y ** 2));
+      ? Math.sqrt(compositeVelocity ** 2 - match.ball.vel.y ** 2)
+      : -Math.sqrt(compositeVelocity ** 2 - match.ball.vel.y ** 2);
 }
 
 function isHitPaddle(match: IMatch, paddle: IPaddle): boolean {
@@ -88,7 +88,7 @@ export function updateMatch(
       { left: match.leftPlayer.score, right: match.rightPlayer.score },
       match.status,
     );
-    match.ball = initBall(match.ball.vel.x * -1);
+    match.ball = initBall(match.ball.vel.x < 0 ? 1 : -1);
   } else if (
     match.ball.vel.x < 0 &&
     isHitPaddle(match, match.leftPlayer.paddle)
