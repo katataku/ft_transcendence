@@ -7,7 +7,7 @@ import React, {
 import { EStatus } from '../../types/game.model'
 import { Col } from 'react-bootstrap'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { PowerUp } from './PowerUp'
+import { PowerUps } from './PowerUp'
 import { Paddles } from './Paddle'
 import { Ball } from './Ball'
 
@@ -66,7 +66,7 @@ export function Match(props: { match: IMatch }): ReactElement {
 
   return (
     <Col id="centerCol">
-      <PowerUp
+      <PowerUps
         matchId={props.match.id}
         leftName={props.match.leftPlayer.name}
         status={status}

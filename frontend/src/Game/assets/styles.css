@@ -10,6 +10,11 @@
   overflow: hidden;
 }
 
+#alignV {
+  display: flex;
+  align-items: center;
+}
+
 #buttonPos {
   margin-top: 5px;
 }
@@ -17,7 +22,7 @@
 #match {
   width: var(--wid);
   height: var(--height);
-  background-color:#000000;
+  background-color:#212529;
   margin: auto;
   position: absolute;
   top: 50%;
@@ -84,8 +89,8 @@
   position: relative;
   background: repeating-linear-gradient(
     to bottom,
-    white,
-    white 15px,
+    #212529,
+    #212529 15px,
     black 15px,
     black 30px
   ) 50%/1px 100% no-repeat;

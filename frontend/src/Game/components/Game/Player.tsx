@@ -6,7 +6,7 @@ import { MatchHistory } from '../../../components/MatchHistory'
 
 function Ready(props: { matchID: number; player: IPlayer }): ReactElement {
   const greenButton = 'btn btn-success btn-lg pull bottom'
-  const grayButton = 'btn btn-secondary btn-lg pull bottom'
+  const grayButton = 'btn btn-outline-secondary btn-lg pull bottom'
   const [button, setButton] = useState<string>(grayButton)
   const gameSocket = useContext(GameSocketContext)
   const { loginUser } = useContext(GlobalContext)

@@ -6,9 +6,9 @@ import React, {
   useState
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { Dropdown, DropdownButton, Row, Col } from 'react-bootstrap'
+import { Dropdown, DropdownButton, Row, ButtonGroup} from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-import {SpeedOpts, PaddleOpts, EndScoreOpts} from '../../utils/constants'
+import {SpeedOpts, PaddleOpts, EndScoreOpts, PowerUP} from '../../utils/constants'
 
 function PowerUpDropDown(props: {
   status: EStatus
@@ -17,7 +17,7 @@ function PowerUpDropDown(props: {
   setTitle: Setter<string>
 }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
-  const opts = props.title === 'Speed' ? SpeedOpts : props.title === 'Paddle' ? PaddleOpts : EndScoreOpts
+  const opts = props.title === PowerUP.Speed ? SpeedOpts : props.title === PowerUP.Paddle ? PaddleOpts : EndScoreOpts
 
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || loginUser.name !== props.leftName)
@@ -38,7 +38,7 @@ function PowerUpDropDown(props: {
   return (
     <DropdownButton
       id="dropdown-basic-button"
-      variant="info"
+      variant="dark"
       title={props.title}
       onSelect={modifySpeed}
     >
@@ -49,28 +49,28 @@ function PowerUpDropDown(props: {
   )
 }
 
-export function PowerUp(props: {
+export function PowerUps(props: {
   matchId: number
   leftName: string
   status: EStatus
 }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
-  const [speed, setSpeed] = useState<string>('Speed')
-  const [paddle, setPaddle] = useState<string>('Paddle')
-  const [endScore, setEndScore] = useState<string>('endScore')
+  const [speed, setSpeed] = useState<string>(PowerUP.Speed)
+  const [paddle, setPaddle] = useState<string>(PowerUP.Paddle)
+  const [endScore, setEndScore] = useState<string>(PowerUP.Score)
 
   useEffect(() => {
     gameSocket.on(
       'updatePowerUp',
       (data: { type: string; difficulty: string }) => {
         switch (data.type) {
-          case 'speed':
+          case PowerUP.Speed:
             setSpeed(data.difficulty)
             break
-          case 'paddle':
+          case PowerUP.Paddle:
             setPaddle(data.difficulty)
             break
-          case 'endScore':
+          case PowerUP.Score:
             setEndScore(data.difficulty)
             break
         }
@@ -81,7 +81,7 @@ export function PowerUp(props: {
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
       matchID: props.matchId,
-      type: 'speed',
+      type: PowerUP.Speed,
       difficulty: speed
     })
   }, [speed])
@@ -89,7 +89,7 @@ export function PowerUp(props: {
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
       matchID: props.matchId,
-      type: 'paddle',
+      type: PowerUP.Paddle,
       difficulty: paddle
     })
   }, [paddle])
@@ -97,7 +97,7 @@ export function PowerUp(props: {
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
       matchID: props.matchId,
-      type: 'endScore',
+      type: PowerUP.Score,
       difficulty: endScore
     })
   }, [endScore])
@@ -105,30 +105,29 @@ export function PowerUp(props: {
 
   return (
     <Row>
-      <Col>
+      <ButtonGroup className="justify-content-md-center">
+        <h5 id="alignV">
+          Game Settings:{' '}
+        </h5>
         <PowerUpDropDown
           status={props.status}
           leftName={props.leftName}
           title={speed}
           setTitle={setSpeed}
         />
-      </Col>
-      <Col>
         <PowerUpDropDown
           status={props.status}
           leftName={props.leftName}
           title={paddle}
           setTitle={setPaddle}
         />
-      </Col>
-      <Col>
         <PowerUpDropDown
           status={props.status}
           leftName={props.leftName}
           title={endScore}
           setTitle={setEndScore}
         />
-      </Col>
+      </ButtonGroup>
     </Row>
   )
 }

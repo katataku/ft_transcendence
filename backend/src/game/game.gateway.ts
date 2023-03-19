@@ -25,6 +25,7 @@ import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
 import { UsersService } from '../users/users.service';
 import { UserMatchHistoryDto } from '../common/dto/users.dto';
+import { PowerUP } from './constants';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
@@ -327,13 +328,13 @@ export class GameGateway {
     if (match === undefined) return;
 
     switch (data.type) {
-      case 'speed':
+      case PowerUP.Speed:
         match.speed = decideSpeed(data.difficulty);
         break;
-      case 'paddle':
+      case PowerUP.Paddle:
         match.settings.paddleSize = decidePaddleSize(data.difficulty);
         break;
-      case 'endScore':
+      case PowerUP.Score:
         match.settings.winScore = decideEndScore(data.difficulty);
         break;
     }

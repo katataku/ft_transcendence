@@ -10,13 +10,13 @@ export function decideSpeed(difficulty: string): number {
 
   switch (difficulty) {
     case opts.Easy:
-      return 400;
+      return 300;
     case opts.Medium:
-      return 600;
+      return 500;
     case opts.Hard:
-      return 800;
+      return 700;
     default:
-      return 400;
+      return 300;
   }
 }
 
@@ -42,9 +42,9 @@ export function decideEndScore(difficulty: string): number {
     case opts.Easy:
       return 3;
     case opts.Medium:
-      return 10;
+      return 7;
     case opts.Hard:
-      return 100;
+      return 10;
     default:
       return 3;
   }
