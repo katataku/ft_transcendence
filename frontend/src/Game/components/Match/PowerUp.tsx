@@ -108,28 +108,26 @@ export function PowerUps(props: {
   }, [endScore])
 
   return (
-    <Row>
-      <ButtonGroup className="justify-content-md-center">
-        <h5 id="alignV">Game Settings: </h5>
-        <PowerUpDropDown
-          status={props.status}
-          leftName={props.leftName}
-          title={speed}
-          setTitle={setSpeed}
-        />
-        <PowerUpDropDown
-          status={props.status}
-          leftName={props.leftName}
-          title={paddle}
-          setTitle={setPaddle}
-        />
-        <PowerUpDropDown
-          status={props.status}
-          leftName={props.leftName}
-          title={endScore}
-          setTitle={setEndScore}
-        />
-      </ButtonGroup>
-    </Row>
+    <ButtonGroup className="justify-content-md-center" id="button">
+      <h5 id="alignV">Game Settings: </h5>
+      <PowerUpDropDown
+        status={props.status}
+        leftName={props.leftName}
+        title={speed}
+        setTitle={setSpeed}
+      />
+      <PowerUpDropDown
+        status={props.status}
+        leftName={props.leftName}
+        title={paddle}
+        setTitle={setPaddle}
+      />
+      <PowerUpDropDown
+        status={props.status}
+        leftName={props.leftName}
+        title={endScore}
+        setTitle={setEndScore}
+      />
+    </ButtonGroup>
   )
 }
