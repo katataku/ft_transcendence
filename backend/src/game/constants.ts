@@ -18,9 +18,9 @@ export const SpeedOpts = {
   Hard: 'Speed-Fast',
 };
 export const PaddleOpts = {
-  Easy: 'Paddle-Small',
+  Easy: 'Paddle-Large',
   Medium: 'Paddle-Medium',
-  Hard: 'Paddle-Large',
+  Hard: 'Paddle-Small',
 };
 export const EndScoreOpts = {
   Easy: 'End Score-3',

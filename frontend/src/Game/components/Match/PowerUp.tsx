@@ -17,7 +17,7 @@ function PowerUpDropDown(props: {
   setTitle: Setter<string>
 }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
-  const opts = props.title === PowerUP.Speed ? SpeedOpts : props.title === PowerUP.Paddle ? PaddleOpts : EndScoreOpts
+  const [opts, _setOpts] = useState(props.title === PowerUP.Speed ? SpeedOpts : props.title === PowerUP.Paddle ? PaddleOpts : EndScoreOpts)
 
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || loginUser.name !== props.leftName)

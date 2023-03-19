@@ -25,13 +25,13 @@ export function decidePaddleSize(difficulty: string): Vector2 {
 
   switch (difficulty) {
     case opts.Easy:
-      return { x: 8, y: 100 };
+      return { x: 8, y: 120 };
     case opts.Medium:
       return { x: 8, y: 80 };
     case opts.Hard:
       return { x: 8, y: 40 };
     default:
-      return { x: 8, y: 100 };
+      return { x: 8, y: 120 };
   }
 }
 
