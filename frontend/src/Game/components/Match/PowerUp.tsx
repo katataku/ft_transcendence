@@ -6,9 +6,14 @@ import React, {
   useState
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { Dropdown, DropdownButton, Row, ButtonGroup} from 'react-bootstrap'
+import { Dropdown, DropdownButton, Row, ButtonGroup } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-import {SpeedOpts, PaddleOpts, EndScoreOpts, PowerUP} from '../../utils/constants'
+import {
+  SpeedOpts,
+  PaddleOpts,
+  EndScoreOpts,
+  PowerUP
+} from '../../utils/constants'
 
 function PowerUpDropDown(props: {
   status: EStatus
@@ -105,9 +110,7 @@ export function PowerUps(props: {
   return (
     <Row>
       <ButtonGroup className="justify-content-md-center">
-        <h5 id="alignV">
-          Game Settings:{' '}
-        </h5>
+        <h5 id="alignV">Game Settings: </h5>
         <PowerUpDropDown
           status={props.status}
           leftName={props.leftName}
