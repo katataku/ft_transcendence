@@ -6,7 +6,7 @@ import React, {
   useState
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { Dropdown, DropdownButton, Row, ButtonGroup } from 'react-bootstrap'
+import { Dropdown, DropdownButton, ButtonGroup } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 import {
   SpeedOpts,
