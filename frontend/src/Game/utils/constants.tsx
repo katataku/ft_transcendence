@@ -2,17 +2,17 @@ export const SpeedOpts = {
   Easy: 'Speed-Slow',
   Medium: 'Speed-Medium',
   Hard: 'Speed-Fast'
-};
+}
 export const PaddleOpts = {
   Easy: 'Paddle-Small',
   Medium: 'Paddle-Medium',
   Hard: 'Paddle-Large'
-};
+}
 export const EndScoreOpts = {
   Easy: 'End Score-3',
   Medium: 'End Score-7',
   Hard: 'End Score-10'
-};
+}
 
 export const PowerUP = {
   Speed: 'Speed',

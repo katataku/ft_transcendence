@@ -6,9 +6,14 @@ import React, {
   useState
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { Dropdown, DropdownButton, Row, ButtonGroup} from 'react-bootstrap'
+import { Dropdown, DropdownButton, Row, ButtonGroup } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-import {SpeedOpts, PaddleOpts, EndScoreOpts, PowerUP} from '../../utils/constants'
+import {
+  SpeedOpts,
+  PaddleOpts,
+  EndScoreOpts,
+  PowerUP
+} from '../../utils/constants'
 
 function PowerUpDropDown(props: {
   status: EStatus
@@ -17,7 +22,12 @@ function PowerUpDropDown(props: {
   setTitle: Setter<string>
 }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
-  const opts = props.title === PowerUP.Speed ? SpeedOpts : props.title === PowerUP.Paddle ? PaddleOpts : EndScoreOpts
+  const opts =
+    props.title === PowerUP.Speed
+      ? SpeedOpts
+      : props.title === PowerUP.Paddle
+      ? PaddleOpts
+      : EndScoreOpts
 
   const modifySpeed = (op: string | null): void => {
     if (props.status !== EStatus.none || loginUser.name !== props.leftName)
@@ -105,9 +115,7 @@ export function PowerUps(props: {
   return (
     <Row>
       <ButtonGroup className="justify-content-md-center">
-        <h5 id="alignV">
-          Game Settings:{' '}
-        </h5>
+        <h5 id="alignV">Game Settings: </h5>
         <PowerUpDropDown
           status={props.status}
           leftName={props.leftName}
