@@ -7,6 +7,8 @@ import {
   Delete,
   Res,
   Put,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -18,6 +20,8 @@ import {
   UserSignInDto,
   UserFriendDeleteRequestDto,
   UserMatchHistoryDto,
+  UsernameCheckResponseDto,
+  UsernameCheckRequestDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 import { Response } from 'express';
@@ -117,5 +121,21 @@ export class UsersController {
     @Param() param: UserIdParam,
   ): Promise<UserMatchHistoryDto> {
     return await this.service.getUserMatchHistory(param.id);
+  }
+
+  @Post('check/username-availability')
+  async checkUsername(
+    @Body() body: UsernameCheckRequestDto,
+  ): Promise<UsernameCheckResponseDto> {
+    const isDuplicate = await this.service.isUsernameDuplicate(body.username);
+
+    if (isDuplicate) {
+      throw new HttpException(
+        'Username already exists',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return { message: 'Username is available' };
   }
 }
