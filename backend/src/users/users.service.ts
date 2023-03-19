@@ -242,4 +242,11 @@ export class UsersService {
     data[type] = data[type] + 1;
     await this.userMatchHistoryRepository.save(data);
   }
+
+  async isUsernameDuplicate(username: string): Promise<boolean> {
+    const data = await this.usersRepository.findOne({
+      where: { name: username },
+    });
+    return data != null;
+  }
 }
