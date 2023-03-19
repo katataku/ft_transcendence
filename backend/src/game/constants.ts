@@ -70,7 +70,7 @@ export const initServerMatch: IMatch = {
   leftPlayer: undefined,
   rightPlayer: undefined,
   ball: initBall(),
-  speed: 400,
+  speed: 300,
   status: EStatus.none,
   lastFrameTime: Date.now(),
   elapsedTime: 0,
