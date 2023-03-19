@@ -102,7 +102,6 @@ export function PowerUps(props: {
     })
   }, [endScore])
 
-
   return (
     <Row>
       <ButtonGroup className="justify-content-md-center">
