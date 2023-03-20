@@ -42,6 +42,7 @@ export class UsersService {
       name: data.name,
       password: SHA256(data.password).toString(),
       createdAt: new Date(),
+      isTwoFactorEnabled: false,
     };
     const user = await this.usersRepository.save(obj);
     await this.saveAvatar(user.id, data.avatar);
@@ -70,6 +71,8 @@ export class UsersService {
       return {
         id: target.id,
         name: target.name,
+        isTwoFactorEnabled: target.isTwoFactorEnabled,
+        otpSecret: target.otpSecret,
       };
     }
   }
@@ -92,6 +95,8 @@ export class UsersService {
     const res: UserGetDto = {
       id: data.id,
       name: data.name,
+      isTwoFactorEnabled: data.isTwoFactorEnabled,
+      otpSecret: data.otpSecret,
     };
     return res;
   }
@@ -241,5 +246,34 @@ export class UsersService {
     const data: UserMatchHistory = await this.getUserMatchHistoryRow(userId);
     data[type] = data[type] + 1;
     await this.userMatchHistoryRepository.save(data);
+  }
+
+  async getOTPSecret(userId: number): Promise<string> {
+    const user = await this.getUserById(userId);
+    if (user.otpSecret == null) {
+      throw new HttpException('2FA by otp is invalid .', HttpStatus.NOT_FOUND);
+    }
+    return user.otpSecret;
+  }
+
+  async enableTwoFactor(userId: number, otpSecret: string): Promise<User> {
+    const user = await this.getUserById(userId);
+    user.isTwoFactorEnabled = true;
+    user.otpSecret = otpSecret;
+    const updatedUser = await this.usersRepository.save(user);
+    return updatedUser;
+  }
+
+  async disableTwoFactor(userId: number): Promise<User> {
+    const user = await this.getUserById(userId);
+    user.isTwoFactorEnabled = false;
+    user.otpSecret = null;
+    const updatedUser = await this.usersRepository.save(user);
+    return updatedUser;
+  }
+
+  async isTwoFactorEnabled(userId: number): Promise<boolean> {
+    const user = await this.getUserById(userId);
+    return user.isTwoFactorEnabled;
   }
 }
