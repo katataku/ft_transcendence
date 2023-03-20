@@ -1,4 +1,11 @@
-import { IsInt, IsNumber, IsNumberString, IsString } from 'class-validator';
+import {
+  IsInt,
+  IsNumber,
+  IsNumberString,
+  IsString,
+  IsBoolean,
+  IsOptional,
+} from 'class-validator';
 
 export class UserSignUpReqDto {
   @IsString()
@@ -19,6 +26,11 @@ export class UserGetDto {
   id: number;
   @IsString()
   name: string;
+  @IsBoolean()
+  isTwoFactorEnabled: boolean;
+  @IsOptional()
+  @IsString()
+  otpSecret?: string;
 }
 
 export class UserUpdateReqDto {

@@ -18,6 +18,12 @@ export class User {
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt!: Date;
+
+  @Column({ name: 'otp_secret', nullable: true })
+  otpSecret?: string;
+
+  @Column({ name: 'is_two_factor_enabled', default: false })
+  isTwoFactorEnabled!: boolean;
 }
 
 @Entity({ name: 'friendship' })
