@@ -1,10 +1,10 @@
 interface EnableTwoFactorAuth {
-  userId: number;
-  secret: string;
-  token: string;
+  userId: number
+  secret: string
+  token: string
 }
 
 interface VerifyTwoFactorAuth {
-  userId: number;
-  token: string;
+  userId: number
+  token: string
 }
