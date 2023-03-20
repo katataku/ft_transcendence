@@ -1,5 +1,5 @@
-import { EStatus, IBall, IMatch, IPaddle, IScore } from './types/game.model';
-import * as GameSetting from './constants';
+import { EStatus, IMatch, IPaddle, IScore } from './types/game.model';
+import { initBall } from './constants';
 
 function calculateTilt(relativePosBall: number): number {
   const absValFromPaddle = Math.abs(relativePosBall);
@@ -25,41 +25,44 @@ function calculateTilt(relativePosBall: number): number {
   return relativePosBall < 0 ? -x : x;
 }
 
-function handlePaddleCollision(ball: IBall, paddle: IPaddle): void {
-  const compositeVelocity = Math.sqrt(ball.vel.x ** 2 + ball.vel.y ** 2);
-  ball.vel.y = calculateTilt(
+function handlePaddleCollision(match: IMatch, paddle: IPaddle): void {
+  const compositeVelocity = Math.sqrt(
+    match.ball.vel.x ** 2 + match.ball.vel.y ** 2,
+  );
+  match.ball.vel.y = calculateTilt(
     // ボールがパドルの何%で衝突したのか)
-    (ball.pos.y +
-      GameSetting.ballPx / 2 -
-      (paddle.pos.y + GameSetting.paddleSize.y / 2)) /
-      (GameSetting.paddleSize.y / 2),
+    (match.ball.pos.y +
+      match.settings.ballPx / 2 -
+      (paddle.pos.y + match.settings.paddleSize.y / 2)) /
+      (match.settings.paddleSize.y / 2),
   );
-  ball.vel.x =
-    ball.vel.x < 0
-      ? Math.sqrt(compositeVelocity ** 2 - ball.vel.y ** 2)
-      : -Math.sqrt(compositeVelocity ** 2 - ball.vel.y ** 2);
+  match.ball.vel.x =
+    match.ball.vel.x < 0
+      ? Math.sqrt(compositeVelocity ** 2 - match.ball.vel.y ** 2)
+      : -Math.sqrt(compositeVelocity ** 2 - match.ball.vel.y ** 2);
 }
 
-function isHitPaddle(ball: IBall, paddle: IPaddle): boolean {
+function isHitPaddle(match: IMatch, paddle: IPaddle): boolean {
   return (
-    paddle.pos.x <= ball.pos.x + GameSetting.ballPx &&
-    ball.pos.x <= paddle.pos.x + GameSetting.paddleSize.x &&
-    paddle.pos.y <= ball.pos.y + GameSetting.ballPx &&
-    ball.pos.y <= paddle.pos.y + GameSetting.paddleSize.y
-  );
-}
-
-function isHitWall(ball: IBall): boolean {
-  return (
-    (ball.pos.y <= 0 && ball.vel.y < 0) ||
-    (ball.pos.y >= GameSetting.gameWinHght - GameSetting.ballPx &&
-      ball.vel.y > 0)
+    paddle.pos.x <= match.ball.pos.x + match.settings.ballPx &&
+    match.ball.pos.x <= paddle.pos.x + match.settings.paddleSize.x &&
+    paddle.pos.y <= match.ball.pos.y + match.settings.ballPx &&
+    match.ball.pos.y <= paddle.pos.y + match.settings.paddleSize.y
   );
 }
 
-function isHitGoal(ball: IBall): boolean {
+function isHitWall(match: IMatch): boolean {
   return (
-    ball.pos.x <= 0 || ball.pos.x >= GameSetting.gameWinWid - GameSetting.ballPx
+    (match.ball.pos.y <= 0 && match.ball.vel.y < 0) ||
+    (match.ball.pos.y >= match.settings.winHght - match.settings.ballPx &&
+      match.ball.vel.y > 0)
+  );
+}
+
+function isHitGoal(match: IMatch): boolean {
+  return (
+    match.ball.pos.x <= 0 ||
+    match.ball.pos.x >= match.settings.winWid - match.settings.ballPx
   );
 }
 
@@ -71,9 +74,9 @@ export function updateMatch(
   match.ball.pos.x += match.ball.vel.x * deltaTime * match.speed;
   match.ball.pos.y += match.ball.vel.y * deltaTime * match.speed;
 
-  if (isHitWall(match.ball)) {
+  if (isHitWall(match)) {
     match.ball.vel.y *= -1;
-  } else if (isHitGoal(match.ball)) {
+  } else if (isHitGoal(match)) {
     match.status = EStatus.pause;
     if (match.ball.vel.x < 0) {
       match.rightPlayer.score++;
@@ -85,23 +88,23 @@ export function updateMatch(
       { left: match.leftPlayer.score, right: match.rightPlayer.score },
       match.status,
     );
-    match.ball = GameSetting.initBall(match.ball.vel.x * -1);
+    match.ball = initBall(match.ball.vel.x < 0 ? 1 : -1);
   } else if (
     match.ball.vel.x < 0 &&
-    isHitPaddle(match.ball, match.leftPlayer.paddle)
+    isHitPaddle(match, match.leftPlayer.paddle)
   ) {
-    handlePaddleCollision(match.ball, match.leftPlayer.paddle);
+    handlePaddleCollision(match, match.leftPlayer.paddle);
   } else if (
     match.ball.vel.x > 0 &&
-    isHitPaddle(match.ball, match.rightPlayer.paddle)
+    isHitPaddle(match, match.rightPlayer.paddle)
   ) {
-    handlePaddleCollision(match.ball, match.rightPlayer.paddle);
+    handlePaddleCollision(match, match.rightPlayer.paddle);
   }
 }
 
-export function isMatchSet(leftScore: number, rightScore: number): boolean {
+export function isMatchSet(match: IMatch): boolean {
   return (
-    leftScore >= GameSetting.winningScore ||
-    rightScore >= GameSetting.winningScore
+    match.leftPlayer.score >= match.settings.winScore ||
+    match.rightPlayer.score >= match.settings.winScore
   );
 }

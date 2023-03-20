@@ -65,3 +65,11 @@ export class UserFriendDeleteRequestDto {
   @IsNumber()
   friendUserId: number;
 }
+
+export interface UsernameCheckRequestDto {
+  username: string;
+}
+
+export interface UsernameCheckResponseDto {
+  message: string;
+}

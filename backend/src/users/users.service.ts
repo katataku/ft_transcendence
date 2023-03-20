@@ -248,6 +248,13 @@ export class UsersService {
     await this.userMatchHistoryRepository.save(data);
   }
 
+  async isUsernameDuplicate(username: string): Promise<boolean> {
+    const data = await this.usersRepository.findOne({
+      where: { name: username },
+    });
+    return data != null;
+  }
+
   async getOTPSecret(userId: number): Promise<string> {
     const user = await this.getUserById(userId);
     if (user.otpSecret == null) {
