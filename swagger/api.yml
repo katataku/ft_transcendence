@@ -597,6 +597,95 @@ paths:
                 type: string
                 example: token
 
+  /auth/2fa/setup/{userId}:
+    get:
+      tags: 
+        - auth
+      summary: Get OTP data
+      description: otp secretとQRCodeを取得
+      parameters:
+        - name: userId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  secret:
+                    type: string
+                  qrCode:
+                    type: string
+
+  /auth/2fa/enable:
+    post:
+      tags: 
+        - auth
+      summary: Enable two-factor authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnableTwoFactorAuthDto'
+      responses:
+        200:
+          description: 成功
+          content:
+          text/plain:
+            schema:
+              type: string
+
+  /auth/2fa/status:
+    get:
+      tags: 
+          - auth
+      summary: Check two-factor authentication status
+      parameters:
+        - in: query
+          name: userId
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: 成功
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /auth/2fa/verify:
+    post:
+      tags:
+          - auth
+      summary: Verify two-factor authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyTwoFactorAuthDto'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: boolean
+        '400':
+          description: Bad request
+          content:
+            text/plain:
+              schema:
+                type: string
+
 components:
   schemas:
     health:
@@ -819,3 +908,25 @@ components:
         winner:
           type: number
           example: 1
+
+    EnableTwoFactorAuthDto:
+      type: object
+      properties:
+        userId:
+          type: number
+          example: 1
+        secret:
+          type: string
+          description: getOTPDataで得たsecret
+        token:
+          type: string
+          description: getOTPDataで得たqrcodeをimgタグのsrcへ代入しqrcodeを読み取って得た6桁のコード
+
+    VerifyTwoFactorAuthDto:
+      type: object
+      properties:
+        userId:
+          type: string
+        token:
+          type: string
+          description: 6桁のコード
