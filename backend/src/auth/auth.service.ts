@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
+import { toDataURL } from 'qrcode';
+import { authenticator } from 'otplib';
 
 @Injectable()
 export class AuthService {
@@ -24,5 +26,21 @@ export class AuthService {
     } catch (err) {
       Logger.error(err);
     }
+  }
+
+  // TOTP シークレットキーを生成
+  generateSecret(): string {
+    return authenticator.generateSecret();
+  }
+
+  // QR コードを生成
+  async generateQrCode(secret: string, email: string): Promise<string> {
+    const otpAuthUrl = authenticator.keyuri(email, 'YourAppName', secret);
+    return toDataURL(otpAuthUrl);
+  }
+
+  // TOTP トークンを検証
+  verifyToken(secret: string, token: string): boolean {
+    return authenticator.verify({ secret, token });
   }
 }
