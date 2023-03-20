@@ -926,7 +926,7 @@ components:
       type: object
       properties:
         userId:
-          type: string
+          type: number
         token:
           type: string
           description: 6桁のコード
