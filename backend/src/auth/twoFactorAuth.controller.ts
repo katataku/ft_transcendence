@@ -63,7 +63,7 @@ export class TwoFactorAuthController {
   async verifyOtp(@Body() data: VerifyTwoFactorAuthDto): Promise<boolean> {
     const secret = await this.usersService.getOTPSecret(data.userId);
     if (secret === null) {
-      return;
+      return false;
     }
 
     const isValid = this.authService.verifyToken(secret, data.token);
