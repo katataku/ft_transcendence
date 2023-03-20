@@ -19,6 +19,10 @@
         "pendings",
         "toastify",
         "winHght",
-		"qrcode"
+        "qrcode",
+        "otplib",
+        "TOTP",
+        "keyuri",
+        "Modalshow"
     ]
 }
