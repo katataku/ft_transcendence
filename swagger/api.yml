@@ -641,6 +641,26 @@ paths:
             schema:
               type: string
 
+  /auth/2fa/disable:
+    post:
+      tags:
+        - auth
+      summary: Disable two-factor authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+              properties:
+                userId:
+                  type: integer
+      responses:
+        200:
+          description: 成功
+
   /auth/2fa/status:
     get:
       tags: 
