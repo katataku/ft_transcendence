@@ -57,7 +57,7 @@ export function TwoFactorRegModal(): ReactElement {
   }
   return (
     <div>
-      <Button onClick={openModal}>2FAを有効・無効にするボタンになる予定</Button>
+      <Button onClick={openModal}>2FAを有効・無効にするボタン</Button>
       <Modal show={modalIsOpen} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>QR Code</Modal.Title>
