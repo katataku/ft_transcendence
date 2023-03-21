@@ -3,7 +3,11 @@ import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
-import { signIn, signUp } from '../../utils/userAxios'
+import {
+  checkUsernameAvailability,
+  signIn,
+  signUp
+} from '../../utils/userAxios'
 import { BaseURL } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
@@ -108,10 +112,18 @@ export function SignIn(): ReactElement {
         <Button
           onClick={() => {
             if (signUpMode) {
-              signUp({ name: userName, password, avatar: image }, (res) => {
-                setLoginUser({ id: res, name: userName })
-                setIsSignedIn(true)
-              })
+              checkUsernameAvailability(
+                userName,
+                () => {
+                  signUp({ name: userName, password, avatar: image }, (res) => {
+                    setLoginUser({ id: res, name: userName })
+                    setIsSignedIn(true)
+                  })
+                },
+                () => {
+                  alert('Username already exists, so try another username.')
+                }
+              )
             } else {
               signIn({ id: Number(userName), password }, (res) => {
                 setRegisterUser({ id: res.id, name: res.name })

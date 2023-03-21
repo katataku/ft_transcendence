@@ -177,3 +177,21 @@ export function getMatchHistoryById(
       alert(err)
     })
 }
+
+export function checkUsernameAvailability(
+  username: string,
+  callbackOK: () => void,
+  callbackNG: () => void
+): void {
+  const requestData: UsernameCheckRequestDto = {
+    username
+  }
+  axios
+    .post('/user/check/username-availability', requestData)
+    .then((_response) => {
+      callbackOK()
+    })
+    .catch((err) => {
+      if (err.response.data.message === 'Username already exists') callbackNG()
+    })
+}
