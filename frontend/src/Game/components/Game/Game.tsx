@@ -36,6 +36,9 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
     gameSocket.on('matchFound', () => {
       setMatchFound(true)
     })
+    gameSocket.on('queuedOrMatched', () => {
+      console.log('user is already matched or queued')
+    })
   }, [])
 
   const handleClick = (): void => {
