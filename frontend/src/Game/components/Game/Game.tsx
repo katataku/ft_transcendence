@@ -36,13 +36,15 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
     gameSocket.on('matchFound', () => {
       setMatchFound(true)
     })
-    gameSocket.on('queuedOrMatched', () => {
-      console.log('user is already matched or queued')
+    gameSocket.on('matching', () => {
+      setShowSpinner(true)
+    })
+    gameSocket.on('inQueue', () => {
+      alert("Already in matching queue...")
     })
   }, [])
 
   const handleClick = (): void => {
-    setShowSpinner(true)
     gameSocket.emit('matching', {
       userId: loginUser.id,
       userName: loginUser.name
