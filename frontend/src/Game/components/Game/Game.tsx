@@ -14,14 +14,12 @@ import { useLocation } from 'react-router-dom'
 
 function Playing(props: { match: IMatch }): ReactElement {
   return (
-    <Container>
-      <Row id="header">
+    <Container id="header">
+      <Row>
         <Player matchID={props.match.id} player={props.match.leftPlayer} />
         <Player matchID={props.match.id} player={props.match.rightPlayer} />
       </Row>
-      <Row>
-        <Match match={props.match} />
-      </Row>
+      <Match match={props.match} />
     </Container>
   )
 }

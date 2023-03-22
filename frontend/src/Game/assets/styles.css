@@ -10,19 +10,21 @@
   overflow: hidden;
 }
 
-#buttonPos {
-  margin-top: 5px;
+#alignV {
+  display: flex;
+  align-items: center;
+}
+
+#button {
+  margin-top: 10px;
+  margin-bottom: 10px;
 }
 
 #match {
   width: var(--wid);
   height: var(--height);
-  background-color:#000000;
-  margin: auto;
+  background-color:#212529;
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -35%);
   font-family: 'Courier New', monospace;
   overflow: hidden;
 }
@@ -75,10 +77,6 @@
   border-radius: 100px;
 }
 
-#centerCol {
-  text-align-last: center;
-}
-
 #boardDiv {
   height: var(--height);
   position: relative;
@@ -86,7 +84,7 @@
     to bottom,
     white,
     white 15px,
-    black 15px,
-    black 30px
+    #212529 15px,
+    #212529 30px
   ) 50%/1px 100% no-repeat;
 }

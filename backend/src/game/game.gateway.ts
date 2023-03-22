@@ -15,11 +15,17 @@ import {
   IScore,
 } from './types/game.model';
 import * as GameSetting from './constants';
-import { decidePaddleSize, decideSpeed, deepCopy } from './utility';
+import {
+  decideEndScore,
+  decidePaddleSize,
+  decideSpeed,
+  deepCopy,
+} from './utility';
 import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
 import { UsersService } from '../users/users.service';
 import { UserMatchHistoryDto } from '../common/dto/users.dto';
+import { initPaddle, PowerUP } from './constants';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
@@ -308,7 +314,7 @@ export class GameGateway {
   }
 
   @SubscribeMessage('updatePowerUp')
-  handleUpdateSpeed(
+  handlePowerUp(
     @ConnectedSocket() client: Socket,
     @MessageBody()
     data: {
@@ -322,23 +328,16 @@ export class GameGateway {
     if (match === undefined) return;
 
     switch (data.type) {
-      case 'speed':
+      case PowerUP.Speed:
         match.speed = decideSpeed(data.difficulty);
         break;
-      case 'paddle':
+      case PowerUP.Paddle:
         match.settings.paddleSize = decidePaddleSize(data.difficulty);
-        match.leftPlayer.paddle.pos.y =
-          match.settings.winHght / 2 - match.settings.paddleSize.y / 2;
-        match.rightPlayer.paddle.pos.x =
-          match.settings.winWid -
-          (match.settings.winWid / 20 + match.settings.paddleSize.x);
-        match.rightPlayer.paddle.pos.y =
-          match.settings.winHght / 2 - match.settings.paddleSize.y / 2;
+        match.leftPlayer.paddle = initPaddle(match.settings, 'left');
+        match.rightPlayer.paddle = initPaddle(match.settings, 'right');
         break;
-      /* case 'endScore':
-        match.settings.winScore = decideWinScore();
-        break; */
-      default:
+      case PowerUP.Score:
+        match.settings.winScore = decideEndScore(data.difficulty);
         break;
     }
     this.server

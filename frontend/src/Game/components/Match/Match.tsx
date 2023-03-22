@@ -5,9 +5,9 @@ import React, {
   useState
 } from 'react'
 import { EStatus } from '../../types/game.model'
-import { Col } from 'react-bootstrap'
+import { Row } from 'react-bootstrap'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { PowerUp } from './PowerUp'
+import { PowerUps } from './PowerUp'
 import { Paddles } from './Paddle'
 import { Ball } from './Ball'
 
@@ -65,25 +65,29 @@ export function Match(props: { match: IMatch }): ReactElement {
   }, [])
 
   return (
-    <Col id="centerCol">
-      <PowerUp
-        matchId={props.match.id}
-        leftName={props.match.leftPlayer.name}
-        status={status}
-      />
-      <div id="match">
-        <div id="boardDiv" />
-        <Score
-          left={props.match.leftPlayer.score}
-          right={props.match.rightPlayer.score}
+    <>
+      <Row>
+        <PowerUps
+          matchId={props.match.id}
+          leftName={props.match.leftPlayer.name}
+          status={status}
         />
-        <div id="countDown">{status === EStatus.ready && <CountDown />}</div>
-        {status === EStatus.play && <Ball ball={props.match.ball} />}
-        {status === EStatus.set && <Result match={props.match} />}
-        {status !== EStatus.none && (
-          <Paddles match={props.match} status={status} />
-        )}
-      </div>
-    </Col>
+      </Row>
+      <Row className="d-flex justify-content-center">
+        <div id="match">
+          <div id="boardDiv" />
+          <Score
+            left={props.match.leftPlayer.score}
+            right={props.match.rightPlayer.score}
+          />
+          <div id="countDown">{status === EStatus.ready && <CountDown />}</div>
+          {status === EStatus.play && <Ball ball={props.match.ball} />}
+          {status === EStatus.set && <Result match={props.match} />}
+          {status !== EStatus.none && (
+            <Paddles match={props.match} status={status} />
+          )}
+        </div>
+      </Row>
+    </>
   )
 }
