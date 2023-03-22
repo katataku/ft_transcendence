@@ -39,6 +39,8 @@ export class GameGateway {
 
   private serverMatches: Map<number, IMatch> = new Map<number, IMatch>();
   private connectedClients: Map<string, Socket> = new Map<string, Socket>();
+  private matchedClients: Map<string, number> = new Map<string, number>();
+  private matchedPlayers: Map<string, number> = new Map<string, number>();
   private connectedUsers: Map<string, IUserQueue> = new Map<
     string,
     IUserQueue
@@ -53,6 +55,7 @@ export class GameGateway {
   handleConnection(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
     this.connectedClients.set(client.id, client);
+    this.matchedClients.set(client.id, 0);
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
@@ -60,7 +63,10 @@ export class GameGateway {
     this.userQueue = this.userQueue.filter(
       (element) => !(element.clientId === client.id),
     );
+    client.leave(this.matchedClients.get(client.id).toString());
     this.connectedClients.delete(client.id);
+    this.matchedClients.delete(client.id);
+    this.matchedPlayers.delete(this.connectedUsers.get(client.id).userName);
   }
 
   private countdown(matchID: string, seconds: number): Promise<void> {
@@ -169,6 +175,10 @@ export class GameGateway {
         newMatch.rightPlayer.matchHistory = rightHist;
         if (leftSocket !== undefined) leftSocket.join(res.id.toString());
         if (rightSocket !== undefined) rightSocket.join(res.id.toString());
+        this.matchedClients.set(leftUser.clientId, newMatch.id);
+        this.matchedClients.set(rightUser.clientId, newMatch.id);
+        this.matchedPlayers.set(leftUser.userName, newMatch.id);
+        this.matchedPlayers.set(rightUser.userName, newMatch.id);
         this.server.to(res.id.toString()).emit('updateConnections', newMatch);
       })
       .catch((reason) => this.logger.log(reason));
@@ -287,6 +297,10 @@ export class GameGateway {
     @MessageBody() data: { matchID: number; userName: string },
   ): void {
     let currentMatch = undefined;
+    if (this.matchedPlayers.has(data.userName)) {
+      this.server.to(client.id).emit('alreadyMatched');
+      return;
+    }
     for (const [_key, match] of this.serverMatches) {
       if (
         match.leftPlayer !== undefined &&
