@@ -27,3 +27,11 @@ interface UserMatchHistoryDto {
   wins: number
   losses: number
 }
+
+interface UsernameCheckRequestDto {
+  username: string
+}
+
+interface UsernameCheckResponseDto {
+  message: string
+}
