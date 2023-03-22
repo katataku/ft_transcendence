@@ -6,6 +6,7 @@ import { FriendPendingList } from './FriendPendingList'
 import { BaseURL } from '../../../constants'
 import { getMatchHistoryById } from '../../../utils/userAxios'
 import { MatchHistory } from '../../../components/MatchHistory'
+import { TwoFactorRegModal } from '../../../Auth/components/TwoFactorRegModal'
 
 function Settings(): ReactElement {
   const { loginUser } = useContext(GlobalContext)
@@ -31,9 +32,7 @@ function Settings(): ReactElement {
       <p>
         <Button>自分のプロフィールを編集できるボタンになる予定</Button>
       </p>
-      <p>
-        <Button>2FAを有効・無効にするボタンになる予定</Button>
-      </p>
+      <TwoFactorRegModal />
     </>
   )
 }

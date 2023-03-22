@@ -18,6 +18,11 @@
         "Codeball",
         "pendings",
         "toastify",
-        "winHght"
+        "winHght",
+        "qrcode",
+        "otplib",
+        "TOTP",
+        "keyuri",
+        "Modalshow"
     ]
 }

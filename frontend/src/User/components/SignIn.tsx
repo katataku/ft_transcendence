@@ -6,6 +6,8 @@ import { GlobalContext } from '../../App'
 import { signIn, signUp } from '../../utils/userAxios'
 import { BaseURL } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
+import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
+import { getIsTwoFactorEnabled } from '../../utils/authAxios'
 
 export const defaultAvatar = `${BaseURL}/user/user_avatar/0`
 
@@ -16,6 +18,15 @@ export function SignIn(): ReactElement {
   const [password, setPassword] = useState<string>('')
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [image, setImage] = useState<string>(defaultAvatar)
+  const [twoFactorVerifyModalshow, setTwoFactorVerifyModalshow] =
+    useState(false)
+  const [registeringUser, setRegisterUser] = useState<User>({ id: 0, name: '' })
+  function handleTwoFAModalClose(): void {
+    setTwoFactorVerifyModalshow(false)
+  }
+  function handleTwoFAModalShow(): void {
+    setTwoFactorVerifyModalshow(true)
+  }
 
   function toggleMode(): void {
     setSignUpMode(!signUpMode)
@@ -103,8 +114,15 @@ export function SignIn(): ReactElement {
               })
             } else {
               signIn({ id: Number(userName), password }, (res) => {
-                setLoginUser({ id: res.id, name: res.name })
-                setIsSignedIn(true)
+                setRegisterUser({ id: res.id, name: res.name })
+                getIsTwoFactorEnabled(res.id, (isTwoFactorEnabled: boolean) => {
+                  if (isTwoFactorEnabled) {
+                    handleTwoFAModalShow()
+                  } else {
+                    setLoginUser({ id: res.id, name: res.name })
+                    setIsSignedIn(true)
+                  }
+                })
               })
             }
           }}
@@ -134,6 +152,14 @@ export function SignIn(): ReactElement {
           ))
         }
       </div>
+      <TwoFactorVerifyModal
+        show={twoFactorVerifyModalshow}
+        setShow={setTwoFactorVerifyModalshow}
+        handleClose={handleTwoFAModalClose}
+        registeringUser={registeringUser}
+        setIsSignedIn={setIsSignedIn}
+        setLoginUser={setLoginUser}
+      ></TwoFactorVerifyModal>
     </div>
   )
 }
