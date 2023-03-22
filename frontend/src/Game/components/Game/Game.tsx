@@ -40,7 +40,7 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
       setShowSpinner(true)
     })
     gameSocket.on('inQueue', () => {
-      alert("Already in matching queue...")
+      alert('Already in matching queue...')
     })
   }, [])
 
