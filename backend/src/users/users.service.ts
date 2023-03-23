@@ -55,7 +55,7 @@ export class UsersService {
 
   async signInUser(data: UserSignInDto): Promise<UserGetDto> {
     const target = await this.usersRepository.findOne({
-      where: { id: data.id },
+      where: { name: data.name },
     });
 
     if (target == null) {
