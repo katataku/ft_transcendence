@@ -780,9 +780,9 @@ components:
     user_signin_req:
       type: object
       properties:
-        id:
-          type: integer
-          example: 1
+        name:
+          type: string
+          example: user
         password:
           type: string
           example: password
