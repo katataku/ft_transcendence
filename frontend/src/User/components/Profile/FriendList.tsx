@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { GlobalContext } from '../../../App'
 import { getFriendRequest } from '../../../utils/userAxios'
 
-export function FriendList(): ReactElement {
+export function FriendList(props: { activeTab: string }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
   const [friendList, setFriendList] = useState<User[]>([])
 
@@ -15,7 +15,8 @@ export function FriendList(): ReactElement {
 
   useEffect(() => {
     updateFriendList()
-  }, [])
+  }, [props.activeTab])
+
   return (
     <>
       <p>あなたのフレンド一覧</p>
