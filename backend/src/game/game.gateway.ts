@@ -179,6 +179,15 @@ export class GameGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { userId: number; userName: string },
   ): Promise<void> {
+    const queuedUser = this.userQueue.filter(
+      (user) => user.userId === data.userId,
+    );
+    if (queuedUser.length > 0) {
+      this.server.to(client.id).emit('inQueue');
+      return;
+    }
+
+    this.server.to(client.id).emit('matching');
     this.userQueue.push({
       clientId: client.id,
       userId: data.userId,
