@@ -34,8 +34,8 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
     gameSocket.on('matchFound', () => {
       setMatchFound(true)
     })
-    gameSocket.on('alreadyMatched', () => {
-      console.log('already matched :)')
+    gameSocket.on('inMatch', () => {
+      alert('Already in Match...')
     })
   }, [])
 
