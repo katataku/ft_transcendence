@@ -10,7 +10,7 @@ interface signUp {
 }
 
 interface signIn {
-  id: number
+  name: string
   password: string
 }
 
