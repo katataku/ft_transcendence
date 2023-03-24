@@ -1,6 +1,8 @@
 ENV_FILE=./config/.env_docker
 DC_CMD=docker compose
-DC_OPTIONS=--env-file ${ENV_FILE} -f ./docker-compose.yml
+#提出前に以下の行はコメントアウトすることでswaggerが起動しなくなる。
+DC_PROFILE=--profile debug
+DC_OPTIONS=--env-file ${ENV_FILE} -f ./docker-compose.yml ${DC_PROFILE}
 
 include ${ENV_FILE}
 
