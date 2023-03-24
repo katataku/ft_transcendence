@@ -39,6 +39,12 @@ function Settings(): ReactElement {
 
 export function MyPage(): ReactElement {
   const { loginUser } = useContext(GlobalContext)
+  const [activeTab, setActiveTab] = useState<string>('Settings')
+
+  const handleTabSelect = (selectedTab: string | null): void => {
+    setActiveTab(selectedTab ?? '')
+  }
+
   return (
     <>
       <h2>My page</h2>
@@ -49,12 +55,13 @@ export function MyPage(): ReactElement {
         defaultActiveKey="Settings"
         id="uncontrolled-tab-example"
         className="mb-3"
+        onSelect={handleTabSelect}
       >
         <Tab eventKey="Settings" title="Settings">
           <Settings></Settings>
         </Tab>
         <Tab eventKey="FriendList" title="FriendList">
-          <FriendList></FriendList>
+          <FriendList activeTab={activeTab}></FriendList>
         </Tab>
         <Tab eventKey="FriendPendingList" title="FriendPendingList">
           <FriendPendingList></FriendPendingList>
