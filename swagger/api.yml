@@ -593,6 +593,40 @@ paths:
         200:
           description: 成功
 
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: User login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_signin_req'
+      responses:
+        '200':
+          description: 成功
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /auth/protected:
+    get:
+      tags:
+        - auth
+      summary: Get protected data
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+
   /auth/42/{code}:
     get:
       tags: 
@@ -724,6 +758,11 @@ paths:
                 type: string
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
   schemas:
     health:
       type: object
