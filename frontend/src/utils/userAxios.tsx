@@ -1,4 +1,4 @@
-import axios, { type AxiosError } from 'axios'
+import axios from 'axios'
 import { defaultAvatar } from '../User/components/SignIn'
 
 axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
@@ -49,20 +49,6 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
     })
 }
 
-export function signIn(obj: signIn, callback: (user: User) => void): void {
-  axios
-    .post<User>('/user/sign_in', obj)
-    .then((res) => {
-      callback(res.data)
-    })
-    .catch((err: AxiosError) => {
-      if (err.response?.status === 401) {
-        alert('Password is incorrect.')
-      } else {
-        alert('Unknown Error.')
-      }
-    })
-}
 export async function getAvatar(userId: number): Promise<string> {
   const res = await axios.get<string>(`/user/user_avatar/${userId}`)
   return res.data
