@@ -13,6 +13,7 @@ import {
   EStatus,
   IUserQueue,
   IScore,
+  IClient,
 } from './types/game.model';
 import * as GameSetting from './constants';
 import {
@@ -38,7 +39,7 @@ export class GameGateway {
   private logger: Logger = new Logger('GameGateway');
 
   private serverMatches: Map<number, IMatch> = new Map<number, IMatch>();
-  private connectedClients: Map<string, Socket> = new Map<string, Socket>();
+  private connectedClients: Map<string, IClient> = new Map<string, IClient>();
   private matchedUsers: Map<string, number> = new Map<string, number>();
   private connectedUsers: Map<string, IUserQueue> = new Map<
     string,
@@ -53,7 +54,7 @@ export class GameGateway {
 
   handleConnection(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
-    this.connectedClients.set(client.id, client);
+    this.connectedClients.set(client.id, { socket: client, userName: '' });
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
@@ -61,6 +62,7 @@ export class GameGateway {
     this.userQueue = this.userQueue.filter(
       (element) => !(element.clientId === client.id),
     );
+    this.matchedUsers.delete(this.connectedClients.get(client.id).userName);
     this.connectedClients.delete(client.id);
   }
 
@@ -161,17 +163,18 @@ export class GameGateway {
         const newMatch = this.serverMatches.get(res.id);
         newMatch.id = res.id;
         newMatch.leftPlayer = deepCopy(GameSetting.initLeftProfile);
-        newMatch.leftPlayer.socketID = leftSocket.id;
+        newMatch.leftPlayer.socketID = leftSocket.socket.id;
         newMatch.leftPlayer.name = leftUser.userName;
         newMatch.leftPlayer.id = leftUser.userId;
         newMatch.leftPlayer.matchHistory = leftHist;
         newMatch.rightPlayer = deepCopy(GameSetting.initRightProfile);
-        newMatch.rightPlayer.socketID = rightSocket.id;
+        newMatch.rightPlayer.socketID = rightSocket.socket.id;
         newMatch.rightPlayer.name = rightUser.userName;
         newMatch.rightPlayer.id = rightUser.userId;
         newMatch.rightPlayer.matchHistory = rightHist;
-        if (leftSocket !== undefined) leftSocket.join(res.id.toString());
-        if (rightSocket !== undefined) rightSocket.join(res.id.toString());
+        if (leftSocket !== undefined) leftSocket.socket.join(res.id.toString());
+        if (rightSocket !== undefined)
+          rightSocket.socket.join(res.id.toString());
         this.matchedUsers.set(leftUser.userName, newMatch.id);
         this.matchedUsers.set(rightUser.userName, newMatch.id);
         this.server.to(res.id.toString()).emit('updateConnections', newMatch);
@@ -184,6 +187,10 @@ export class GameGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { userId: number; userName: string },
   ): Promise<void> {
+    if (this.matchedUsers.has(data.userName)) {
+      this.server.to(client.id).emit('inMatch');
+      return;
+    }
     const queuedUser = this.userQueue.filter(
       (user) => user.userId === data.userId,
     );
@@ -301,8 +308,12 @@ export class GameGateway {
     @MessageBody() data: { matchID: number; userName: string },
   ): void {
     let currentMatch = undefined;
+    this.connectedClients.set(client.id, {
+      socket: client,
+      userName: data.userName,
+    });
     if (this.matchedUsers.has(data.userName)) {
-      this.server.to(client.id).emit('inMatch');
+      this.server.to(client.id).emit('updateConnections');
       return;
     }
     for (const [_key, match] of this.serverMatches) {
