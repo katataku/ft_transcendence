@@ -8,6 +8,7 @@ import { BaseURL, localStorageKey } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
 import {
+  // eslint-disable-next-line
   getIsTwoFactorEnabled,
   signIn,
   validateJwtToken
@@ -26,10 +27,12 @@ export function SignIn(): ReactElement {
   const [image, setImage] = useState<string>(defaultAvatar)
   const [twoFactorVerifyModalshow, setTwoFactorVerifyModalshow] =
     useState(false)
+  // eslint-disable-next-line
   const [registeringUser, setRegisterUser] = useState<User>({ id: 0, name: '' })
   function handleTwoFAModalClose(): void {
     setTwoFactorVerifyModalshow(false)
   }
+  // eslint-disable-next-line
   function handleTwoFAModalShow(): void {
     setTwoFactorVerifyModalshow(true)
   }
