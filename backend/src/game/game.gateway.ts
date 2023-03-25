@@ -246,7 +246,7 @@ export class GameGateway {
     if (invitee === undefined) return;
 
     if (this.userQueue.find((user) => user.userName === invitee.userName)) {
-      console.log('inqueue');
+      console.log('inQueue');
       this.server.to(client.id).emit('inviteeInQueue', invitee.userName);
     } else if (this.matchedUsers.get(invitee.userName) === undefined) {
       console.log('not in match');
