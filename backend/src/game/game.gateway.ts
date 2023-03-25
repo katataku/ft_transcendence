@@ -62,7 +62,6 @@ export class GameGateway {
     this.userQueue = this.userQueue.filter(
       (element) => !(element.clientId === client.id),
     );
-    this.matchedUsers.delete(this.connectedClients.get(client.id).userName);
     this.connectedClients.delete(client.id);
   }
 
@@ -245,7 +244,17 @@ export class GameGateway {
   ): void {
     const invitee = this.connectedUsers.get(data.invitee);
     if (invitee === undefined) return;
-    this.server.to(invitee.clientId).emit('inviteMatching', data.inviter);
+
+    if (this.userQueue.find((user) => user.userName === invitee.userName)) {
+      console.log('inqueue');
+      this.server.to(client.id).emit('inviteeInQueue', invitee.userName);
+    } else if (this.matchedUsers.get(invitee.userName) === undefined) {
+      console.log('not in match');
+      this.server.to(invitee.clientId).emit('inviteMatching', data.inviter);
+    } else {
+      console.log('in match');
+      this.server.to(client.id).emit('inviteeInMatch', invitee.userName);
+    }
   }
 
   @SubscribeMessage('inviteAccepted')
