@@ -1,5 +1,4 @@
 import {
-  IsInt,
   IsNumber,
   IsNumberString,
   IsString,
@@ -41,8 +40,8 @@ export class UserUpdateReqDto {
 }
 
 export class UserSignInDto {
-  @IsInt()
-  id: number;
+  @IsString()
+  name: string;
   @IsString()
   password: string;
 }

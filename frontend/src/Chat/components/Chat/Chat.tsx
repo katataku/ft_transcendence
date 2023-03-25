@@ -9,7 +9,7 @@ import { GlobalContext } from '../../../App'
 import { chatListKickAlertLocalStorageKey } from '../../../constants'
 
 const ServerURL: string = process.env.REACT_APP_BACKEND_WEBSOCKET_BASE_URL ?? ''
-const socket = io(ServerURL)
+const socket = io(ServerURL + '/chat')
 
 // Websocket通信を管理。
 // 描画などは各モジュールに移譲する。

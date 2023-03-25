@@ -62,7 +62,7 @@ export function SignIn(): ReactElement {
       </div>
       <div style={{ width: '500px', margin: 'auto' }}>
         <Form.Control
-          placeholder={signUpMode ? 'UserName' : 'UserID'}
+          placeholder={'UserName'}
           onChange={(e) => {
             setUserName(e.target.value)
           }}
@@ -125,7 +125,7 @@ export function SignIn(): ReactElement {
                 }
               )
             } else {
-              signIn({ id: Number(userName), password }, (res) => {
+              signIn({ name: userName, password }, (res) => {
                 setRegisterUser({ id: res.id, name: res.name })
                 getIsTwoFactorEnabled(res.id, (isTwoFactorEnabled: boolean) => {
                   if (isTwoFactorEnabled) {
