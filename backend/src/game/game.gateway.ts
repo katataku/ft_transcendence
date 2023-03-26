@@ -330,7 +330,12 @@ export class GameGateway {
     const matchedUserSocket = this.matchedUsers.get(data.userName);
     // ユーザーがマッチしていない場合（ビューワー）、
     // またはユーザーがマッチしているが切断されている場合にのみ、マッチを検索
-    if (matchedUserSocket === undefined || matchedUserSocket === '') {
+    // matchedUserSocket === client.id is for strict mode strange behavior
+    if (
+      matchedUserSocket === undefined ||
+      matchedUserSocket === '' ||
+      matchedUserSocket === client.id
+    ) {
       for (const [_key, match] of this.serverMatches) {
         if (
           match.leftPlayer !== undefined &&
