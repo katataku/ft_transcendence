@@ -3,16 +3,17 @@ import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import { SignIn } from './User/components/SignIn'
 import { GlobalContext } from './App'
+import { initUser, localStorageKey } from './constants'
 
 export function TopPage(): ReactElement {
-  const { loginUser, isSignedIn, setIsSignedIn } = useContext(GlobalContext)
+  const { loginUser, setLoginUser } = useContext(GlobalContext)
 
   // マッチリスト・プロフィル・チャット->ゲームに行くとmatchIdは必要があります。
   // プロフィル・チャット->ゲームに行くとまだmatchId決めていないので
   // 下の<Link to="Game" state={0}>のようで書けます
   return (
     <div className="App">
-      {isSignedIn ? (
+      {loginUser.id !== 0 ? (
         <div>
           <p>
             <Link data-cy="link-to-chatlist" to="chatlist">
@@ -41,7 +42,8 @@ export function TopPage(): ReactElement {
           <p>
             <Button
               onClick={() => {
-                setIsSignedIn(false)
+                localStorage.removeItem(localStorageKey)
+                setLoginUser(initUser)
               }}
             >
               Sign out

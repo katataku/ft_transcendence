@@ -2,9 +2,28 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { toDataURL } from 'qrcode';
 import { authenticator } from 'otplib';
+import { JwtService } from '@nestjs/jwt';
+import { UsersService } from 'src/users/users.service';
+import { UserSignInDto } from 'src/common/dto/users.dto';
+import { JwtPayloadDto, LocalStorageDto } from 'src/common/dto/auth.dto';
 
 @Injectable()
 export class AuthService {
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {}
+  async login(user: UserSignInDto): Promise<LocalStorageDto> {
+    const loggedInUser = await this.usersService.signInUser(user);
+    const payload: JwtPayloadDto = {
+      userId: loggedInUser.id,
+      userName: loggedInUser.name,
+    };
+    return {
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
   async request42AuthToken(code: string): Promise<string> {
     const clientId = process.env.FT_API_CLIENT_ID;
     const clientSecret = process.env.FT_API_CLIENT_SECRET;
