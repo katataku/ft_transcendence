@@ -18,5 +18,5 @@ interface SigninRes {
   userId: number
   userName: string
   access_token?: string;
-  isTwofactorEnabled: boolean;
+  isTwoFactorEnabled: boolean;
 }

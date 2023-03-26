@@ -39,5 +39,5 @@ export class SigninResDto {
   access_token?: string;
 
   @IsBoolean()
-  isTwofactorEnabled!: boolean;
+  isTwoFactorEnabled!: boolean;
 }

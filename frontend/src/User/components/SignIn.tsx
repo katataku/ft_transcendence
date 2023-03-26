@@ -40,7 +40,7 @@ export function SignIn(): ReactElement {
 
   function handleSuccessfulSignIn(res: SigninRes): void {
     // 2faが有効なら、2faの確認モーダルを表示します。
-    if (res.isTwofactorEnabled) {
+    if (res.isTwoFactorEnabled) {
       setUserTryingToLogin({ id: res.userId, name: res.userName })
       handleTwoFAModalShow()
     } else {

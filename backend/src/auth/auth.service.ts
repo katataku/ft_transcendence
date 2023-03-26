@@ -32,7 +32,7 @@ export class AuthService {
       userId: loggedInUser.id,
       userName: loggedInUser.name,
       access_token: isTwoFactorEnabled ? null : this.jwtService.sign(payload),
-      isTwofactorEnabled: isTwoFactorEnabled,
+      isTwoFactorEnabled: isTwoFactorEnabled,
     };
   }
 
