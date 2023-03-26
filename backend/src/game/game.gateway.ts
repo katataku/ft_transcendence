@@ -328,34 +328,34 @@ export class GameGateway {
     });
 
     const matchedUserSocket = this.matchedUsers.get(data.userName);
-    // if not matched user or matched user already connected
-    if (matchedUserSocket !== undefined && matchedUserSocket !== '') {
-      this.server.to(client.id).emit('updateConnections');
-      return;
+    // ユーザーがマッチしていない場合（ビューワー）、
+    // またはユーザーがマッチしているが切断されている場合にのみ、マッチを検索
+    if (matchedUserSocket === undefined || matchedUserSocket === '') {
+      for (const [_key, match] of this.serverMatches) {
+        if (
+          match.leftPlayer !== undefined &&
+          match.leftPlayer.name === data.userName
+        ) {
+          match.leftPlayer.socketID = client.id;
+          this.matchedUsers.set(data.userName, client.id);
+          client.join(match.id.toString());
+        } else if (
+          match.rightPlayer !== undefined &&
+          match.rightPlayer.name === data.userName
+        ) {
+          match.rightPlayer.socketID = client.id;
+          this.matchedUsers.set(data.userName, client.id);
+          client.join(match.id.toString());
+        } else if (match.id === data.matchID) {
+          // もし観戦しようとしていたら。
+          // defaultはmatch.id = 0なので観戦しようとする時だけmatch.id > 0
+          client.join(match.id.toString());
+        } else continue;
+        currentMatch = match;
+        break;
+      }
     }
-    for (const [_key, match] of this.serverMatches) {
-      if (
-        match.leftPlayer !== undefined &&
-        match.leftPlayer.name === data.userName
-      ) {
-        match.leftPlayer.socketID = client.id;
-        this.matchedUsers.set(data.userName, client.id);
-        client.join(match.id.toString());
-      } else if (
-        match.rightPlayer !== undefined &&
-        match.rightPlayer.name === data.userName
-      ) {
-        match.rightPlayer.socketID = client.id;
-        this.matchedUsers.set(data.userName, client.id);
-        client.join(match.id.toString());
-      } else if (match.id === data.matchID) {
-        // もし観戦しようとしていたら。
-        // defaultはmatch.id = 0なので観戦しようとする時だけmatch.id > 0
-        client.join(match.id.toString());
-      } else continue;
-      currentMatch = match;
-      break;
-    }
+
     if (currentMatch === undefined)
       this.server.to(client.id).emit('updateConnections');
     else this.server.to(client.id).emit('updateConnections', currentMatch);
