@@ -11,15 +11,15 @@ import { AuthService } from './auth.service';
 import { Auth42Param } from 'src/common/params/user.params';
 import { UserSignInDto } from 'src/common/dto/users.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
-import { LocalStorageDto } from 'src/common/dto/auth.dto';
+import { SigninResDto } from 'src/common/dto/auth.dto';
 
 @Controller('auth')
 export class AuthController {
   constructor(private service: AuthService) {}
 
-  @Post('login')
-  async login(@Body() body: UserSignInDto): Promise<LocalStorageDto> {
-    return this.service.login(body);
+  @Post('signin')
+  async signIn(@Body() body: UserSignInDto): Promise<SigninResDto> {
+    return this.service.signIn(body);
   }
 
   @UseGuards(JwtAuthGuard)
