@@ -40,7 +40,8 @@ export class GameGateway {
 
   private serverMatches: Map<number, IMatch> = new Map<number, IMatch>();
   private connectedClients: Map<string, IClient> = new Map<string, IClient>();
-  private matchedUsers: Map<string, number> = new Map<string, number>();
+  // <userName, socketId>
+  private matchedUsers: Map<string, string> = new Map<string, string>();
   private connectedUsers: Map<string, IUserQueue> = new Map<
     string,
     IUserQueue
@@ -62,6 +63,10 @@ export class GameGateway {
     this.userQueue = this.userQueue.filter(
       (element) => !(element.clientId === client.id),
     );
+    const user = this.connectedClients.get(client.id);
+    if (this.matchedUsers.has(user.userName)) {
+      this.matchedUsers.set(user.userName, '');
+    }
     this.connectedClients.delete(client.id);
   }
 
@@ -174,8 +179,8 @@ export class GameGateway {
         if (leftSocket !== undefined) leftSocket.socket.join(res.id.toString());
         if (rightSocket !== undefined)
           rightSocket.socket.join(res.id.toString());
-        this.matchedUsers.set(leftUser.userName, newMatch.id);
-        this.matchedUsers.set(rightUser.userName, newMatch.id);
+        this.matchedUsers.set(leftUser.userName, leftUser.clientId);
+        this.matchedUsers.set(rightUser.userName, rightUser.clientId);
         this.server.to(res.id.toString()).emit('updateConnections', newMatch);
       })
       .catch((reason) => this.logger.log(reason));
@@ -246,14 +251,14 @@ export class GameGateway {
     if (invitee === undefined) return;
 
     if (this.userQueue.find((user) => user.userName === invitee.userName)) {
-      console.log('inQueue');
+      // invitee is in queue already
       this.server.to(client.id).emit('inviteeInQueue', invitee.userName);
-    } else if (this.matchedUsers.get(invitee.userName) === undefined) {
-      console.log('not in match');
-      this.server.to(invitee.clientId).emit('inviteMatching', data.inviter);
-    } else {
-      console.log('in match');
+    } else if (this.matchedUsers.get(invitee.userName) !== undefined) {
+      // invitee is in a match already
       this.server.to(client.id).emit('inviteeInMatch', invitee.userName);
+    } else {
+      // invitee is available
+      this.server.to(invitee.clientId).emit('inviteMatching', data.inviter);
     }
   }
 
@@ -321,7 +326,10 @@ export class GameGateway {
       socket: client,
       userName: data.userName,
     });
-    if (this.matchedUsers.has(data.userName)) {
+
+    const matchedUserSocket = this.matchedUsers.get(data.userName);
+    // if not matched user or matched user already connected
+    if (matchedUserSocket !== undefined && matchedUserSocket !== '') {
       this.server.to(client.id).emit('updateConnections');
       return;
     }
@@ -331,12 +339,14 @@ export class GameGateway {
         match.leftPlayer.name === data.userName
       ) {
         match.leftPlayer.socketID = client.id;
+        this.matchedUsers.set(data.userName, client.id);
         client.join(match.id.toString());
       } else if (
         match.rightPlayer !== undefined &&
         match.rightPlayer.name === data.userName
       ) {
         match.rightPlayer.socketID = client.id;
+        this.matchedUsers.set(data.userName, client.id);
         client.join(match.id.toString());
       } else if (match.id === data.matchID) {
         // もし観戦しようとしていたら。
