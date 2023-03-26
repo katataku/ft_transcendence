@@ -5,6 +5,7 @@ import React, {
   useContext
 } from 'react'
 import { Button, Modal, Card, InputGroup, FormControl } from 'react-bootstrap'
+import { toast } from 'react-toastify'
 import { GlobalContext } from '../../App'
 import {
   disable2FA,
@@ -23,7 +24,7 @@ export function TwoFactorRegModal(): ReactElement {
 
   useEffect(() => {
     if (modalIsOpen) {
-      getOTPData(loginUser.id, (res) => {
+      getOTPData(loginUser.name, (res) => {
         setSecret(res.secret)
         setQrCodeDataURL(res.qrCode)
       })
@@ -47,17 +48,21 @@ export function TwoFactorRegModal(): ReactElement {
       secret,
       token: inputValue
     }
-    enable2FA(obj, () => {})
+    enable2FA(obj, (isEnabled: boolean): void => {
+      if (isEnabled) toast('2FA enabled', { type: 'success' })
+      else toast('2FA failed', { type: 'error' })
+    })
     closeModal()
   }
   const handleDisable2FA = (): void => {
     disable2FA(loginUser.id, () => {
       setIsTwoFactorEnabled(false)
+      toast('2FA disabled', { type: 'success' })
     })
   }
   return (
     <div>
-      <Button onClick={openModal}>2FAを有効・無効にするボタン</Button>
+      <Button onClick={openModal}>2FA setting</Button>
       <Modal show={modalIsOpen} onHide={closeModal}>
         <Modal.Header closeButton>
           <Modal.Title>QR Code</Modal.Title>
@@ -84,7 +89,7 @@ export function TwoFactorRegModal(): ReactElement {
         <Modal.Footer>
           {isTwoFactorEnabled && (
             <Button variant="danger" onClick={handleDisable2FA}>
-              2FAを無効化する
+              Disable 2FA
             </Button>
           )}
         </Modal.Footer>
