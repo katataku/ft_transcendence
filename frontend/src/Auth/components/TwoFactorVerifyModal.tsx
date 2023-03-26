@@ -8,7 +8,6 @@ export function TwoFactorVerifyModal(props: {
   handleClose: () => void
   registeringUser: User
   setLoginUser: (user: User) => void
-  setIsSignedIn: (a: boolean) => void
 }): ReactElement {
   const [token, setToken] = useState('')
   const [isInvalid, setIsInvalid] = useState(false)
@@ -28,7 +27,6 @@ export function TwoFactorVerifyModal(props: {
     verifyOTP(obj, (res: boolean) => {
       if (res) {
         console.log('verify')
-        props.setIsSignedIn(true)
         props.setLoginUser(props.registeringUser)
         props.setShow(false)
       } else {

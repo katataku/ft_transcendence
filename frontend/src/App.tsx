@@ -14,44 +14,40 @@ import { Profile } from './User'
 import { Notification } from './Notification'
 import { GameSocketContext } from './Game/utils/gameSocketContext'
 import { Auth42callback } from './Auth/callback'
+import { Private } from './PrivateRoute'
+import { validateJwtToken } from './utils/authAxios'
+import { initUser } from './constants'
 
 // interfaceの初期化をしろとeslintに怒られますが、Setterは初期化できないため、ここだけeslintを無視します。
 export const GlobalContext = createContext<GlobalContext>({} as GlobalContext) // eslint-disable-line
 
-const localStorageKey: string = 'ft_trans_user'
+let didInit = false
 
 export function App(): ReactElement {
-  const [loginUser, setLoginUser] = useState<User>({
-    id: 0,
-    name: ''
-  })
-  const [isSignedIn, setIsSignedIn] = useState<boolean>(false)
+  const [loginUser, setLoginUser] = useState<User>(initUser)
   const gameSocket = useContext(GameSocketContext)
 
   const context: GlobalContext = {
     loginUser,
-    setLoginUser,
-    isSignedIn,
-    setIsSignedIn
+    setLoginUser
   }
 
   useEffect(() => {
-    const data = localStorage.getItem(localStorageKey)
-    if (data !== null) {
-      setIsSignedIn(true)
-      setLoginUser(JSON.parse(data))
+    if (!didInit) {
+      didInit = true
+      // リロードしたときにログイン状態を維持するために、jwtを検証します。
+      validateJwtToken(
+        (res: jwtPayload) => {
+          const loggedInUser: User = { id: res.userId, name: res.userName }
+          gameSocket.emit('loggedIn', loggedInUser)
+          setLoginUser(loggedInUser)
+        },
+        () => {}
+      )
     }
   }, [])
 
-  useEffect(() => {
-    if (isSignedIn) {
-      localStorage.setItem(localStorageKey, JSON.stringify(loginUser))
-      gameSocket.emit('loggedIn', loginUser)
-    } else {
-      localStorage.removeItem(localStorageKey)
-    }
-  }, [isSignedIn])
-
+  // prettier-ignore
   return (
     <div className="App">
       <GlobalContext.Provider value={context}>
@@ -60,14 +56,14 @@ export function App(): ReactElement {
           <Notification />
           <div>
             <Routes>
-              <Route path="/" element={<TopPage />} />
-              <Route path="/game" element={<Game />} />
-              <Route path="/matchlist" element={<MatchList />} />
-              <Route path="/chat" element={<Chat />} />
-              <Route path="/chatlist" element={<ChatList />} />
-              <Route path="/chatroom" element={<ChatRoom />} />
-              <Route path="/profile/:id" element={<Profile />} />
-              <Route path="/callback" element={<Auth42callback />} />
+              <Route path="/"            element={<TopPage />} />
+              <Route path="/game"        element={<Private element={<Game />}      />} />
+              <Route path="/matchlist"   element={<Private element={<MatchList />} />} />
+              <Route path="/chat"        element={<Private element={<Chat />}      />} />
+              <Route path="/chatlist"    element={<Private element={<ChatList />}  />} />
+              <Route path="/chatroom"    element={<Private element={<ChatRoom />}  />} />
+              <Route path="/profile/:id" element={<Private element={<Profile />}   />} />
+              <Route path="/callback"    element={<Auth42callback />} />
             </Routes>
           </div>
         </BrowserRouter>

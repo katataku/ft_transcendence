@@ -23,6 +23,7 @@
         "otplib",
         "TOTP",
         "keyuri",
-        "Modalshow"
+        "Modalshow",
+        "Ilocal"
     ]
 }

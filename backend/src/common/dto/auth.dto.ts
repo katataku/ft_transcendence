@@ -18,3 +18,16 @@ export class VerifyTwoFactorAuthDto {
   @IsString()
   token!: string;
 }
+
+export class JwtPayloadDto {
+  @IsNumber()
+  userId!: number;
+
+  @IsString()
+  userName!: string;
+}
+
+export class LocalStorageDto {
+  @IsString()
+  access_token!: string;
+}
