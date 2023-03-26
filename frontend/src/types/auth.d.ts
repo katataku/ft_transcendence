@@ -17,6 +17,6 @@ interface jwtPayload {
 interface SigninRes {
   userId: number
   userName: string
-  access_token?: string;
-  isTwoFactorEnabled: boolean;
+  access_token?: string
+  isTwoFactorEnabled: boolean
 }
