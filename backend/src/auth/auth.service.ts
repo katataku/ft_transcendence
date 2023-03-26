@@ -1,11 +1,16 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import { toDataURL } from 'qrcode';
 import { authenticator } from 'otplib';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { UserSignInDto } from 'src/common/dto/users.dto';
-import { JwtPayloadDto, LocalStorageDto } from 'src/common/dto/auth.dto';
+import {
+  EnableTwoFactorAuthDto,
+  JwtPayloadDto,
+  SigninResDto,
+  VerifyTwoFactorAuthDto,
+} from 'src/common/dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,14 +18,21 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
   ) {}
-  async login(user: UserSignInDto): Promise<LocalStorageDto> {
+  async signIn(user: UserSignInDto): Promise<SigninResDto> {
     const loggedInUser = await this.usersService.signInUser(user);
+    const isTwoFactorEnabled = await this.usersService.isTwoFactorEnabled(
+      loggedInUser.id,
+    );
     const payload: JwtPayloadDto = {
       userId: loggedInUser.id,
       userName: loggedInUser.name,
     };
+
     return {
-      access_token: this.jwtService.sign(payload),
+      userId: loggedInUser.id,
+      userName: loggedInUser.name,
+      access_token: isTwoFactorEnabled ? null : this.jwtService.sign(payload),
+      isTwofactorEnabled: isTwoFactorEnabled,
     };
   }
 
@@ -47,19 +59,57 @@ export class AuthService {
     }
   }
 
-  // TOTP シークレットキーを生成
-  generateSecret(): string {
+  // 2 Factor Authentication
+
+  private generateSecret(): string {
     return authenticator.generateSecret();
   }
 
-  // QR コードを生成
-  async generateQrCode(secret: string, email: string): Promise<string> {
-    const otpAuthUrl = authenticator.keyuri(email, 'YourAppName', secret);
+  private async generateQrCode(
+    secret: string,
+    userId: string,
+  ): Promise<string> {
+    const otpAuthUrl = authenticator.keyuri(userId, 'ft_transcendence', secret);
     return toDataURL(otpAuthUrl);
   }
 
-  // TOTP トークンを検証
-  verifyToken(secret: string, token: string): boolean {
-    return authenticator.verify({ secret, token });
+  async getOTPData(
+    userName: string,
+  ): Promise<{ secret: string; qrCode: string }> {
+    const secret = this.generateSecret();
+    const qrCode = await this.generateQrCode(secret, userName);
+    return {
+      secret: secret,
+      qrCode: qrCode,
+    };
+  }
+
+  async enable(data: EnableTwoFactorAuthDto): Promise<boolean> {
+    const isValid = authenticator.verify({
+      secret: data.secret,
+      token: data.token,
+    });
+    if (isValid) {
+      await this.usersService.enableTwoFactor(data.userId, data.secret);
+    }
+    return isValid;
+  }
+
+  async verifyOtp(data: VerifyTwoFactorAuthDto): Promise<string> {
+    const user = await this.usersService.getUserById(data.userId);
+    if (user.otpSecret == null) {
+      throw new HttpException('2FA is invalid .', HttpStatus.NOT_FOUND);
+    }
+    const secret = user.otpSecret;
+
+    const isValid = authenticator.verify({ secret, token: data.token });
+    if (!isValid)
+      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+
+    const payload: JwtPayloadDto = {
+      userId: user.id,
+      userName: user.name,
+    };
+    return this.jwtService.sign(payload);
   }
 }
