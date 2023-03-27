@@ -50,7 +50,6 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
       gameSocket.off('inQueue')
       gameSocket.off('inMatch')
     }
-
   }, [])
 
   const handleClick = (): void => {
