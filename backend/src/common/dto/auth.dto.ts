@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator';
+import { IsNumber, IsString, IsOptional, IsBoolean } from 'class-validator';
 
 export class EnableTwoFactorAuthDto {
   @IsNumber()
@@ -27,7 +27,17 @@ export class JwtPayloadDto {
   userName!: string;
 }
 
-export class LocalStorageDto {
+export class SigninResDto {
+  @IsNumber()
+  userId!: number;
+
   @IsString()
-  access_token!: string;
+  userName!: string;
+
+  @IsOptional()
+  @IsString()
+  access_token?: string;
+
+  @IsBoolean()
+  isTwoFactorEnabled!: boolean;
 }
