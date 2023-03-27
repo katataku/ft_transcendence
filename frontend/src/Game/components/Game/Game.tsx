@@ -118,7 +118,6 @@ export function Game(): ReactElement {
       userName: loginUser.name
     })
     gameSocket.on('updateConnections', (serverMatch: IMatch) => {
-      console.log(serverMatch)
       setMatch(serverMatch)
       setHasResponse(true)
     })
