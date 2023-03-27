@@ -3,20 +3,23 @@ import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
-import {
-  checkUsernameAvailability,
-  signIn,
-  signUp
-} from '../../utils/userAxios'
-import { BaseURL } from '../../constants'
+import { checkUsernameAvailability, signUp } from '../../utils/userAxios'
+import { BaseURL, localStorageKey } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
-import { getIsTwoFactorEnabled } from '../../utils/authAxios'
+import {
+  // eslint-disable-next-line
+  getIsTwoFactorEnabled,
+  signIn,
+  validateJwtToken
+} from '../../utils/authAxios'
+import { GameSocketContext } from '../../Game/utils/gameSocketContext'
 
 export const defaultAvatar = `${BaseURL}/user/user_avatar/0`
 
 export function SignIn(): ReactElement {
-  const { setLoginUser, setIsSignedIn } = useContext(GlobalContext)
+  const { setLoginUser } = useContext(GlobalContext)
+  const gameSocket = useContext(GameSocketContext)
   const [signUpMode, setSignUpMode] = useState<boolean>(false)
   const [userName, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -24,10 +27,12 @@ export function SignIn(): ReactElement {
   const [image, setImage] = useState<string>(defaultAvatar)
   const [twoFactorVerifyModalshow, setTwoFactorVerifyModalshow] =
     useState(false)
+  // eslint-disable-next-line
   const [registeringUser, setRegisterUser] = useState<User>({ id: 0, name: '' })
   function handleTwoFAModalClose(): void {
     setTwoFactorVerifyModalshow(false)
   }
+  // eslint-disable-next-line
   function handleTwoFAModalShow(): void {
     setTwoFactorVerifyModalshow(true)
   }
@@ -38,6 +43,21 @@ export function SignIn(): ReactElement {
 
   function toggleShowPassword(): void {
     setShowPassword(!showPassword)
+  }
+
+  function handleSuccessfulSignIn(res: IlocalStorage): void {
+    localStorage.setItem(localStorageKey, res.access_token)
+    validateJwtToken(
+      (res: jwtPayload) => {
+        const loggedInUser: User = {
+          id: res.userId,
+          name: res.userName
+        }
+        gameSocket.emit('loggedIn', loggedInUser)
+        setLoginUser(loggedInUser)
+      },
+      () => {}
+    )
   }
 
   return (
@@ -115,9 +135,8 @@ export function SignIn(): ReactElement {
               checkUsernameAvailability(
                 userName,
                 () => {
-                  signUp({ name: userName, password, avatar: image }, (res) => {
-                    setLoginUser({ id: res, name: userName })
-                    setIsSignedIn(true)
+                  signUp({ name: userName, password, avatar: image }, () => {
+                    signIn({ name: userName, password }, handleSuccessfulSignIn)
                   })
                 },
                 () => {
@@ -125,17 +144,7 @@ export function SignIn(): ReactElement {
                 }
               )
             } else {
-              signIn({ name: userName, password }, (res) => {
-                setRegisterUser({ id: res.id, name: res.name })
-                getIsTwoFactorEnabled(res.id, (isTwoFactorEnabled: boolean) => {
-                  if (isTwoFactorEnabled) {
-                    handleTwoFAModalShow()
-                  } else {
-                    setLoginUser({ id: res.id, name: res.name })
-                    setIsSignedIn(true)
-                  }
-                })
-              })
+              signIn({ name: userName, password }, handleSuccessfulSignIn)
             }
           }}
         >
@@ -154,8 +163,7 @@ export function SignIn(): ReactElement {
                 data-cy={`login-as-${name}`}
                 variant="warning"
                 onClick={() => {
-                  setLoginUser({ id: index + 1, name })
-                  setIsSignedIn(true)
+                  signIn({ name, password: 'password' }, handleSuccessfulSignIn)
                 }}
               >
                 Login as {name}
@@ -169,7 +177,6 @@ export function SignIn(): ReactElement {
         setShow={setTwoFactorVerifyModalshow}
         handleClose={handleTwoFAModalClose}
         registeringUser={registeringUser}
-        setIsSignedIn={setIsSignedIn}
         setLoginUser={setLoginUser}
       ></TwoFactorVerifyModal>
     </div>

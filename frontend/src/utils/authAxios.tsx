@@ -1,4 +1,54 @@
 import axios, { type AxiosError } from 'axios'
+import { localStorageKey } from '../constants'
+
+export function signIn(
+  loginData: signIn,
+  callback: (res: IlocalStorage) => void
+): void {
+  axios
+    .post('/auth/login', loginData)
+    .then((res): void => {
+      callback(res.data)
+    })
+    .catch((err: AxiosError) => {
+      if (err.response?.status === 401) {
+        alert('Password is incorrect.')
+      } else {
+        alert('Unknown Error.')
+      }
+    })
+}
+
+export function validateJwtToken(
+  success: (res: jwtPayload) => void,
+  fail: () => void
+): void {
+  const jwtToken: string | null = localStorage.getItem(localStorageKey)
+  if (jwtToken === null) {
+    fail()
+    return
+  }
+
+  axios
+    .get('/auth/protected', {
+      headers: {
+        Authorization: 'Bearer ' + jwtToken
+      }
+    })
+    .then((res) => {
+      // res.data is like:
+      // {
+      // 	"userId": 10,
+      // 	"userName": "hello",
+      // 	"iat": 1679569772,
+      // 	"exp": 1679573372
+      //   }
+      success(res.data)
+    })
+    .catch(() => {
+      fail()
+    })
+}
 
 export function request42AuthToken(
   authCode: string,
