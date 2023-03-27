@@ -47,6 +47,28 @@ export class AuthService {
     }
   }
 
+  async request42Info(token: string) {
+    const url = 'https://api.intra.42.fr/v2/me';
+    const headers = { Authorization: `Bearer ${token}` };
+    let res;
+    try {
+      res = await axios.get(url, { headers });
+    } catch (err) {
+      Logger.error(err);
+    }
+    return res.data;
+  }
+
+  async getAvatar42(url: string): Promise<string> {
+    try {
+      const response = await axios.get(url, { responseType: 'arraybuffer' });
+      const data = Buffer.from(response.data, 'binary').toString('base64');
+      return data;
+    } catch (err) {
+      Logger.error(err);
+    }
+  }
+
   // TOTP シークレットキーを生成
   generateSecret(): string {
     return authenticator.generateSecret();

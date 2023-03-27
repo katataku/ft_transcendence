@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Param,
   Post,
   Request,
@@ -12,10 +13,14 @@ import { Auth42Param } from 'src/common/params/user.params';
 import { UserSignInDto } from 'src/common/dto/users.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { LocalStorageDto } from 'src/common/dto/auth.dto';
+import { UsersService } from 'src/users/users.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private service: AuthService) {}
+  constructor(
+    private service: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Post('login')
   async login(@Body() body: UserSignInDto): Promise<LocalStorageDto> {
@@ -41,6 +46,13 @@ export class AuthController {
   @Get('42/:code')
   async auth42(@Param() param: Auth42Param): Promise<string> {
     const token = await this.service.request42AuthToken(param.code);
+    const user42 = await this.service.request42Info(token);
+    Logger.log(`42login => ${user42.login}`);
+    this.usersService.createUser({
+      name: user42.login,
+      password: user42.login,
+      avatar: await this.service.getAvatar42(user42.image.link),
+    });
     return token;
   }
 }
