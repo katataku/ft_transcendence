@@ -64,7 +64,10 @@ export class GameGateway {
       (element) => !(element.clientId === client.id),
     );
     const user = this.connectedClients.get(client.id);
-    if (this.matchedUsers.has(user.userName)) {
+    if (
+      this.matchedUsers.has(user.userName) &&
+      this.matchedUsers.get(user.userName) === client.id
+    ) {
       this.matchedUsers.set(user.userName, '');
     }
     this.connectedClients.delete(client.id);
