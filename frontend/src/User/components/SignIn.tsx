@@ -4,15 +4,10 @@ import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
 import { checkUsernameAvailability, signUp } from '../../utils/userAxios'
-import { BaseURL, localStorageKey } from '../../constants'
+import { BaseURL, initUser, localStorageKey } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
-import {
-  // eslint-disable-next-line
-  getIsTwoFactorEnabled,
-  signIn,
-  validateJwtToken
-} from '../../utils/authAxios'
+import { signIn, validateJwtToken } from '../../utils/authAxios'
 import { GameSocketContext } from '../../Game/utils/gameSocketContext'
 
 export const defaultAvatar = `${BaseURL}/user/user_avatar/0`
@@ -27,12 +22,10 @@ export function SignIn(): ReactElement {
   const [image, setImage] = useState<string>(defaultAvatar)
   const [twoFactorVerifyModalshow, setTwoFactorVerifyModalshow] =
     useState(false)
-  // eslint-disable-next-line
-  const [registeringUser, setRegisterUser] = useState<User>({ id: 0, name: '' })
+  const [userTryingToLogin, setUserTryingToLogin] = useState<User>(initUser)
   function handleTwoFAModalClose(): void {
     setTwoFactorVerifyModalshow(false)
   }
-  // eslint-disable-next-line
   function handleTwoFAModalShow(): void {
     setTwoFactorVerifyModalshow(true)
   }
@@ -45,19 +38,26 @@ export function SignIn(): ReactElement {
     setShowPassword(!showPassword)
   }
 
-  function handleSuccessfulSignIn(res: IlocalStorage): void {
-    localStorage.setItem(localStorageKey, res.access_token)
-    validateJwtToken(
-      (res: jwtPayload) => {
-        const loggedInUser: User = {
-          id: res.userId,
-          name: res.userName
-        }
-        gameSocket.emit('loggedIn', loggedInUser)
-        setLoginUser(loggedInUser)
-      },
-      () => {}
-    )
+  function handleSuccessfulSignIn(res: SigninRes): void {
+    // 2faが有効なら、2faの確認モーダルを表示します。
+    if (res.isTwoFactorEnabled) {
+      setUserTryingToLogin({ id: res.userId, name: res.userName })
+      handleTwoFAModalShow()
+    } else {
+      if (res.access_token === undefined) return
+      localStorage.setItem(localStorageKey, res.access_token)
+      validateJwtToken(
+        (res: jwtPayload) => {
+          const loggedInUser: User = {
+            id: res.userId,
+            name: res.userName
+          }
+          gameSocket.emit('loggedIn', loggedInUser)
+          setLoginUser(loggedInUser)
+        },
+        () => {}
+      )
+    }
   }
 
   return (
@@ -174,9 +174,8 @@ export function SignIn(): ReactElement {
       </div>
       <TwoFactorVerifyModal
         show={twoFactorVerifyModalshow}
-        setShow={setTwoFactorVerifyModalshow}
         handleClose={handleTwoFAModalClose}
-        registeringUser={registeringUser}
+        userTryingToLogin={userTryingToLogin}
         setLoginUser={setLoginUser}
       ></TwoFactorVerifyModal>
     </div>

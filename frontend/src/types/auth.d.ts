@@ -14,6 +14,9 @@ interface jwtPayload {
   userName: string
 }
 
-interface IlocalStorage {
-  access_token: string
+interface SigninRes {
+  userId: number
+  userName: string
+  access_token?: string
+  isTwoFactorEnabled: boolean
 }

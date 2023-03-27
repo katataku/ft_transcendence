@@ -2,17 +2,19 @@ import axios, { type AxiosError } from 'axios'
 import { localStorageKey } from '../constants'
 
 export function signIn(
-  loginData: signIn,
-  callback: (res: IlocalStorage) => void
+  signInData: signIn,
+  callback: (res: SigninRes) => void
 ): void {
   axios
-    .post('/auth/login', loginData)
+    .post('/auth/signin', signInData)
     .then((res): void => {
       callback(res.data)
     })
     .catch((err: AxiosError) => {
       if (err.response?.status === 401) {
         alert('Password is incorrect.')
+      } else if (err.response?.status === 404) {
+        alert('User not found.')
       } else {
         alert('Unknown Error.')
       }
@@ -81,11 +83,11 @@ export function get42userInfo(
 }
 
 export function getOTPData(
-  userId: number,
+  userName: string,
   callback: (res: { secret: string; qrCode: string }) => void
 ): void {
   axios
-    .get<{ secret: string; qrCode: string }>(`/auth/2fa/setup/${userId}`)
+    .get<{ secret: string; qrCode: string }>(`/auth/2fa/setup/${userName}`)
     .then((res): void => {
       callback(res.data)
     })
@@ -96,7 +98,7 @@ export function getOTPData(
 
 export function enable2FA(
   enableTwoFactorAuth: EnableTwoFactorAuth,
-  callback: (res: any) => void
+  callback: (isEnabled: boolean) => void
 ): void {
   axios
     .post('/auth/2fa/enable', enableTwoFactorAuth)
@@ -139,14 +141,20 @@ export function getIsTwoFactorEnabled(
 
 export function verifyOTP(
   verifyTwoFactorAuth: VerifyTwoFactorAuth,
-  callback: (res: boolean) => void
+  callback: (accessToken: string) => void
 ): void {
   axios
     .post('/auth/2fa/verify', verifyTwoFactorAuth)
     .then((res): void => {
       callback(res.data)
     })
-    .catch((err) => {
-      console.log(err)
+    .catch((err: AxiosError) => {
+      if (err.response?.status === 401) {
+        alert((err.response?.data as any).message)
+      } else if (err.response?.status === 404) {
+        alert((err.response?.data as any).message)
+      } else {
+        alert('Unknown Error.')
+      }
     })
 }
