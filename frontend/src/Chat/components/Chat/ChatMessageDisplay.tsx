@@ -80,6 +80,11 @@ export const MessageDisplay = (props: {
       setShowModal(false)
       alert(userName + ' is already in queue')
     })
+
+    return () => {
+      gameSocket.off('inviteeInMatch')
+      gameSocket.off('inviteeInQueue')
+    }
   }, [])
 
   const handleModalClose = (): void => {
