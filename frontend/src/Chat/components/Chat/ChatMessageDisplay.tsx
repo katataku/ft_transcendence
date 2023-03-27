@@ -83,7 +83,7 @@ export const MessageDisplay = (props: {
 
   const handleInviteButtonClick = (): void => {
     const now = Date.now()
-    if ((now - inviteTime) < 60000) {
+    if (now - inviteTime < 60000) {
       alert('Please wait a bit before sending another invite...')
     } else {
       setInviteTime(now)
