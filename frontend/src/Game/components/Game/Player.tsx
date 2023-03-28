@@ -23,7 +23,12 @@ function Ready(props: { matchID: number; player: IPlayer }): ReactElement {
   if (button === grayButton && props.player.ready) setButton(greenButton)
 
   return (
-    <button data-cy="ready-button" type="button" className={button} onClick={setReady}>
+    <button
+      data-cy="ready-button"
+      type="button"
+      className={button}
+      onClick={setReady}
+    >
       Ready
     </button>
   )
