@@ -27,11 +27,13 @@ import { UserIdParam } from 'src/common/params/user.params';
 import { Response } from 'express';
 import * as fs from 'fs';
 import { promisify } from 'util';
+import { Public } from 'src/auth/public.decorator';
 
 @Controller('user')
 export class UsersController {
   constructor(private service: UsersService) {}
 
+  @Public()
   @Post()
   signUp(@Body() body: UserSignUpReqDto): Promise<UserSignUpResDto> {
     return this.service.createUser(body);
@@ -95,6 +97,7 @@ export class UsersController {
     return this.service.deletePending(body);
   }
 
+  @Public()
   @Get('user_avatar/:id')
   async getAvatar(
     @Param() param: UserIdParam,
@@ -123,6 +126,7 @@ export class UsersController {
     return await this.service.getUserMatchHistory(param.id);
   }
 
+  @Public()
   @Post('check/username-availability')
   async checkUsername(
     @Body() body: UsernameCheckRequestDto,
