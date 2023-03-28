@@ -21,7 +21,9 @@ export function TopPage(): ReactElement {
             </Link>
           </p>
           <p>
-            <Link data-cy="link-to-matchlist" to="MatchList">Move to MatchList</Link>
+            <Link data-cy="link-to-matchlist" to="MatchList">
+              Move to MatchList
+            </Link>
           </p>
           <p>
             <Link data-cy="link-to-gamepage" to="Game" state={0}>
