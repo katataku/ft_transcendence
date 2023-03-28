@@ -1,5 +1,6 @@
 import axios, { type AxiosError } from 'axios'
 import { localStorageKey } from '../constants'
+import jwtAxios from './axiosConfig'
 
 export function signIn(
   signInData: signIn,
@@ -31,7 +32,7 @@ export function validateJwtToken(
     return
   }
 
-  axios
+  jwtAxios
     .get('/auth/protected', {
       headers: {
         Authorization: 'Bearer ' + jwtToken
@@ -86,7 +87,7 @@ export function getOTPData(
   userName: string,
   callback: (res: { secret: string; qrCode: string }) => void
 ): void {
-  axios
+  jwtAxios
     .get<{ secret: string; qrCode: string }>(`/auth/2fa/setup/${userName}`)
     .then((res): void => {
       callback(res.data)
@@ -100,7 +101,7 @@ export function enable2FA(
   enableTwoFactorAuth: EnableTwoFactorAuth,
   callback: (isEnabled: boolean) => void
 ): void {
-  axios
+  jwtAxios
     .post('/auth/2fa/enable', enableTwoFactorAuth)
     .then((res): void => {
       callback(res.data)
@@ -111,7 +112,7 @@ export function enable2FA(
 }
 
 export function disable2FA(userId: number, callback: (res: any) => void): void {
-  axios
+  jwtAxios
     .post('/auth/2fa/disable', { userId })
     .then((res): void => {
       callback(res.data)
@@ -125,7 +126,7 @@ export function getIsTwoFactorEnabled(
   userId: number,
   callback: (res: boolean) => void
 ): void {
-  axios
+  jwtAxios
     .get<boolean>('/auth/2fa/status', {
       params: {
         userId
@@ -143,7 +144,7 @@ export function verifyOTP(
   verifyTwoFactorAuth: VerifyTwoFactorAuth,
   callback: (accessToken: string) => void
 ): void {
-  axios
+  jwtAxios
     .post('/auth/2fa/verify', verifyTwoFactorAuth)
     .then((res): void => {
       callback(res.data)
