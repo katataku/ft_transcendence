@@ -41,6 +41,7 @@ export function TopPage(): ReactElement {
           </p>
           <p>
             <Button
+              data-cy="signout-button"
               onClick={() => {
                 localStorage.removeItem(localStorageKey)
                 setLoginUser(initUser)
