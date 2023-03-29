@@ -26,7 +26,13 @@ import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
 import { UsersService } from '../users/users.service';
 import { UserMatchHistoryDto } from '../common/dto/users.dto';
-import { initPaddle, PowerUP } from './constants';
+import {
+  EndScoreOpts,
+  initPaddle,
+  PaddleOpts,
+  PowerUP,
+  SpeedOpts,
+} from './constants';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
@@ -161,6 +167,9 @@ export class GameGateway {
         id: 0,
         p1: leftUser.userId,
         p2: rightUser.userId,
+        pu_speed: SpeedOpts.Easy,
+        pu_paddle: PaddleOpts.Easy,
+        pu_end_score: EndScoreOpts.Easy,
         winner: 0,
       })
       .then((res) => {

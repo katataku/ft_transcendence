@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from 'class-validator';
 
 export class MatchDto {
   @IsNumber()
@@ -7,6 +7,12 @@ export class MatchDto {
   p1: number;
   @IsNumber()
   p2: number;
+  @IsString()
+  pu_speed: string;
+  @IsString()
+  pu_paddle: string;
+  @IsString()
+  pu_end_score: string;
   @IsNumber()
   winner: number;
 }

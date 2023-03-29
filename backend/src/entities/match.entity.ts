@@ -11,6 +11,15 @@ export class Match {
   @Column({ name: 'p2' })
   p2!: number;
 
+  @Column({ name: 'pu_speed' })
+  pu_speed!: string;
+
+  @Column({ name: 'pu_paddle' })
+  pu_paddle!: string;
+
+  @Column({ name: 'pu_end_score' })
+  pu_end_score!: string;
+
   @Column({ name: 'winner' })
   winner!: number;
 }
