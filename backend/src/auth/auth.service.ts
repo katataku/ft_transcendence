@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import axios from 'axios';
+import axios, { type AxiosResponse } from 'axios';
 import { toDataURL } from 'qrcode';
 import { authenticator } from 'otplib';
 import { JwtService } from '@nestjs/jwt';
@@ -50,7 +50,7 @@ export class AuthService {
   async request42Info(token: string) {
     const url = 'https://api.intra.42.fr/v2/me';
     const headers = { Authorization: `Bearer ${token}` };
-    let res;
+    let res: AxiosResponse;
     try {
       res = await axios.get(url, { headers });
     } catch (err) {
