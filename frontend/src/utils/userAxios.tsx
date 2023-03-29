@@ -48,6 +48,17 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
     })
 }
 
+export function signIn42(token: string, callback:(res: any) => void): void {
+  axios
+    .get(`auth/42/login/${token}`)
+    .then((res) => {
+      callback(res.data)
+    })
+    .catch((err) => {
+      alert(err)
+    })
+}
+
 export async function getAvatar(userId: number): Promise<string> {
   const res = await jwtAxios.get<string>(`/user/user_avatar/${userId}`)
   return res.data

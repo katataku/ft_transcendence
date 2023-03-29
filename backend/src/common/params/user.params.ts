@@ -9,3 +9,8 @@ export class Auth42Param {
   @IsString()
   code: string;
 }
+
+export class login42Param {
+  @IsString()
+  token: string
+}

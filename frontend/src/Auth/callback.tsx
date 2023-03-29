@@ -6,7 +6,8 @@ export function Auth42callback(): ReactElement {
     const code = new URLSearchParams(window.location.search).get('code')
     if (code !== null) {
       request42AuthToken(code, (token) => {
-        localStorage.setItem('42AuthToken', token)
+        localStorage.setItem('42token', token)
+        window.location.href = '/'
       })
     }
   }, [])

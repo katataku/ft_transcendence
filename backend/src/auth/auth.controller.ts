@@ -9,8 +9,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Auth42Param } from 'src/common/params/user.params';
-import { UserSignInDto } from 'src/common/dto/users.dto';
+import { Auth42Param, login42Param } from 'src/common/params/user.params';
+import { UserGetDto, UserSignInDto } from 'src/common/dto/users.dto';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { UsersService } from 'src/users/users.service';
 import { SigninResDto } from 'src/common/dto/auth.dto';
@@ -61,5 +61,16 @@ export class AuthController {
       Logger.log(err);
     }
     return token;
+  }
+
+  @Public()
+  @Get('42/login/:token')
+  async login42(@Param() param: login42Param): Promise<UserGetDto> {
+    try {
+      const user42 = await this.service.request42Info(param.token);
+      return await this.usersService.signInUser({name: user42.login, password: user42.login})
+    } catch (err) {
+      Logger.error(err);
+    }
   }
 }

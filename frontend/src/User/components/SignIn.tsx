@@ -1,9 +1,9 @@
-import { type ReactElement, useContext } from 'react'
+import { type ReactElement, useContext, useEffect } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
-import { checkUsernameAvailability, signUp } from '../../utils/userAxios'
+import { checkUsernameAvailability, signIn42, signUp } from '../../utils/userAxios'
 import { BaseURL, initUser, localStorageKey } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
@@ -37,6 +37,20 @@ export function SignIn(): ReactElement {
   function toggleShowPassword(): void {
     setShowPassword(!showPassword)
   }
+
+  useEffect(() => {
+    const token42 = localStorage.getItem('42token')
+    if (token42 != null) {
+      signIn42(token42, (res) => {
+        const loggedInUser: User = {
+          id: res.id,
+          name: res.name
+        }
+        console.log(loggedInUser);
+        setLoginUser(loggedInUser)
+      })
+    }
+  }, [])
 
   function handleSuccessfulSignIn(res: SigninRes): void {
     // 2faが有効なら、2faの確認モーダルを表示します。
