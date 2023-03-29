@@ -40,6 +40,16 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
     gameSocket.on('inQueue', () => {
       alert('Already in matching queue...')
     })
+    gameSocket.on('inMatch', () => {
+      alert('Already in Match...')
+    })
+
+    return () => {
+      gameSocket.off('matchFound')
+      gameSocket.off('matching')
+      gameSocket.off('inQueue')
+      gameSocket.off('inMatch')
+    }
   }, [])
 
   const handleClick = (): void => {
@@ -110,6 +120,9 @@ export function Game(): ReactElement {
       setMatch(serverMatch)
       setHasResponse(true)
     })
+    return () => {
+      gameSocket.off('updateConnections')
+    }
   }, [])
 
   function matchPending(): boolean {

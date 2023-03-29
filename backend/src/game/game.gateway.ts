@@ -13,6 +13,7 @@ import {
   EStatus,
   IUserQueue,
   IScore,
+  IClient,
 } from './types/game.model';
 import * as GameSetting from './constants';
 import {
@@ -38,7 +39,9 @@ export class GameGateway {
   private logger: Logger = new Logger('GameGateway');
 
   private serverMatches: Map<number, IMatch> = new Map<number, IMatch>();
-  private connectedClients: Map<string, Socket> = new Map<string, Socket>();
+  private connectedClients: Map<string, IClient> = new Map<string, IClient>();
+  // <userName, socketId>
+  private matchedUsers: Map<string, string> = new Map<string, string>();
   private connectedUsers: Map<string, IUserQueue> = new Map<
     string,
     IUserQueue
@@ -52,7 +55,7 @@ export class GameGateway {
 
   handleConnection(@ConnectedSocket() client: Socket) {
     this.logger.log(`Client connected: ${client.id}`);
-    this.connectedClients.set(client.id, client);
+    this.connectedClients.set(client.id, { socket: client, userName: '' });
   }
 
   handleDisconnect(@ConnectedSocket() client: Socket) {
@@ -60,6 +63,13 @@ export class GameGateway {
     this.userQueue = this.userQueue.filter(
       (element) => !(element.clientId === client.id),
     );
+    const user = this.connectedClients.get(client.id);
+    if (
+      this.matchedUsers.has(user.userName) &&
+      this.matchedUsers.get(user.userName) === client.id
+    ) {
+      this.matchedUsers.set(user.userName, '');
+    }
     this.connectedClients.delete(client.id);
   }
 
@@ -133,6 +143,8 @@ export class GameGateway {
             });
           this.userService.updateUserMatchHistory(winner.id, 'wins');
           this.userService.updateUserMatchHistory(loser.id, 'losses');
+          this.matchedUsers.delete(match.leftPlayer.name);
+          this.matchedUsers.delete(match.rightPlayer.name);
           map.delete(key);
         }
       });
@@ -158,17 +170,20 @@ export class GameGateway {
         const newMatch = this.serverMatches.get(res.id);
         newMatch.id = res.id;
         newMatch.leftPlayer = deepCopy(GameSetting.initLeftProfile);
-        newMatch.leftPlayer.socketID = leftSocket.id;
+        newMatch.leftPlayer.socketID = leftSocket.socket.id;
         newMatch.leftPlayer.name = leftUser.userName;
         newMatch.leftPlayer.id = leftUser.userId;
         newMatch.leftPlayer.matchHistory = leftHist;
         newMatch.rightPlayer = deepCopy(GameSetting.initRightProfile);
-        newMatch.rightPlayer.socketID = rightSocket.id;
+        newMatch.rightPlayer.socketID = rightSocket.socket.id;
         newMatch.rightPlayer.name = rightUser.userName;
         newMatch.rightPlayer.id = rightUser.userId;
         newMatch.rightPlayer.matchHistory = rightHist;
-        if (leftSocket !== undefined) leftSocket.join(res.id.toString());
-        if (rightSocket !== undefined) rightSocket.join(res.id.toString());
+        if (leftSocket !== undefined) leftSocket.socket.join(res.id.toString());
+        if (rightSocket !== undefined)
+          rightSocket.socket.join(res.id.toString());
+        this.matchedUsers.set(leftUser.userName, leftUser.clientId);
+        this.matchedUsers.set(rightUser.userName, rightUser.clientId);
         this.server.to(res.id.toString()).emit('updateConnections', newMatch);
       })
       .catch((reason) => this.logger.log(reason));
@@ -179,6 +194,10 @@ export class GameGateway {
     @ConnectedSocket() client: Socket,
     @MessageBody() data: { userId: number; userName: string },
   ): Promise<void> {
+    if (this.matchedUsers.has(data.userName)) {
+      this.server.to(client.id).emit('inMatch');
+      return;
+    }
     const queuedUser = this.userQueue.filter(
       (user) => user.userId === data.userId,
     );
@@ -233,7 +252,17 @@ export class GameGateway {
   ): void {
     const invitee = this.connectedUsers.get(data.invitee);
     if (invitee === undefined) return;
-    this.server.to(invitee.clientId).emit('inviteMatching', data.inviter);
+
+    if (this.userQueue.find((user) => user.userName === invitee.userName)) {
+      // invitee is in queue already
+      this.server.to(client.id).emit('inviteeInQueue', invitee.userName);
+    } else if (this.matchedUsers.get(invitee.userName) !== undefined) {
+      // invitee is in a match already
+      this.server.to(client.id).emit('inviteeInMatch', invitee.userName);
+    } else {
+      // invitee is available
+      this.server.to(invitee.clientId).emit('inviteMatching', data.inviter);
+    }
   }
 
   @SubscribeMessage('inviteAccepted')
@@ -296,27 +325,42 @@ export class GameGateway {
     @MessageBody() data: { matchID: number; userName: string },
   ): void {
     let currentMatch = undefined;
-    for (const [_key, match] of this.serverMatches) {
-      if (
-        match.leftPlayer !== undefined &&
-        match.leftPlayer.name === data.userName
-      ) {
-        match.leftPlayer.socketID = client.id;
-        client.join(match.id.toString());
-      } else if (
-        match.rightPlayer !== undefined &&
-        match.rightPlayer.name === data.userName
-      ) {
-        match.rightPlayer.socketID = client.id;
-        client.join(match.id.toString());
-      } else if (match.id === data.matchID) {
-        // もし観戦しようとしていたら。
-        // defaultはmatch.id = 0なので観戦しようとする時だけmatch.id > 0
-        client.join(match.id.toString());
-      } else continue;
-      currentMatch = match;
-      break;
+    this.connectedClients.set(client.id, {
+      socket: client,
+      userName: data.userName,
+    });
+
+    const matchedUserSocket = this.matchedUsers.get(data.userName);
+    if (
+      matchedUserSocket === undefined || // ユーザーがマッチしていない場合（ビューワー）、
+      matchedUserSocket === '' || // またはユーザーがマッチしているが切断されている場合にのみ
+      matchedUserSocket === client.id // または「戻る」「進む」ボタンが押された状態、マッチを検索
+    ) {
+      for (const [_key, match] of this.serverMatches) {
+        if (
+          match.leftPlayer !== undefined &&
+          match.leftPlayer.name === data.userName
+        ) {
+          match.leftPlayer.socketID = client.id;
+          this.matchedUsers.set(data.userName, client.id);
+          client.join(match.id.toString());
+        } else if (
+          match.rightPlayer !== undefined &&
+          match.rightPlayer.name === data.userName
+        ) {
+          match.rightPlayer.socketID = client.id;
+          this.matchedUsers.set(data.userName, client.id);
+          client.join(match.id.toString());
+        } else if (match.id === data.matchID) {
+          // もし観戦しようとしていたら。
+          // defaultはmatch.id = 0なので観戦しようとする時だけmatch.id > 0
+          client.join(match.id.toString());
+        } else continue;
+        currentMatch = match;
+        break;
+      }
     }
+
     if (currentMatch === undefined)
       this.server.to(client.id).emit('updateConnections');
     else this.server.to(client.id).emit('updateConnections', currentMatch);
