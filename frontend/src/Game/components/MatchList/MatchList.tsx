@@ -3,9 +3,6 @@ import { useNavigate } from 'react-router-dom'
 import { getMatches } from '../../../utils/matchAxios'
 import { getAllUsersRequest } from '../../../utils/userAxios'
 import ListGroup from 'react-bootstrap/ListGroup'
-import axios from 'axios'
-
-axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
 
 function listMatches(matches: MatchDto[], users: User[]): ReactElement[] {
   const navigate = useNavigate()

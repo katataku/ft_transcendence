@@ -1,10 +1,9 @@
 import axios from 'axios'
 import { defaultAvatar } from '../User/components/SignIn'
-
-axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
+import jwtAxios from './axiosConfig'
 
 export function getAllUsersRequest(callback: (users: User[]) => void): void {
-  axios
+  jwtAxios
     .get<User[]>('/user/users')
     .then((response) => {
       callback(response.data)
@@ -19,7 +18,7 @@ export function getUserRequest(
   userId: number,
   callback: (user: User) => void
 ): void {
-  axios
+  jwtAxios
     .get<User>('/user/' + String(userId))
     .then((response) => {
       callback(response.data)
@@ -50,7 +49,7 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
 }
 
 export async function getAvatar(userId: number): Promise<string> {
-  const res = await axios.get<string>(`/user/user_avatar/${userId}`)
+  const res = await jwtAxios.get<string>(`/user/user_avatar/${userId}`)
   return res.data
 }
 
@@ -58,7 +57,7 @@ export function getFriendRequest(
   userId: number,
   callback: (user: User[]) => void
 ): void {
-  axios
+  jwtAxios
     .get<User[]>('/user/friends/' + String(userId))
     .then((response) => {
       callback(response.data)
@@ -73,7 +72,7 @@ export function getFriendPendingRequest(
   userId: number,
   callback: (user: User[]) => void
 ): void {
-  axios
+  jwtAxios
     .get<User[]>('/user/friends/pending/' + String(userId))
     .then((response) => {
       callback(response.data)
@@ -88,7 +87,7 @@ export function updateFriendPendingRequest(
   requestData: FriendRequestDto,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .post('/user/friends', requestData)
     .then((_response) => {
       callback()
@@ -107,7 +106,7 @@ export function deleteFriendRequest(
   const requestData: UserFriendDeleteRequestDto = {
     friendUserId: friendID
   }
-  axios
+  jwtAxios
     .delete<UserFriendDeleteRequestDto>('/user/friends/' + String(userID), {
       data: requestData
     })
@@ -124,7 +123,7 @@ export function deleteFriendPendingRequest(
   requestData: FriendRequestDto,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .delete<FriendRequestDto>('/user/friends/pending', { data: requestData })
     .then((_response) => {
       callback()
@@ -139,7 +138,7 @@ export function getFriendsRequest(
   userId: number,
   callback: (user: User[]) => void
 ): void {
-  axios
+  jwtAxios
     .get<User[]>('/user/friends/' + String(userId))
     .then((response) => {
       callback(response.data)
@@ -154,7 +153,7 @@ export function getMatchHistoryById(
   id: number,
   callback: (matchHistory: UserMatchHistoryDto) => void
 ): void {
-  axios
+  jwtAxios
     .get<UserMatchHistoryDto>('/user/match_history/' + String(id))
     .then((response) => {
       callback(response.data)

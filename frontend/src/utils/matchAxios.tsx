@@ -1,10 +1,10 @@
-import axios from 'axios'
+import jwtAxios from './axiosConfig'
 
 export function createMatch(
   match: MatchDto,
   callback: (id: number | undefined) => void
 ): void {
-  axios
+  jwtAxios
     .post<MatchDto>('/match', match)
     .then((response) => {
       callback(response.data.id)
@@ -15,7 +15,7 @@ export function createMatch(
 }
 
 export function getMatches(callback: (matches: MatchDto[]) => void): void {
-  axios
+  jwtAxios
     .get<MatchDto[]>('/match/matches')
     .then((response) => {
       callback(response.data)
@@ -29,7 +29,7 @@ export function getMatchById(
   id: number,
   callback: (match: MatchDto) => void
 ): void {
-  axios
+  jwtAxios
     .get<MatchDto>('/match/' + String(id))
     .then((response) => {
       callback(response.data)
@@ -40,7 +40,7 @@ export function getMatchById(
 }
 
 export function postMatchResult(matchResult: MatchResultDto): void {
-  axios
+  jwtAxios
     .post<MatchDto>('/match/result/' + String(matchResult.id), matchResult)
     .then((_response) => {})
     .catch((err) => {

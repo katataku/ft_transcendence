@@ -1,10 +1,10 @@
-import axios from 'axios'
+import jwtAxios from './axiosConfig'
 
 export function updateChatDMMembersRequest(
   requestData: ChatDMMembersPK,
   callback: (chatDMMembers: ChatDMMembers) => void
 ): void {
-  axios
+  jwtAxios
     .post<ChatDMMembers>('/chatDMMembers', requestData)
     .then((response) => {
       callback(response.data)
