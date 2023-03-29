@@ -48,7 +48,7 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
     })
 }
 
-export function signIn42(token: string, callback:(res: any) => void): void {
+export function signIn42(token: string, callback: (res: any) => void): void {
   axios
     .get(`auth/42/login/${token}`)
     .then((res) => {

@@ -3,8 +3,17 @@ import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
-import { checkUsernameAvailability, signIn42, signUp } from '../../utils/userAxios'
-import { BaseURL, LSKey42Token, initUser, localStorageKey } from '../../constants'
+import {
+  checkUsernameAvailability,
+  signIn42,
+  signUp
+} from '../../utils/userAxios'
+import {
+  BaseURL,
+  LSKey42Token,
+  initUser,
+  localStorageKey
+} from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
 import { signIn, validateJwtToken } from '../../utils/authAxios'

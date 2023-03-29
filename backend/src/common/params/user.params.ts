@@ -12,5 +12,5 @@ export class Auth42Param {
 
 export class login42Param {
   @IsString()
-  token: string
+  token: string;
 }
