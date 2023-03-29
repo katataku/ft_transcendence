@@ -1,18 +1,21 @@
 import axios, { type AxiosError } from 'axios'
 import { localStorageKey } from '../constants'
+import jwtAxios from './axiosConfig'
 
 export function signIn(
-  loginData: signIn,
-  callback: (res: IlocalStorage) => void
+  signInData: signIn,
+  callback: (res: SigninRes) => void
 ): void {
   axios
-    .post('/auth/login', loginData)
+    .post('/auth/signin', signInData)
     .then((res): void => {
       callback(res.data)
     })
     .catch((err: AxiosError) => {
       if (err.response?.status === 401) {
         alert('Password is incorrect.')
+      } else if (err.response?.status === 404) {
+        alert('User not found.')
       } else {
         alert('Unknown Error.')
       }
@@ -29,7 +32,7 @@ export function validateJwtToken(
     return
   }
 
-  axios
+  jwtAxios
     .get('/auth/protected', {
       headers: {
         Authorization: 'Bearer ' + jwtToken
@@ -65,11 +68,11 @@ export function request42AuthToken(
 }
 
 export function getOTPData(
-  userId: number,
+  userName: string,
   callback: (res: { secret: string; qrCode: string }) => void
 ): void {
-  axios
-    .get<{ secret: string; qrCode: string }>(`/auth/2fa/setup/${userId}`)
+  jwtAxios
+    .get<{ secret: string; qrCode: string }>(`/auth/2fa/setup/${userName}`)
     .then((res): void => {
       callback(res.data)
     })
@@ -80,9 +83,9 @@ export function getOTPData(
 
 export function enable2FA(
   enableTwoFactorAuth: EnableTwoFactorAuth,
-  callback: (res: any) => void
+  callback: (isEnabled: boolean) => void
 ): void {
-  axios
+  jwtAxios
     .post('/auth/2fa/enable', enableTwoFactorAuth)
     .then((res): void => {
       callback(res.data)
@@ -93,7 +96,7 @@ export function enable2FA(
 }
 
 export function disable2FA(userId: number, callback: (res: any) => void): void {
-  axios
+  jwtAxios
     .post('/auth/2fa/disable', { userId })
     .then((res): void => {
       callback(res.data)
@@ -107,7 +110,7 @@ export function getIsTwoFactorEnabled(
   userId: number,
   callback: (res: boolean) => void
 ): void {
-  axios
+  jwtAxios
     .get<boolean>('/auth/2fa/status', {
       params: {
         userId
@@ -123,14 +126,20 @@ export function getIsTwoFactorEnabled(
 
 export function verifyOTP(
   verifyTwoFactorAuth: VerifyTwoFactorAuth,
-  callback: (res: boolean) => void
+  callback: (accessToken: string) => void
 ): void {
-  axios
+  jwtAxios
     .post('/auth/2fa/verify', verifyTwoFactorAuth)
     .then((res): void => {
       callback(res.data)
     })
-    .catch((err) => {
-      console.log(err)
+    .catch((err: AxiosError) => {
+      if (err.response?.status === 401) {
+        alert((err.response?.data as any).message)
+      } else if (err.response?.status === 404) {
+        alert((err.response?.data as any).message)
+      } else {
+        alert('Unknown Error.')
+      }
     })
 }

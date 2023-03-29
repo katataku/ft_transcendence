@@ -1,11 +1,9 @@
-import axios from 'axios'
-
-axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
+import jwtAxios from './axiosConfig'
 
 export function getChatRoomMembersRequest(
   callback: (members: ChatRoomMember[]) => void
 ): void {
-  axios
+  jwtAxios
     .get<ChatRoomMember[]>('/chatRoomMembers')
     .then((response) => {
       callback(
@@ -32,7 +30,7 @@ export function updateChatRoomMembersRequest(
   requestData: ChatRoomMember,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .post<ChatRoom>('/chatRoomMembers', requestData)
     .then((_response) => {
       callback()
@@ -47,7 +45,7 @@ export function deleteChatRoomMembersRequest(
   requestData: ChatRoomMemberPK,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .delete<ChatRoom>('/chatRoomMembers', { data: requestData })
     .then((_response) => {
       // 100ms後に更新する

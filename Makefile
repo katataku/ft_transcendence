@@ -1,8 +1,7 @@
-ENV_FILE=./config/.env_docker
 DC_CMD=docker compose
 #提出前に以下の行はコメントアウトすることでswaggerが起動しなくなる。
 DC_PROFILE=--profile debug
-DC_OPTIONS=--env-file ${ENV_FILE} -f ./docker-compose.yml ${DC_PROFILE}
+DC_OPTIONS=-f ./docker-compose.yml ${DC_PROFILE}
 
 include ${ENV_FILE}
 
@@ -22,18 +21,20 @@ clean:
 .PHONY:fclean
 fclean: down clean prune
 
+.PHONY:make-db-dir
+make-db-dir:
+	mkdir -p ./db-data
+
 .PHONY:build
 build:
 	${DC_CMD} ${DC_OPTIONS} build
 
 .PHONY:up
-up:
-	mkdir -p ${DB_STORAGE_DIR}
+up:make-db-dir
 	${DC_CMD} ${DC_OPTIONS} up
 
 .PHONY:up-d
-up-d:
-	mkdir -p ${DB_STORAGE_DIR}
+up-d:make-db-dir
 	${DC_CMD} ${DC_OPTIONS} up -d
 
 .PHONY:down
@@ -58,8 +59,7 @@ lint-dockerfile:
 	docker run --rm -i hadolint/hadolint hadolint - --style 'DL3007' < ./frontend/Dockerfile
 
 .PHONY:back
-back:
-	mkdir -p ${DB_STORAGE_DIR}
+back:make-db-dir
 	${DC_CMD} ${DC_OPTIONS} up db backend swagger swagger-editor
 
 .PHONY:create

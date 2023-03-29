@@ -23,30 +23,16 @@ export class TwoFactorAuthController {
 
   private logger: Logger = new Logger('TwoFactorAuthController');
 
-  @Get('setup/:userId')
+  @Get('setup/:userName')
   async getOTPData(
-    @Param('userId') userId: number,
+    @Param('userName') userName: string,
   ): Promise<{ secret: string; qrCode: string }> {
-    const secret = this.authService.generateSecret();
-    const qrCode = await this.authService.generateQrCode(
-      secret,
-      userId.toString(),
-    );
-    return {
-      secret: secret,
-      qrCode: qrCode,
-    };
+    return await this.authService.getOTPData(userName);
   }
 
   @Post('enable')
-  async enable(@Body() data: EnableTwoFactorAuthDto) {
-    const isValid = this.authService.verifyToken(data.secret, data.token);
-    if (isValid) {
-      await this.usersService.enableTwoFactor(data.userId, data.secret);
-      return 'Logged in successfully';
-    } else {
-      return 'Invalid token';
-    }
+  async enable(@Body() data: EnableTwoFactorAuthDto): Promise<boolean> {
+    return await this.authService.enable(data);
   }
 
   @Post('disable')
@@ -60,18 +46,7 @@ export class TwoFactorAuthController {
   }
 
   @Post('verify')
-  async verifyOtp(@Body() data: VerifyTwoFactorAuthDto): Promise<boolean> {
-    const secret = await this.usersService.getOTPSecret(data.userId);
-    if (secret === null) {
-      return false;
-    }
-
-    const isValid = this.authService.verifyToken(secret, data.token);
-    if (isValid) {
-      this.logger.log('2fa Logged in successfully');
-    } else {
-      this.logger.log('2fa Invalid token');
-    }
-    return isValid;
+  async verifyOtp(@Body() data: VerifyTwoFactorAuthDto): Promise<string> {
+    return await this.authService.verifyOtp(data);
   }
 }

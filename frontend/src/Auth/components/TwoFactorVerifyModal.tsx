@@ -1,14 +1,16 @@
-import React, { type ReactElement, useState } from 'react'
+import React, { type ReactElement, useState, useContext } from 'react'
 import { Form, Button, Modal } from 'react-bootstrap'
-import { verifyOTP } from '../../utils/authAxios'
+import { localStorageKey } from '../../constants'
+import { GameSocketContext } from '../../Game/utils/gameSocketContext'
+import { validateJwtToken, verifyOTP } from '../../utils/authAxios'
 
 export function TwoFactorVerifyModal(props: {
   show: boolean
-  setShow: (bool: boolean) => void
   handleClose: () => void
-  registeringUser: User
+  userTryingToLogin: User
   setLoginUser: (user: User) => void
 }): ReactElement {
+  const gameSocket = useContext(GameSocketContext)
   const [token, setToken] = useState('')
   const [isInvalid, setIsInvalid] = useState(false)
 
@@ -20,18 +22,23 @@ export function TwoFactorVerifyModal(props: {
     }
 
     const obj: VerifyTwoFactorAuth = {
-      userId: props.registeringUser.id,
+      userId: props.userTryingToLogin.id,
       token
     }
 
-    verifyOTP(obj, (res: boolean) => {
-      if (res) {
-        console.log('verify')
-        props.setLoginUser(props.registeringUser)
-        props.setShow(false)
-      } else {
-        console.log('code invalid')
-      }
+    verifyOTP(obj, (accessToken: string) => {
+      localStorage.setItem(localStorageKey, accessToken)
+      validateJwtToken(
+        (res: jwtPayload) => {
+          const loggedInUser: User = {
+            id: res.userId,
+            name: res.userName
+          }
+          gameSocket.emit('loggedIn', loggedInUser)
+          props.setLoginUser(props.userTryingToLogin)
+        },
+        () => {}
+      )
     })
     event.preventDefault()
   }

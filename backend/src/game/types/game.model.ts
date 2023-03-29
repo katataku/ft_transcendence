@@ -1,4 +1,5 @@
 import { UserMatchHistoryDto } from '../../common/dto/users.dto';
+import { Socket } from 'socket.io';
 
 export interface Vector2 {
   x: number;
@@ -63,5 +64,10 @@ export interface IMatch {
 export interface IUserQueue {
   clientId: string;
   userId: number;
+  userName: string;
+}
+
+export interface IClient {
+  socket: Socket;
   userName: string;
 }

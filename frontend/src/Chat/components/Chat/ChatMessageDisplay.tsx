@@ -71,6 +71,22 @@ export const MessageDisplay = (props: {
   const [showModal, setShowModal] = useState(false)
   const [targetUser, setTargetUser] = useState<User>({ id: 0, name: '' })
 
+  useEffect(() => {
+    gameSocket.on('inviteeInMatch', (userName: string) => {
+      setShowModal(false)
+      alert(userName + ' is already in a match')
+    })
+    gameSocket.on('inviteeInQueue', (userName: string) => {
+      setShowModal(false)
+      alert(userName + ' is already in queue')
+    })
+
+    return () => {
+      gameSocket.off('inviteeInMatch')
+      gameSocket.off('inviteeInQueue')
+    }
+  }, [])
+
   const handleModalClose = (): void => {
     setShowModal(false)
   }

@@ -1,10 +1,10 @@
-import axios from 'axios'
+import jwtAxios from './axiosConfig'
 
 export function getChatBlockUserRequest(
   user: User,
   callback: (members: blockUserList[]) => void
 ): void {
-  axios
+  jwtAxios
     .get('/chat-block-user/' + String(user.id))
     .then((response) => {
       callback(response.data)
@@ -18,7 +18,7 @@ export function updateChatBlockUserRequest(
   newBlockUser: blockUserList,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .post<blockUserList>('/chat-block-user', newBlockUser)
     .then(callback)
     .catch((reason) => {
@@ -31,7 +31,7 @@ export function deleteChatBlockUserRequest(
   deleteBlockUser: blockUserListPK,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .delete('/chat-block-user', { data: deleteBlockUser })
     .then((_response) => {
       // 100ms後に更新する

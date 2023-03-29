@@ -1,11 +1,9 @@
-import axios from 'axios'
-
-axios.defaults.baseURL = process.env.REACT_APP_BACKEND_HTTP_BASE_URL
+import jwtAxios from './axiosConfig'
 
 export function getChatRoomRequest(
   callback: (value: ChatRoom[]) => void
 ): void {
-  axios
+  jwtAxios
     .get<ChatRoom[]>('/chatRoom')
     .then((response) => {
       callback(response.data)
@@ -19,7 +17,7 @@ export function getChatRoomIdRequest(
   roomId: number,
   callback: (value: ChatRoom) => void
 ): void {
-  axios
+  jwtAxios
     .get<ChatRoom[]>('/chatRoom')
     .then((response) => {
       response.data
@@ -34,7 +32,7 @@ export function getChatRoomIdRequest(
 }
 
 export function deleteChatRoomRequest(room: ChatRoom): void {
-  axios
+  jwtAxios
     .delete('/chatRoom/' + String(room.id))
     .then((_response) => {})
     .catch((reason) => {
@@ -47,7 +45,7 @@ export function createChatRoomRequest(
   requestData: ChatRoomReqDto,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .post<ChatRoom>('/chatRoom', requestData)
     .then((_response) => {
       callback()
@@ -63,7 +61,7 @@ export function updateChatRoomRequest(
   requestData: ChatRoomReqDto,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .post<ChatRoom>('/chatRoom/' + String(room.id), requestData)
     .then((_response) => {
       callback()
@@ -79,7 +77,7 @@ export function chatRoomAuthRequest(
   requestData: ChatRoomAuthReqDto,
   callback: () => void
 ): void {
-  axios
+  jwtAxios
     .post('/chatRoom/' + String(room.id) + '/auth', requestData)
     .then(() => {
       callback()
