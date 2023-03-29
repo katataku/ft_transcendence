@@ -21,10 +21,9 @@ import { initUser } from './constants'
 // interfaceの初期化をしろとeslintに怒られますが、Setterは初期化できないため、ここだけeslintを無視します。
 export const GlobalContext = createContext<GlobalContext>({} as GlobalContext) // eslint-disable-line
 
-let didInit = false
-
 export function App(): ReactElement {
   const [loginUser, setLoginUser] = useState<User>(initUser)
+  const [hasResponse, setHasResponse] = useState<boolean>(false)
   const gameSocket = useContext(GameSocketContext)
 
   const context: GlobalContext = {
@@ -33,19 +32,21 @@ export function App(): ReactElement {
   }
 
   useEffect(() => {
-    if (!didInit) {
-      didInit = true
-      // リロードしたときにログイン状態を維持するために、jwtを検証します。
-      validateJwtToken(
-        (res: jwtPayload) => {
-          const loggedInUser: User = { id: res.userId, name: res.userName }
-          gameSocket.emit('loggedIn', loggedInUser)
-          setLoginUser(loggedInUser)
-        },
-        () => {}
-      )
-    }
+    // リロードしたときにログイン状態を維持するために、jwtを検証します。
+    validateJwtToken(
+      (res: jwtPayload) => {
+        const loggedInUser: User = { id: res.userId, name: res.userName }
+        gameSocket.emit('loggedIn', loggedInUser)
+        setLoginUser(loggedInUser)
+        setHasResponse(true)
+      },
+      () => {
+        setHasResponse(true)
+      }
+    )
   }, [])
+
+  if (!hasResponse) return <></>
 
   // prettier-ignore
   return (

@@ -133,6 +133,8 @@ export function Game(): ReactElement {
     )
   }
 
+  if (!hasResponse) return <></>
+
   return matchPending() ? (
     <Matching hasResponse={hasResponse} />
   ) : (
