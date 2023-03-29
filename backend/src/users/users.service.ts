@@ -38,7 +38,7 @@ export class UsersService {
 
   async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
     if (await this.usersRepository.findOne({ where: { name: data.name } })) {
-      throw Error('Error: Name already in use.'); //42authの初期認証を判定
+      throw new Error('Name already in use.'); //42authの初期認証を判定
     }
     const obj: User = {
       id: null,

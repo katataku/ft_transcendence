@@ -50,7 +50,7 @@ export class AuthController {
     Logger.log(`42login => ${user42.login}`);
 
     try {
-      this.usersService.createUser({
+      await this.usersService.createUser({
         name: user42.login,
         password: user42.login,
         avatar: await this.service.getAvatar42(user42.image.link),
