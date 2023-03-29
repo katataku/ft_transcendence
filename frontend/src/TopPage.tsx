@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import { SignIn } from './User/components/SignIn'
 import { GlobalContext } from './App'
-import { initUser, localStorageKey } from './constants'
+import { LSKey42Token, initUser, localStorageKey } from './constants'
 
 export function TopPage(): ReactElement {
   const { loginUser, setLoginUser } = useContext(GlobalContext)
@@ -43,6 +43,7 @@ export function TopPage(): ReactElement {
             <Button
               onClick={() => {
                 localStorage.removeItem(localStorageKey)
+                localStorage.removeItem(LSKey42Token)
                 setLoginUser(initUser)
               }}
             >

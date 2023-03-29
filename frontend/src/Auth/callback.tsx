@@ -1,12 +1,13 @@
 import { useEffect, type ReactElement } from 'react'
 import { request42AuthToken } from '../utils/authAxios'
+import { LSKey42Token } from '../constants'
 
 export function Auth42callback(): ReactElement {
   useEffect(() => {
     const code = new URLSearchParams(window.location.search).get('code')
     if (code !== null) {
       request42AuthToken(code, (token) => {
-        localStorage.setItem('42token', token)
+        localStorage.setItem(LSKey42Token, token)
         window.location.href = '/'
       })
     }

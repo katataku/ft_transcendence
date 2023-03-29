@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
 import { checkUsernameAvailability, signIn42, signUp } from '../../utils/userAxios'
-import { BaseURL, initUser, localStorageKey } from '../../constants'
+import { BaseURL, LSKey42Token, initUser, localStorageKey } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
 import { signIn, validateJwtToken } from '../../utils/authAxios'
@@ -39,15 +39,13 @@ export function SignIn(): ReactElement {
   }
 
   useEffect(() => {
-    const token42 = localStorage.getItem('42token')
+    const token42 = localStorage.getItem(LSKey42Token)
     if (token42 != null) {
       signIn42(token42, (res) => {
-        const loggedInUser: User = {
+        setLoginUser({
           id: res.id,
           name: res.name
-        }
-        console.log(loggedInUser);
-        setLoginUser(loggedInUser)
+        })
       })
     }
   }, [])
