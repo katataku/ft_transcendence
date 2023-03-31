@@ -7,6 +7,7 @@ export function Auth42callback(): ReactElement {
     const code = new URLSearchParams(window.location.search).get('code')
     if (code !== null) {
       request42AuthToken(code, (token) => {
+        console.log(token)
         if (token.length !== 0) {
           localStorage.setItem(LSKey42Token, token)
           window.location.href = '/'

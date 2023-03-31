@@ -45,20 +45,22 @@ export class AuthController {
   @Public()
   @Get('42/:code')
   async auth42(@Param() param: Auth42Param): Promise<string> {
+    let token: string;
     try {
-      const token = await this.service.request42AuthToken(param.code);
+      token = await this.service.request42AuthToken(param.code);
       const user42 = await this.service.request42Info(token);
       Logger.log(`42login => ${user42.login}`);
+      Logger.log(`Token => ${token}`);
 
       await this.usersService.createUser({
         name: user42.login,
         password: user42.login,
         avatar: await this.service.getAvatar42(user42.image.link),
       });
-      return token;
     } catch (err) {
       Logger.log(err);
     }
+    return token;
   }
 
   @Public()

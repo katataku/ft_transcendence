@@ -52,7 +52,6 @@ export class AuthService {
 
     try {
       const res = await axios.post(url, data);
-      Logger.log(res.data);
       return res.data.access_token;
     } catch (err) {
       Logger.error(err);
