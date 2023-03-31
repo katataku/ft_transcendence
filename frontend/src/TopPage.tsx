@@ -21,10 +21,12 @@ export function TopPage(): ReactElement {
             </Link>
           </p>
           <p>
-            <Link to="MatchList">Move to MatchList</Link>
+            <Link data-cy="link-to-matchList" to="MatchList">
+              Move to MatchList
+            </Link>
           </p>
           <p>
-            <Link to="Game" state={0}>
+            <Link data-cy="link-to-gamePage" to="Game" state={0}>
               Move to Game
             </Link>
           </p>
@@ -41,6 +43,7 @@ export function TopPage(): ReactElement {
           </p>
           <p>
             <Button
+              data-cy="signOut-button"
               onClick={() => {
                 localStorage.removeItem(localStorageKey)
                 setLoginUser(initUser)
