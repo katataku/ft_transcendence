@@ -9,6 +9,8 @@ import {
   Put,
   HttpException,
   HttpStatus,
+  Request,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -17,7 +19,6 @@ import {
   UserGetDto,
   UserSignUpReqDto,
   UserSignUpResDto,
-  UserSignInDto,
   UserFriendDeleteRequestDto,
   UserMatchHistoryDto,
   UsernameCheckResponseDto,
@@ -39,11 +40,6 @@ export class UsersController {
     return this.service.createUser(body);
   }
 
-  @Post('sign_in')
-  signIn(@Body() body: UserSignInDto): Promise<UserGetDto> {
-    return this.service.signInUser(body);
-  }
-
   @Get('users')
   getUsers(): Promise<UserGetDto[]> {
     return this.service.getUsers();
@@ -58,12 +54,15 @@ export class UsersController {
   updateUser(
     @Param() param: UserIdParam,
     @Body() body: UserUpdateReqDto,
+    @Request() req,
   ): Promise<UserGetDto> {
+    if (req.user.userId != param.id) throw new ForbiddenException();
     return this.service.updateUser(param.id, body);
   }
 
   @Delete(':id')
-  deleteUser(@Param() param: UserIdParam): Promise<string> {
+  deleteUser(@Param() param: UserIdParam, @Request() req): Promise<string> {
+    if (req.user.userId != param.id) throw new ForbiddenException();
     return this.service.deleteUser(param.id);
   }
 
@@ -71,12 +70,15 @@ export class UsersController {
   deleteFriend(
     @Param() param: UserIdParam,
     @Body() body: UserFriendDeleteRequestDto,
+    @Request() req,
   ): Promise<string> {
+    if (req.user.userId != param.id) throw new ForbiddenException();
     return this.service.deleteFriend(param.id, body.friendUserId);
   }
 
   @Post('friends')
-  requestFriend(@Body() body: FriendRequestDto) {
+  requestFriend(@Body() body: FriendRequestDto, @Request() req) {
+    if (req.user.userId !== body.from) throw new ForbiddenException();
     console.table(body);
     return this.service.requestFriendship(body);
   }
@@ -93,7 +95,9 @@ export class UsersController {
   }
 
   @Delete('friends/pending')
-  deleteFriendPending(@Body() body: FriendRequestDto) {
+  deleteFriendPending(@Body() body: FriendRequestDto, @Request() req) {
+    console.log('deleteFriendPending');
+    if (req.user.userId !== body.from) throw new ForbiddenException();
     return this.service.deletePending(body);
   }
 
