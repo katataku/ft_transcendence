@@ -5,6 +5,8 @@ info:
   description: API Document for ft_transcendence
 servers:
   - url: "http://localhost:3001"
+security:
+  - bearerAuth: []
 
 tags:
   - name: health
@@ -30,6 +32,7 @@ paths:
       tags: 
         - health
       summary: Health check
+      security: []
       description: ヘルスチェック
       responses:
         200:
@@ -44,6 +47,7 @@ paths:
       tags:
         - user
       summary: user
+      security: []
       description: ユーザーの作成
       requestBody:
         description: create a new user
@@ -251,6 +255,7 @@ paths:
       tags:
         - user
       summary: check username duplicate
+      security: []
       requestBody:
         content:
           application/json:
@@ -540,22 +545,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/matches_get'
 
-  /match:
-    post:
-      tags:
-        - match
-      summary: match
-      description: マッチの作成
-      requestBody:
-        description: create a new match
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/match_get'
-      responses:
-        200:
-          description: 成功
-
   /match/{matchID}:
     get:
       tags:
@@ -577,27 +566,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/match_get'
 
-  /match/result/{matchID}:
-    post:
-      tags:
-        - match
-      summary: match result
-      description: マッチの結果
-      requestBody:
-        description: Post match results
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/match_result_post'
-      responses:
-        200:
-          description: 成功
-
-  /auth/login:
+  /auth/signin:
     post:
       tags:
         - auth
       summary: User login
+      security: []
       requestBody:
         required: true
         content:
@@ -617,8 +591,6 @@ paths:
       tags:
         - auth
       summary: Get protected data
-      security:
-        - bearerAuth: []
       responses:
         '200':
           description: OK
@@ -632,6 +604,7 @@ paths:
       tags: 
         - auth
       summary: 42による認証
+      security: []
       parameters:
         - name: code
           required: true
@@ -762,6 +735,7 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+      bearerFormat: JWT
 
   schemas:
     health:
@@ -988,16 +962,6 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/match_get'
-
-    match_result_post:
-      type: object
-      properties:
-        id:
-          type: number
-          example: 1
-        winner:
-          type: number
-          example: 1
 
     EnableTwoFactorAuthDto:
       type: object
