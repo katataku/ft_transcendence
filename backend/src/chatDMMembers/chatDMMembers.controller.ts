@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Param,
+  Post,
+  Request,
+} from '@nestjs/common';
 import {
   ChatDMMembersDto,
   ChatDMMembersPKDto,
@@ -15,12 +24,17 @@ export class ChatDMMembersController {
   }
 
   @Post()
-  post(@Body() data: ChatDMMembersPKDto): Promise<ChatDMMembersDto> {
+  post(
+    @Body() data: ChatDMMembersPKDto,
+    @Request() req,
+  ): Promise<ChatDMMembersDto> {
+    if (req.user.userId !== data.user1Id) throw new ForbiddenException();
     return this.service.createDMMember(data);
   }
 
   @Delete()
-  delete(@Body() data: ChatDMMembersPKDto): Promise<void> {
+  delete(@Body() data: ChatDMMembersPKDto, @Request() req): Promise<void> {
+    if (req.user.userId !== data.user1Id) throw new ForbiddenException();
     return this.service.deleteDMMember(data);
   }
 }
