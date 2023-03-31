@@ -10,15 +10,21 @@ describe('Game - Match Test', () => {
         cy.contains('PONG')
     })
 
-    it('can queue, match, and start game', () => {
+    it('can join matching queue', () => {
+        cy.visit('/')
+        cy.get('button[data-cy="login-as-guest1"]').click()
+        cy.get('a[data-cy="link-to-gamePage"]').click()
+        cy.get('button[data-cy="play-button"]').click()
+        cy.contains('matching...')
+    })
+
+    it('can match and play', () => {
         /*==== Can join queue ====*/
         cy.visit('/')
         // guest 1 login and join queue
         cy.get('button[data-cy="login-as-guest1"]').click()
         cy.get('a[data-cy="link-to-gamePage"]').click()
         cy.get('button[data-cy="play-button"]').click()
-        // Join queue success
-        cy.contains('matching...')
         // guest 1 logout
         cy.go('back')
         cy.get('button[data-cy="signOut-button"]').click()
