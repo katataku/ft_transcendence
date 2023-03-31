@@ -70,6 +70,7 @@ export const MessageDisplay = (props: {
   const gameSocket = useContext(GameSocketContext)
   const [showModal, setShowModal] = useState(false)
   const [targetUser, setTargetUser] = useState<User>({ id: 0, name: '' })
+  const [inviteTime, setInviteTime] = useState<number>(0)
 
   useEffect(() => {
     gameSocket.on('inviteeInMatch', (userName: string) => {
@@ -97,10 +98,16 @@ export const MessageDisplay = (props: {
   }
 
   const handleInviteButtonClick = (): void => {
-    gameSocket.emit('inviteMatching', {
-      inviter: loginUser.name,
-      invitee: targetUser.name
-    })
+    const now = Date.now()
+    if (now - inviteTime < 60000) {
+      alert('Please wait a bit before sending another invite...')
+    } else {
+      setInviteTime(now)
+      gameSocket.emit('inviteMatching', {
+        inviter: loginUser.name,
+        invitee: targetUser.name
+      })
+    }
   }
 
   const makeItem = (item: messageEventType): messageItem => {
