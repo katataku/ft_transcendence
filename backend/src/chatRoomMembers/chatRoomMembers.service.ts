@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   ChatRoomMembersDto,
@@ -45,5 +49,22 @@ export class ChatRoomMembersService {
         },
       });
     this.chatRoomMembersRepository.remove(targetRoomMember);
+  }
+
+  async validateUserAdminOfChatRoom(
+    signedInUserId: number,
+    targetUserId: number,
+    chatRoomId: number,
+  ): Promise<void> {
+    const targetRoomMember: ChatRoomMembers =
+      await this.chatRoomMembersRepository.findOne({
+        where: {
+          chatRoomId: chatRoomId,
+          userId: signedInUserId,
+        },
+      });
+    if (signedInUserId === targetUserId) return;
+    if (!targetRoomMember || !targetRoomMember.isAdministrator)
+      throw new ForbiddenException();
   }
 }

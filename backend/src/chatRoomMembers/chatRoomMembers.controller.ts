@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Post,
+  Request,
+} from '@nestjs/common';
 import {
   ChatRoomMembersDto,
   ChatRoomMembersPKDto,
@@ -15,12 +23,28 @@ export class ChatRoomMembersController {
   }
 
   @Post()
-  post(@Body() data: ChatRoomMembersDto): Promise<ChatRoomMembersDto> {
+  async post(
+    @Body() data: ChatRoomMembersDto,
+    @Request() req,
+  ): Promise<ChatRoomMembersDto> {
+    await this.service.validateUserAdminOfChatRoom(
+      req.user.userId,
+      data.userId,
+      data.chatRoomId,
+    );
     return this.service.createRoomMember(data);
   }
 
   @Delete()
-  delete(@Body() data: ChatRoomMembersPKDto): Promise<void> {
+  async delete(
+    @Body() data: ChatRoomMembersPKDto,
+    @Request() req,
+  ): Promise<void> {
+    await this.service.validateUserAdminOfChatRoom(
+      req.user.userId,
+      data.userId,
+      data.chatRoomId,
+    );
     return this.service.deleteRoomMember(data);
   }
 }
