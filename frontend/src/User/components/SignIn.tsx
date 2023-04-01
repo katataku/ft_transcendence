@@ -169,7 +169,7 @@ export function SignIn(): ReactElement {
             }
           }}
         >
-          Submit
+          {signUpMode ? 'Sign up' : 'Sign in'}
         </Button>
         <br />
         <Button style={{ margin: '10px' }} onClick={authenticateWith42}>
@@ -187,7 +187,7 @@ export function SignIn(): ReactElement {
                   signIn({ name, password: 'password' }, handleSuccessfulSignIn)
                 }}
               >
-                Login as {name}
+                Sign in as {name}
               </Button>
             </p>
           ))
