@@ -16,17 +16,18 @@ import {
   IClient,
 } from './types/game.model';
 import * as GameSetting from './constants';
-import {
-  decideEndScore,
-  decidePaddleSize,
-  decideSpeed,
-  deepCopy,
-} from './utility';
+import { deepCopy } from './utility';
 import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
 import { UsersService } from '../users/users.service';
 import { UserMatchHistoryDto } from '../common/dto/users.dto';
-import { initPaddle, PowerUP } from './constants';
+import {
+  EndScoreOpts,
+  initPaddle,
+  PaddleOpts,
+  PowerUP,
+  SpeedOpts,
+} from './constants';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
@@ -382,15 +383,21 @@ export class GameGateway {
 
     switch (data.type) {
       case PowerUP.Speed:
-        match.speed = decideSpeed(data.difficulty);
+        match.speed = Object.values(SpeedOpts).find(
+          (item) => item.Desc === data.difficulty,
+        ).Value;
         break;
       case PowerUP.Paddle:
-        match.settings.paddleSize = decidePaddleSize(data.difficulty);
+        match.settings.paddleSize = Object.values(PaddleOpts).find(
+          (item) => item.Desc === data.difficulty,
+        ).Value;
         match.leftPlayer.paddle = initPaddle(match.settings, 'left');
         match.rightPlayer.paddle = initPaddle(match.settings, 'right');
         break;
       case PowerUP.Score:
-        match.settings.winScore = decideEndScore(data.difficulty);
+        match.settings.winScore = Object.values(EndScoreOpts).find(
+          (item) => item.Desc === data.difficulty,
+        ).Value;
         break;
     }
     this.server

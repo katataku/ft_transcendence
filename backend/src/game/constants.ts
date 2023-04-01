@@ -8,6 +8,28 @@ import {
   UPlayer,
 } from './types/game.model';
 
+export const PowerUP = {
+  Speed: 'Speed',
+  Paddle: 'Paddle',
+  Score: 'Score',
+};
+
+export const SpeedOpts = {
+  Easy: { Desc: 'Speed-Slow', Value: 300 },
+  Medium: { Desc: 'Speed-Medium', Value: 500 },
+  Hard: { Desc: 'Speed-Fast', Value: 700 },
+};
+export const PaddleOpts = {
+  Easy: { Desc: 'Paddle-Large', Value: { x: 8, y: 120 } },
+  Medium: { Desc: 'Paddle-Medium', Value: { x: 8, y: 80 } },
+  Hard: { Desc: 'Paddle-Small', Value: { x: 8, y: 40 } },
+};
+export const EndScoreOpts = {
+  Easy: { Desc: 'End Score-3', Value: 3 },
+  Medium: { Desc: 'End Score-7', Value: 7 },
+  Hard: { Desc: 'End Score-10', Value: 10 },
+};
+
 const settings = {
   winWid: 1000,
   winHght: 500,
@@ -17,28 +39,9 @@ const settings = {
     x: 8,
     y: 100,
   },
-};
-
-export const SpeedOpts = {
-  Easy: 'Speed-Slow',
-  Medium: 'Speed-Medium',
-  Hard: 'Speed-Fast',
-};
-export const PaddleOpts = {
-  Easy: 'Paddle-Large',
-  Medium: 'Paddle-Medium',
-  Hard: 'Paddle-Small',
-};
-export const EndScoreOpts = {
-  Easy: 'End Score-3',
-  Medium: 'End Score-7',
-  Hard: 'End Score-10',
-};
-
-export const PowerUP = {
-  Speed: 'Speed',
-  Paddle: 'Paddle',
-  Score: 'Score',
+  puSpeed: SpeedOpts.Easy.Value,
+  puPaddle: PaddleOpts.Easy.Value,
+  puEndScore: EndScoreOpts.Easy.Value,
 };
 
 function getRandomNumberInRange(): number {

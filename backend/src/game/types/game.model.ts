@@ -47,6 +47,9 @@ export interface IMatchSettings {
   ballPx: number;
   winScore: number;
   paddleSize: Vector2;
+  puSpeed: number;
+  puPaddle: { x: number; y: number };
+  puEndScore: number;
 }
 
 export interface IMatch {
