@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  ForbiddenException,
-  Get,
-  Post,
-  Request,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Post, Request } from '@nestjs/common';
 import {
   ChatRoomMembersDto,
   ChatRoomMembersPKDto,
