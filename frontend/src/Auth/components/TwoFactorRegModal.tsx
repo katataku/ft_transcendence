@@ -68,11 +68,14 @@ export function TwoFactorRegModal(): ReactElement {
           <Modal.Title>QR Code</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          <p>1. Install 2FA app on your phone. (e.g. Google Authenticator)</p>
+          <p>2. Scan the QR Code below with your 2FA app.</p>
           <Card>
             <Card.Body className="d-flex justify-content-center">
               <img src={qrCodeDataURL} alt="QR Code" />
             </Card.Body>
           </Card>
+          <p>3. Enter the 6-digit code from your 2FA app.</p>
           <InputGroup className="mt-3">
             <FormControl
               type="number"

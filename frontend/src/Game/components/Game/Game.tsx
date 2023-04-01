@@ -73,6 +73,7 @@ function Matching(props: { hasResponse: boolean }): ReactElement {
             Use the arrow keys to move the paddle
           </p>
           <Button
+            data-cy="play-button"
             onClick={handleClick}
             disabled={showSpinner}
             style={{ fontSize: 30, marginTop: 20 }}
