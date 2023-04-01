@@ -35,7 +35,7 @@ export function TopPage(): ReactElement {
           </p>
           <p>
             <Link data-cy="link-to-matchList" to="MatchList">
-             実施中のゲームを観戦
+              実施中のゲームを観戦
             </Link>
           </p>
           <p>
