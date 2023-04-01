@@ -134,11 +134,7 @@ export function FriendInvitationButton(props: {
   }
 
   const sendRejectRequest = (): void => {
-    const requestData = {
-      from: loginUser.id,
-      to: props.targetUser.id
-    }
-    deleteFriendPendingRequest(requestData, () => {
+    deleteFriendPendingRequest(loginUser.id, props.targetUser.id, () => {
       alert('フレンドリクエストをキャンセルしました！')
       updateIsFriend()
       updateIsPending()

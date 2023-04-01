@@ -94,11 +94,14 @@ export class UsersController {
     return list;
   }
 
-  @Delete('friends/pending')
-  deleteFriendPending(@Body() body: FriendRequestDto, @Request() req) {
-    console.log('deleteFriendPending');
-    if (req.user.userId !== body.from) throw new ForbiddenException();
-    return this.service.deletePending(body);
+  @Delete('friends/pending/:from/:to')
+  deleteFriendPending(
+    @Param('from') from: number,
+    @Param('to') to: number,
+    @Request() req,
+  ) {
+    if (req.user.userId !== from) throw new ForbiddenException();
+    return this.service.deletePending(from, to);
   }
 
   @Public()

@@ -170,14 +170,19 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/friends_get_res'
+  /user/friends/{from}/{to}:
     delete:
       tags:
         - user
       summary: delete friend
       parameters:
-        - name: userID
+        - name: from
           required: true
-          description: id
+          in: path
+          schema:
+            type: integer
+        - name: to
+          required: true
           in: path
           schema:
             type: integer
