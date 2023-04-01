@@ -64,10 +64,10 @@ export class AuthService {
     let res: AxiosResponse;
     try {
       res = await axios.get(url, { headers });
+      return res.data;
     } catch (err) {
       Logger.error(err);
     }
-    return res.data;
   }
 
   async getAvatar42(url: string): Promise<string> {

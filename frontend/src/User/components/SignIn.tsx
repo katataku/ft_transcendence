@@ -173,7 +173,7 @@ export function SignIn(): ReactElement {
         </Button>
         <br />
         <Button style={{ margin: '10px' }} onClick={authenticateWith42}>
-          Sign up with 42
+          Sign in with 42
         </Button>
 
         {

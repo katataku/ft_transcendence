@@ -49,16 +49,18 @@ export class AuthController {
     try {
       token = await this.service.request42AuthToken(param.code);
       const user42 = await this.service.request42Info(token);
-      Logger.log(`42login => ${user42.login}`);
-      Logger.log(`Token => ${token}`);
+      if (user42) {
+        Logger.log(`42login => ${user42.login}`);
+        Logger.log(`Token => ${token}`);
 
-      await this.usersService.createUser({
-        name: user42.login,
-        password: user42.login,
-        avatar: await this.service.getAvatar42(user42.image.link),
-      });
+        await this.usersService.createUser({
+          name: user42.login,
+          password: user42.login,
+          avatar: await this.service.getAvatar42(user42.image.link),
+        });
+      }
     } catch (err) {
-      Logger.log(err);
+      Logger.debug(err);
     }
     return token;
   }
