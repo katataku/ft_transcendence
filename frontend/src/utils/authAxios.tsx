@@ -67,22 +67,6 @@ export function request42AuthToken(
     })
 }
 
-export function get42userInfo(
-  token: string,
-  callback: (res: any) => void
-): void {
-  axios
-    .get('https://api.intra.42.fr/v2/me', {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then((res) => {
-      callback(res.data)
-    })
-    .catch((error) => {
-      console.error(error)
-    })
-}
-
 export function getOTPData(
   userName: string,
   callback: (res: { secret: string; qrCode: string }) => void

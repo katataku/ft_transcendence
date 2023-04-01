@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import Button from 'react-bootstrap/Button'
 import { SignIn } from './User/components/SignIn'
 import { GlobalContext } from './App'
-import { initUser, localStorageKey } from './constants'
+import { LSKey42Token, initUser, localStorageKey } from './constants'
 import { getAllUsersRequest } from './utils/userAxios'
 
 export function TopPage(): ReactElement {
@@ -63,6 +63,7 @@ export function TopPage(): ReactElement {
               data-cy="signOut-button"
               onClick={() => {
                 localStorage.removeItem(localStorageKey)
+                localStorage.removeItem(LSKey42Token)
                 setLoginUser(initUser)
               }}
             >

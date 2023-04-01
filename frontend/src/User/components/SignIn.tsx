@@ -1,10 +1,19 @@
-import { type ReactElement, useContext } from 'react'
+import { type ReactElement, useContext, useEffect } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { GlobalContext } from '../../App'
-import { checkUsernameAvailability, signUp } from '../../utils/userAxios'
-import { BaseURL, initUser, localStorageKey } from '../../constants'
+import {
+  checkUsernameAvailability,
+  signIn42,
+  signUp
+} from '../../utils/userAxios'
+import {
+  BaseURL,
+  LSKey42Token,
+  initUser,
+  localStorageKey
+} from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
 import { signIn, validateJwtToken } from '../../utils/authAxios'
@@ -37,6 +46,18 @@ export function SignIn(): ReactElement {
   function toggleShowPassword(): void {
     setShowPassword(!showPassword)
   }
+
+  useEffect(() => {
+    const token42 = localStorage.getItem(LSKey42Token)
+    if (token42 != null) {
+      signIn42(token42, (res) => {
+        setLoginUser({
+          id: res.id,
+          name: res.name
+        })
+      })
+    }
+  }, [])
 
   function handleSuccessfulSignIn(res: SigninRes): void {
     // 2faが有効なら、2faの確認モーダルを表示します。
@@ -152,7 +173,7 @@ export function SignIn(): ReactElement {
         </Button>
         <br />
         <Button style={{ margin: '10px' }} onClick={authenticateWith42}>
-          Sign up with 42
+          Sign in with 42
         </Button>
 
         {

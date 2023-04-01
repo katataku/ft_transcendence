@@ -1,13 +1,25 @@
-import { Body, Controller, Get, Param, Post, Request } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Param,
+  Post,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Auth42Param } from 'src/common/params/user.params';
-import { UserSignInDto } from 'src/common/dto/users.dto';
+import { Auth42Param, login42Param } from 'src/common/params/user.params';
+import { UserGetDto, UserSignInDto } from 'src/common/dto/users.dto';
+import { UsersService } from 'src/users/users.service';
 import { SigninResDto } from 'src/common/dto/auth.dto';
 import { Public } from './public.decorator';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private service: AuthService) {}
+  constructor(
+    private service: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   @Public()
   @Post('signin')
@@ -33,7 +45,37 @@ export class AuthController {
   @Public()
   @Get('42/:code')
   async auth42(@Param() param: Auth42Param): Promise<string> {
-    const token = await this.service.request42AuthToken(param.code);
+    let token: string;
+    try {
+      token = await this.service.request42AuthToken(param.code);
+      const user42 = await this.service.request42Info(token);
+      if (user42) {
+        Logger.log(`42login => ${user42.login}`);
+        Logger.log(`Token => ${token}`);
+
+        await this.usersService.createUser({
+          name: user42.login,
+          password: user42.login,
+          avatar: await this.service.getAvatar42(user42.image.link),
+        });
+      }
+    } catch (err) {
+      Logger.debug(err);
+    }
     return token;
+  }
+
+  @Public()
+  @Get('42/login/:token')
+  async login42(@Param() param: login42Param): Promise<UserGetDto> {
+    try {
+      const user42 = await this.service.request42Info(param.token);
+      return await this.usersService.signInUser({
+        name: user42.login,
+        password: user42.login,
+      });
+    } catch (err) {
+      Logger.error(err);
+    }
   }
 }
