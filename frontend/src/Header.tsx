@@ -21,7 +21,9 @@ export function Header(): ReactElement {
   return (
     <Navbar>
       <Container>
-        <Navbar.Brand href="/">transcendence</Navbar.Brand>
+        <Navbar.Brand href="/">
+          <Image src="/logo-color.png" height="50" />
+        </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-end"></Navbar.Collapse>
         {loginNameText}
