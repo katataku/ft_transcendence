@@ -30,22 +30,22 @@ export function TopPage(): ReactElement {
         <div>
           <p>
             <Link data-cy="link-to-chatlist" to="chatlist">
-              Move to ChatList
+              チャットルーム一覧
             </Link>
           </p>
           <p>
             <Link data-cy="link-to-matchList" to="MatchList">
-              Move to MatchList
+              実施中のゲームを観戦
             </Link>
           </p>
           <p>
             <Link data-cy="link-to-gamePage" to="Game" state={0}>
-              Move to Game
+              Pong ゲームを開始
             </Link>
           </p>
           <p>
             <Link to={'profile/' + String(loginUser.id)}>
-              Move to My page (My Profile)
+              My page (My Profile)
             </Link>
           </p>
           {allUserList.map((user) => {
