@@ -1,5 +1,5 @@
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
-import axios from 'axios';
+import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import axios, { type AxiosResponse } from 'axios';
 import { toDataURL } from 'qrcode';
 import { authenticator } from 'otplib';
 import { JwtService } from '@nestjs/jwt';
@@ -52,14 +52,33 @@ export class AuthService {
 
     try {
       const res = await axios.post(url, data);
-      Logger.log(res.data);
       return res.data.access_token;
     } catch (err) {
       Logger.error(err);
     }
   }
 
-  // 2 Factor Authentication
+  async request42Info(token: string) {
+    const url = 'https://api.intra.42.fr/v2/me';
+    const headers = { Authorization: `Bearer ${token}` };
+    let res: AxiosResponse;
+    try {
+      res = await axios.get(url, { headers });
+      return res.data;
+    } catch (err) {
+      Logger.error(err);
+    }
+  }
+
+  async getAvatar42(url: string): Promise<string> {
+    try {
+      const response = await axios.get(url, { responseType: 'arraybuffer' });
+      const data = Buffer.from(response.data, 'binary').toString('base64');
+      return data;
+    } catch (err) {
+      Logger.error(err);
+    }
+  }
 
   private generateSecret(): string {
     return authenticator.generateSecret();
