@@ -169,11 +169,11 @@ export class UsersService {
     }
   }
 
-  async deletePending(data: FriendRequestDto): Promise<void> {
+  async deletePending(from: number, to: number): Promise<void> {
     const pendingItem = await this.pendingRepository.findOne({
       where: {
-        from: data.from,
-        to: data.to,
+        from: from,
+        to: to,
       },
     });
 

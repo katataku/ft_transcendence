@@ -92,9 +92,9 @@ export class UsersController {
     return list;
   }
 
-  @Delete('friends/pending')
-  deleteFriendPending(@Body() body: FriendRequestDto) {
-    return this.service.deletePending(body);
+  @Delete('friends/pending/:from/:to')
+  deleteFriendPending(@Param('from') from: number, @Param('to') to: number) {
+    return this.service.deletePending(from, to);
   }
 
   @Public()

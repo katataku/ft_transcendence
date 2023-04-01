@@ -120,11 +120,14 @@ export function deleteFriendRequest(
 }
 
 export function deleteFriendPendingRequest(
-  requestData: FriendRequestDto,
+  from: number,
+  to: number,
   callback: () => void
 ): void {
   jwtAxios
-    .delete<FriendRequestDto>('/user/friends/pending', { data: requestData })
+    .delete<FriendRequestDto>(
+      '/user/friends/pending/' + String(from) + '/' + String(to)
+    )
     .then((_response) => {
       callback()
     })
