@@ -64,6 +64,27 @@ export async function getAvatar(userId: number): Promise<string> {
   return res.data
 }
 
+export function updateAvatar(
+  userId: number,
+  avatar: string,
+  callback: (res: any) => void
+): void {
+  const requestBody = {
+    avatar
+  }
+  if (requestBody.avatar === defaultAvatar) {
+    requestBody.avatar = 'DEFAULT_AVATAR'
+  }
+  jwtAxios
+    .put<string>(`/user/user_avatar/${userId}`, requestBody)
+    .then((res) => {
+      callback(res.data)
+    })
+    .catch((err) => {
+      alert(err)
+    })
+}
+
 export function getFriendRequest(
   userId: number,
   callback: (user: User[]) => void
