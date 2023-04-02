@@ -13,7 +13,7 @@ import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
 @Module({
   imports: [
     UsersModule,
-    OnlineStatusModule,
+    OnlineStatusModule.forRoot(),
     JwtModule.registerAsync({
       /*
         useFactoryは動的に生成する。
@@ -28,7 +28,6 @@ import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
   controllers: [AuthController, TwoFactorAuthController],
   providers: [
     AuthService,
-    OnlineStatusService,
     JwtStrategy,
     {
       provide: APP_GUARD,

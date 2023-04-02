@@ -21,10 +21,10 @@ import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
       UserAvatars,
       UserMatchHistory,
     ]),
-    OnlineStatusModule,
+    OnlineStatusModule.forRoot(),
   ],
   controllers: [UsersController],
-  providers: [UsersService, OnlineStatusService],
+  providers: [UsersService],
   exports: [UsersService],
 })
 export class UsersModule {}

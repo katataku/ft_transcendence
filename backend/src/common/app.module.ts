@@ -66,7 +66,7 @@ const options: PostgresConnectionOptions = {
     ChatDMMembersModule,
     GameModule,
     MatchModule,
-    OnlineStatusModule,
+    OnlineStatusModule.forRoot(),
     AuthModule,
     ScheduleModule.forRoot(),
   ],
