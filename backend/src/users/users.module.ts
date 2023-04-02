@@ -9,6 +9,7 @@ import {
 } from '../entities/users.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { OnlineStatusModule } from 'src/onlineStatus';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsersService } from './users.service';
       UserAvatars,
       UserMatchHistory,
     ]),
+    OnlineStatusModule.forRoot(),
   ],
   controllers: [UsersController],
   providers: [UsersService],

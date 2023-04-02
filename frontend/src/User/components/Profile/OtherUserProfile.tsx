@@ -204,7 +204,11 @@ export function OtherUserProfile(): ReactElement {
       <p>
         <MatchHistory matchHistory={matchHist} />
       </p>
-      <p>current statusを表示する(online, offline, in a game,など).</p>
+      {targetUser.isOnline === true ? (
+        <p style={{ color: 'green' }}>ONLINE</p>
+      ) : (
+        <p style={{ color: 'red' }}>OFFLINE</p>
+      )}
 
       <p>
         <FriendInvitationButton

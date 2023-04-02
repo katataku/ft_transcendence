@@ -1,6 +1,7 @@
 interface User {
   id: number
   name: string
+  isOnline?: boolean
 }
 
 interface signUp {

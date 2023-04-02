@@ -18,6 +18,7 @@ import {
 } from '../entities/users.entity';
 import { Repository } from 'typeorm';
 import { SHA256 } from 'crypto-js';
+import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +33,7 @@ export class UsersService {
     private userAvatarsRepository: Repository<UserAvatars>,
     @InjectRepository(UserMatchHistory)
     private userMatchHistoryRepository: Repository<UserMatchHistory>,
+    private onlineStatusService: OnlineStatusService,
   ) {
     this.saveAvatar(0, 'DEFAULT_AVATAR');
   }
@@ -95,6 +97,21 @@ export class UsersService {
       throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
     }
 
+    const res: UserGetDto = {
+      id: data.id,
+      name: data.name,
+      isTwoFactorEnabled: data.isTwoFactorEnabled,
+      otpSecret: data.otpSecret,
+      isOnline: this.onlineStatusService.capture(data.id),
+    };
+    return res;
+  }
+
+  async getUserByName(name: User['name']): Promise<UserGetDto> {
+    const data = await this.usersRepository.findOne({ where: { name: name } });
+    if (data == null) {
+      throw new Error('User Not Found.');
+    }
     const res: UserGetDto = {
       id: data.id,
       name: data.name,
