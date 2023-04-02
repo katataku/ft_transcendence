@@ -16,10 +16,10 @@ function updatePaddle(
   keydown: Ref,
   settings: IMatchSettings
 ): IPaddle {
-
   switch (keydown.current) {
     case 'ArrowUp':
-      if (paddle.pos.y >= settings.paddleSpeed) paddle.pos.y += -settings.paddleSpeed
+      if (paddle.pos.y >= settings.paddleSpeed)
+        paddle.pos.y += -settings.paddleSpeed
       break
     case 'ArrowDown':
       if (
