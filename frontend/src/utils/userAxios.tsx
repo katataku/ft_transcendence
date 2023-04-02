@@ -58,10 +58,50 @@ export function signIn42(token: string, callback: (res: any) => void): void {
       alert(err)
     })
 }
+export function updateUserProfile(
+  userId: number,
+  name: string,
+  password: string,
+  callback: (res: any) => void
+): void {
+  const requestBody = {
+    name,
+    password
+  }
+  jwtAxios
+    .put<string>(`/user/${userId}`, requestBody)
+    .then((res) => {
+      callback(res.data)
+    })
+    .catch((err) => {
+      alert(err)
+    })
+}
 
 export async function getAvatar(userId: number): Promise<string> {
   const res = await jwtAxios.get<string>(`/user/user_avatar/${userId}`)
   return res.data
+}
+
+export function updateAvatar(
+  userId: number,
+  avatar: string,
+  callback: (res: any) => void
+): void {
+  const requestBody = {
+    avatar
+  }
+  if (requestBody.avatar === defaultAvatar) {
+    requestBody.avatar = 'DEFAULT_AVATAR'
+  }
+  jwtAxios
+    .put<string>(`/user/user_avatar/${userId}`, requestBody)
+    .then((res) => {
+      callback(res.data)
+    })
+    .catch((err) => {
+      alert(err)
+    })
 }
 
 export function getFriendRequest(
