@@ -26,19 +26,9 @@ function PowerUpDropDown(props: {
   )
 
   const modifySpeed = (op: string | null): void => {
-    if (props.status !== EStatus.none || loginUser.name !== props.leftName)
+    if (props.status !== EStatus.none || loginUser.name !== props.leftName || op === null)
       return
-    switch (op) {
-      case opts.Easy.desc:
-        props.setTitle(opts.Easy.desc)
-        break
-      case opts.Medium.desc:
-        props.setTitle(opts.Medium.desc)
-        break
-      case opts.Hard.desc:
-        props.setTitle(opts.Hard.desc)
-        break
-    }
+    props.setTitle(op)
   }
 
   return (
@@ -73,10 +63,10 @@ export function PowerUps(props: {
   )
 
   useEffect(() => {
-    gameSocket.on('updatePowerUp', (data: { match: IMatch }) => {
-      setSpeed(data.match.settings.ballSpeed.desc)
-      setPaddle(data.match.settings.paddleSize.desc)
-      setEndScore(data.match.settings.winScore.desc)
+    gameSocket.on('updatePowerUp', (data: { settings: IMatchSettings }) => {
+      setSpeed(data.settings.ballSpeed.desc)
+      setPaddle(data.settings.paddleSize.desc)
+      setEndScore(data.settings.winScore.desc)
     })
   }, [])
 

@@ -37,14 +37,14 @@ function updatePaddle(
 
 function DrawPaddle(props: {
   paddle: IPaddle
-  settings: IMatchSettings
+  paddleSize: Vector2
 }): ReactElement {
   return (
     <div
       style={{
         backgroundColor: 'white',
-        width: `${props.settings.paddleSize.value.x}px`,
-        height: `${props.settings.paddleSize.value.y}px`,
+        width: `${props.paddleSize.x}px`,
+        height: `${props.paddleSize.y}px`,
         position: 'absolute',
         top: `${props.paddle.pos.y}px`,
         left: `${props.paddle.pos.x}px`
@@ -109,8 +109,8 @@ export function Paddles(props: {
 
   return (
     <>
-      <DrawPaddle paddle={leftPaddle} settings={settings.current} />
-      <DrawPaddle paddle={rightPaddle} settings={settings.current} />
+      <DrawPaddle paddle={leftPaddle} paddleSize={settings.current.paddleSize.value} />
+      <DrawPaddle paddle={rightPaddle} paddleSize={settings.current.paddleSize.value} />
     </>
   )
 }

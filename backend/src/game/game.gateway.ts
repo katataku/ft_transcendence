@@ -406,6 +406,8 @@ export class GameGateway {
         }
         break;
     }
-    this.server.to(match.id.toString()).emit('updatePowerUp', { match: match });
+    this.server
+      .to(match.id.toString())
+      .emit('updatePowerUp', { settings: match.settings });
   }
 }
