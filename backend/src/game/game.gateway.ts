@@ -125,7 +125,6 @@ export class GameGateway {
           rightPaddle: match.rightPlayer.paddle,
           settings: match.settings,
         });
-        this.logger.log(match);
         if (isMatchSet(match)) {
           match.status = EStatus.set;
           this.server.to(matchId).emit('updateConnections', match);
@@ -384,20 +383,14 @@ export class GameGateway {
 
     switch (data.type) {
       case PowerUP.Speed:
-        if (
-          data.difficulty !== PowerUP.Speed &&
-          match.settings.ballSpeed !== undefined
-        ) {
+        if (data.difficulty !== PowerUP.Speed) {
           match.settings.ballSpeed = Object.values(SpeedOpts).find(
             (item) => item.desc === data.difficulty,
           );
         }
         break;
       case PowerUP.Paddle:
-        if (
-          data.difficulty !== PowerUP.Paddle &&
-          match.settings.paddleSize !== undefined
-        ) {
+        if (data.difficulty !== PowerUP.Paddle) {
           match.settings.paddleSize = Object.values(PaddleOpts).find(
             (item) => item.desc === data.difficulty,
           );
@@ -406,10 +399,7 @@ export class GameGateway {
         }
         break;
       case PowerUP.Score:
-        if (
-          data.difficulty !== PowerUP.Score &&
-          match.settings.winScore !== undefined
-        ) {
+        if (data.difficulty !== PowerUP.Score) {
           match.settings.winScore = Object.values(EndScoreOpts).find(
             (item) => item.desc === data.difficulty,
           );
