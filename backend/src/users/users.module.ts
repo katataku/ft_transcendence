@@ -9,6 +9,8 @@ import {
 } from '../entities/users.entity';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
+import { OnlineStatusModule } from 'src/onlineStatus';
+import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
 
 @Module({
   imports: [
@@ -19,9 +21,10 @@ import { UsersService } from './users.service';
       UserAvatars,
       UserMatchHistory,
     ]),
+    OnlineStatusModule,
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, OnlineStatusService],
   exports: [UsersService],
 })
 export class UsersModule {}

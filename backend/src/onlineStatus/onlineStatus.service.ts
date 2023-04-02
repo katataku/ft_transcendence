@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 
 interface UserStatus {
   userId: number;
@@ -9,7 +10,7 @@ const diffSeconds = 60;
 
 @Injectable()
 export class OnlineStatusService {
-  private list: UserStatus[];
+  private list: Array<UserStatus> = [];
 
   connect(id: number) {
     const index = this.list.findIndex((user) => {
@@ -22,6 +23,7 @@ export class OnlineStatusService {
         userId: id,
         date: new Date(),
       });
+      Logger.debug(`${id} is added to Online list.`);
     }
   }
 
@@ -29,11 +31,31 @@ export class OnlineStatusService {
     const index = this.list.findIndex((user) => {
       return user.userId === id;
     });
+    return index !== -1;
+  }
+
+  isOnline(id: number): boolean {
+    const index = this.list.findIndex((user) => {
+      return user.userId === id;
+    });
     if (index !== -1) {
       const diff =
-        (new Date().getTime() - this.list[index].date.getTime()) / 3600000;
+        (new Date().getTime() - this.list[index].date.getTime()) / 1000;
       return diff <= diffSeconds;
     }
     return false;
+  }
+
+  @Cron('*/5 * * * * *')
+  async monitor() {
+    this.list.map((user, index) => {
+      if (!this.isOnline(user.userId)) {
+        this.list.splice(index, 1);
+        Logger.debug(`ID: ${user.userId} is offline.`);
+      }
+    });
+    this.list.map((user) => {
+      Logger.debug(`ID: ${user.userId} has been online since ${user.date}`);
+    });
   }
 }

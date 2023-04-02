@@ -21,6 +21,9 @@ export function signIn(
     })
 }
 
+/**
+ * このリクエストでOnline状態とみなします。
+ */
 export function validateJwtToken(
   success: (res: jwtPayload) => void,
   fail: () => void

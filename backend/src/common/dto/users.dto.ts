@@ -30,6 +30,9 @@ export class UserGetDto {
   @IsOptional()
   @IsString()
   otpSecret?: string;
+  @IsOptional()
+  @IsBoolean()
+  isOnline?: boolean;
 }
 
 export class UserUpdateReqDto {
