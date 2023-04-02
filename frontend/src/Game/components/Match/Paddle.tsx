@@ -109,8 +109,14 @@ export function Paddles(props: {
 
   return (
     <>
-      <DrawPaddle paddle={leftPaddle} paddleSize={settings.current.paddleSize.value} />
-      <DrawPaddle paddle={rightPaddle} paddleSize={settings.current.paddleSize.value} />
+      <DrawPaddle
+        paddle={leftPaddle}
+        paddleSize={settings.current.paddleSize.value}
+      />
+      <DrawPaddle
+        paddle={rightPaddle}
+        paddleSize={settings.current.paddleSize.value}
+      />
     </>
   )
 }

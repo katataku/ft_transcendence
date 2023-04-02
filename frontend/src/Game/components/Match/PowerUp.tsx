@@ -26,7 +26,11 @@ function PowerUpDropDown(props: {
   )
 
   const modifySpeed = (op: string | null): void => {
-    if (props.status !== EStatus.none || loginUser.name !== props.leftName || op === null)
+    if (
+      props.status !== EStatus.none ||
+      loginUser.name !== props.leftName ||
+      op === null
+    )
       return
     props.setTitle(op)
   }
