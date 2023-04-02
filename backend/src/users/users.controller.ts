@@ -9,6 +9,8 @@ import {
   Put,
   HttpException,
   HttpStatus,
+  Request,
+  ForbiddenException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -17,11 +19,11 @@ import {
   UserGetDto,
   UserSignUpReqDto,
   UserSignUpResDto,
-  UserSignInDto,
   UserFriendDeleteRequestDto,
   UserMatchHistoryDto,
   UsernameCheckResponseDto,
   UsernameCheckRequestDto,
+  UserAvatarUpdateReqDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 import { Response } from 'express';
@@ -39,11 +41,6 @@ export class UsersController {
     return this.service.createUser(body);
   }
 
-  @Post('sign_in')
-  signIn(@Body() body: UserSignInDto): Promise<UserGetDto> {
-    return this.service.signInUser(body);
-  }
-
   @Get('users')
   getUsers(): Promise<UserGetDto[]> {
     return this.service.getUsers();
@@ -58,12 +55,15 @@ export class UsersController {
   updateUser(
     @Param() param: UserIdParam,
     @Body() body: UserUpdateReqDto,
+    @Request() req,
   ): Promise<UserGetDto> {
+    if (req.user.userId != param.id) throw new ForbiddenException();
     return this.service.updateUser(param.id, body);
   }
 
   @Delete(':id')
-  deleteUser(@Param() param: UserIdParam): Promise<string> {
+  deleteUser(@Param() param: UserIdParam, @Request() req): Promise<string> {
+    if (req.user.userId != param.id) throw new ForbiddenException();
     return this.service.deleteUser(param.id);
   }
 
@@ -71,12 +71,15 @@ export class UsersController {
   deleteFriend(
     @Param() param: UserIdParam,
     @Body() body: UserFriendDeleteRequestDto,
+    @Request() req,
   ): Promise<string> {
+    if (req.user.userId != param.id) throw new ForbiddenException();
     return this.service.deleteFriend(param.id, body.friendUserId);
   }
 
   @Post('friends')
-  requestFriend(@Body() body: FriendRequestDto) {
+  requestFriend(@Body() body: FriendRequestDto, @Request() req) {
+    if (req.user.userId !== body.from) throw new ForbiddenException();
     console.table(body);
     return this.service.requestFriendship(body);
   }
@@ -92,9 +95,14 @@ export class UsersController {
     return list;
   }
 
-  @Delete('friends/pending')
-  deleteFriendPending(@Body() body: FriendRequestDto) {
-    return this.service.deletePending(body);
+  @Delete('friends/pending/:from/:to')
+  deleteFriendPending(
+    @Param('from') from: number,
+    @Param('to') to: number,
+    @Request() req,
+  ) {
+    if (req.user.userId !== from) throw new ForbiddenException();
+    return this.service.deletePending(from, to);
   }
 
   @Public()
@@ -117,6 +125,14 @@ export class UsersController {
       'base64',
     );
     res.send(binaryData);
+  }
+
+  @Put('user_avatar/:id')
+  async updateAvatar(
+    @Param() param: UserIdParam,
+    @Body() body: UserAvatarUpdateReqDto,
+  ): Promise<void> {
+    return await this.service.updateAvatar(param.id, body.avatar);
   }
 
   @Get('match_history/:id')

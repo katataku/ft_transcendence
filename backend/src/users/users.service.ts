@@ -18,6 +18,7 @@ import {
 } from '../entities/users.entity';
 import { Repository } from 'typeorm';
 import { SHA256 } from 'crypto-js';
+import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
 
 @Injectable()
 export class UsersService {
@@ -32,6 +33,7 @@ export class UsersService {
     private userAvatarsRepository: Repository<UserAvatars>,
     @InjectRepository(UserMatchHistory)
     private userMatchHistoryRepository: Repository<UserMatchHistory>,
+    private onlineStatusService: OnlineStatusService,
   ) {
     this.saveAvatar(0, 'DEFAULT_AVATAR');
   }
@@ -107,21 +109,22 @@ export class UsersService {
       isTwoFactorEnabled: data.isTwoFactorEnabled,
       otpSecret: data.otpSecret,
       is42User: data.is42User,
+      isOnline: this.onlineStatusService.capture(data.id),
     };
     return res;
   }
 
-  async getUserByName(name: string): Promise<UserGetDto> {
+  async getUserByName(name: User['name']): Promise<UserGetDto> {
     const data = await this.usersRepository.findOne({ where: { name: name } });
-    // execptionはcontrollerで処理する
+    // execptionはcontrollerで処理したい
     if (data === null) return null;
-
     const res: UserGetDto = {
       id: data.id,
       name: data.name,
       isTwoFactorEnabled: data.isTwoFactorEnabled,
       otpSecret: data.otpSecret,
       is42User: data.is42User,
+      isOnline: this.onlineStatusService.capture(data.id),
     };
     return res;
   }
@@ -194,11 +197,11 @@ export class UsersService {
     }
   }
 
-  async deletePending(data: FriendRequestDto): Promise<void> {
+  async deletePending(from: number, to: number): Promise<void> {
     const pendingItem = await this.pendingRepository.findOne({
       where: {
-        from: data.from,
-        to: data.to,
+        from: from,
+        to: to,
       },
     });
 
@@ -236,6 +239,24 @@ export class UsersService {
       data: data,
     };
     return (await this.userAvatarsRepository.save(obj)).id;
+  }
+
+  async updateAvatar(userId: number, data: string): Promise<void> {
+    const obj: UserAvatars = {
+      id: null,
+      userId: userId,
+      data: data,
+    };
+    const target = await this.userAvatarsRepository.findOne({
+      where: { userId: userId },
+    });
+    if (target == null) {
+      await this.userAvatarsRepository.save(obj);
+      return;
+    }
+    target.data = data;
+    await this.userAvatarsRepository.save(target);
+    return;
   }
 
   async getAvatarById(userId: number): Promise<string> {

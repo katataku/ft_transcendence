@@ -35,11 +35,7 @@ function RejectButton(props: {
   const { loginUser } = useContext(GlobalContext)
 
   const rejectRequest = (): void => {
-    const requestData = {
-      from: props.targetUserId,
-      to: loginUser.id
-    }
-    deleteFriendPendingRequest(requestData, () => {
+    deleteFriendPendingRequest(props.targetUserId, loginUser.id, () => {
       alert('フレンドリクエストを拒否しました！')
       props.updateFriendPendingList()
     })

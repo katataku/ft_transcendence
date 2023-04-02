@@ -1,5 +1,4 @@
 import axios, { type AxiosError } from 'axios'
-import { localStorageKey } from '../constants'
 import jwtAxios from './axiosConfig'
 
 export function signIn(
@@ -22,22 +21,15 @@ export function signIn(
     })
 }
 
+/**
+ * このリクエストでOnline状態とみなします。
+ */
 export function validateJwtToken(
   success: (res: jwtPayload) => void,
   fail: () => void
 ): void {
-  const jwtToken: string | null = localStorage.getItem(localStorageKey)
-  if (jwtToken === null) {
-    fail()
-    return
-  }
-
   jwtAxios
-    .get('/auth/protected', {
-      headers: {
-        Authorization: 'Bearer ' + jwtToken
-      }
-    })
+    .get('/auth/protected')
     .then((res) => {
       // res.data is like:
       // {

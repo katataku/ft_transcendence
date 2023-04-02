@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SHA256 } from 'crypto-js';
 import { ChatRoom } from 'src/entities/chatRoom.entity';
@@ -91,12 +91,14 @@ export class ChatRoomService {
     };
   }
 
-  async deleteRoom(id: number): Promise<void> {
+  async deleteRoom(id: number, signedInUserId: number): Promise<void> {
     const targetRoom: ChatRoom = await this.chatRoomRepository.findOne({
       where: {
         id: id,
       },
     });
+    if (signedInUserId !== targetRoom.created_by_user_id)
+      throw new ForbiddenException();
     this.chatRoomRepository.remove(targetRoom);
   }
 

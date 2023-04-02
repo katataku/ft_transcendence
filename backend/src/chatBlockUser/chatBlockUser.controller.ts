@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  ForbiddenException,
+  Get,
+  Param,
+  Post,
+  Request,
+} from '@nestjs/common';
 import { ChatBlockUserService } from './chatBlockUser.service';
 import {
   ChatBlockUserDto,
@@ -20,12 +29,17 @@ export class ChatBlockUserController {
   }
 
   @Post()
-  post(@Body() data: ChatBlockUserDto): Promise<ChatBlockUserDto> {
+  post(
+    @Body() data: ChatBlockUserDto,
+    @Request() req,
+  ): Promise<ChatBlockUserDto> {
+    if (req.user.userId !== data.blockUserId) throw new ForbiddenException();
     return this.service.updateBlock(data);
   }
 
   @Delete()
-  delete(@Body() data: ChatBlockUserPKDto): Promise<void> {
+  delete(@Body() data: ChatBlockUserPKDto, @Request() req): Promise<void> {
+    if (req.user.userId !== data.blockUserId) throw new ForbiddenException();
     return this.service.delete(data);
   }
 }

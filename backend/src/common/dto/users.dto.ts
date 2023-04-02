@@ -34,6 +34,9 @@ export class UserGetDto {
   otpSecret?: string;
   @IsBoolean()
   is42User: boolean;
+  @IsOptional()
+  @IsBoolean()
+  isOnline?: boolean;
 }
 
 export class UserUpdateReqDto {
@@ -41,6 +44,11 @@ export class UserUpdateReqDto {
   name: string;
   @IsString()
   password: string;
+}
+
+export class UserAvatarUpdateReqDto {
+  @IsString()
+  avatar: string;
 }
 
 export class UserSignInDto {

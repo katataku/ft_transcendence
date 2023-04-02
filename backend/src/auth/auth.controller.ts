@@ -15,12 +15,14 @@ import { UserSignInDto } from 'src/common/dto/users.dto';
 import { UsersService } from 'src/users/users.service';
 import { SigninResDto } from 'src/common/dto/auth.dto';
 import { Public } from './public.decorator';
+import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private service: AuthService,
     private readonly usersService: UsersService,
+    private readonly onlineStatusService: OnlineStatusService,
   ) {}
 
   @Public()
@@ -41,6 +43,7 @@ export class AuthController {
       }
       idとnameはauth.service.tsのloginメソッドのpayloadに入っている
     */
+    await this.onlineStatusService.connect(req.user.userId); // Online状態を更新
     return req.user;
   }
 

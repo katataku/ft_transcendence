@@ -26,6 +26,7 @@ import { MatchModule } from '../match';
 import { ChatDMMembersModule } from 'src/chatDMMembers';
 import { OnlineStatusModule } from 'src/onlineStatus';
 import { AuthModule } from 'src/auth';
+import { ScheduleModule } from '@nestjs/schedule';
 
 dotenv.config();
 
@@ -65,8 +66,9 @@ const options: PostgresConnectionOptions = {
     ChatDMMembersModule,
     GameModule,
     MatchModule,
-    OnlineStatusModule,
+    OnlineStatusModule.forRoot(),
     AuthModule,
+    ScheduleModule.forRoot(),
   ],
 })
 export class AppModule {}

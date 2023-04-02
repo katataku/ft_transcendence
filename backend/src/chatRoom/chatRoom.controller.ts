@@ -2,11 +2,13 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpException,
   HttpStatus,
   Param,
   Post,
+  Request,
 } from '@nestjs/common';
 import { ChatRoomService } from './chatRoom.service';
 import {
@@ -30,7 +32,12 @@ export class ChatRoomController {
   }
 
   @Post()
-  async post(@Body() data: ChatRoomReqDto): Promise<ChatRoomResDto> {
+  async post(
+    @Body() data: ChatRoomReqDto,
+    @Request() req,
+  ): Promise<ChatRoomResDto> {
+    if (req.user.userId !== data.created_by_user_id)
+      throw new ForbiddenException();
     const result = await this.service.createRoom(data);
     if (result) {
       const chatRoomMembers = new ChatRoomMembersDto();
@@ -49,7 +56,10 @@ export class ChatRoomController {
   async update(
     @Param('id') id: number,
     @Body() data: ChatRoomReqDto,
+    @Request() req,
   ): Promise<ChatRoomResDto> {
+    if (req.user.userId !== data.created_by_user_id)
+      throw new ForbiddenException();
     const result = await this.service.updateRoom(id, data);
     if (result) {
       const chatRoomMembers = new ChatRoomMembersDto();
@@ -64,8 +74,8 @@ export class ChatRoomController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number) {
-    return this.service.deleteRoom(id);
+  delete(@Param('id') id: number, @Request() req): Promise<void> {
+    return this.service.deleteRoom(id, req.user.userId);
   }
 
   @Post(':id/auth')
