@@ -55,7 +55,7 @@ export function validateJwtToken(
 
 export function request42AuthToken(
   authCode: string,
-  callback: (token: string) => void
+  callback: (res: SigninRes) => void
 ): void {
   axios
     .get(`/auth/42/${authCode}`)
