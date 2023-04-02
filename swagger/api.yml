@@ -255,6 +255,21 @@ paths:
               schema:
                 type: string
                 format: binary
+    put:
+      tags:
+        - user
+      summary: update user avatar
+      parameters:
+        - name: userID
+          required: true
+          in: path
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/user_avatar_update_req'
   /user/check/username-availability:
     post:
       tags:
@@ -804,6 +819,12 @@ components:
         password:
           type: string
           example: password
+    user_avatar_update_req:
+      type: object
+      properties:
+        avatar:
+          type: string
+          example: 'DEFAULT_AVATAR'
 
     user_check_req:
       type: object

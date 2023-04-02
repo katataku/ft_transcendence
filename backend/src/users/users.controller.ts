@@ -23,6 +23,7 @@ import {
   UserMatchHistoryDto,
   UsernameCheckResponseDto,
   UsernameCheckRequestDto,
+  UserAvatarUpdateReqDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';
 import { Response } from 'express';
@@ -124,6 +125,14 @@ export class UsersController {
       'base64',
     );
     res.send(binaryData);
+  }
+
+  @Put('user_avatar/:id')
+  async updateAvatar(
+    @Param() param: UserIdParam,
+    @Body() body: UserAvatarUpdateReqDto,
+  ): Promise<void> {
+    return await this.service.updateAvatar(param.id, body.avatar);
   }
 
   @Get('match_history/:id')

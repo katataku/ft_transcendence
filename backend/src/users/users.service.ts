@@ -216,6 +216,24 @@ export class UsersService {
     return (await this.userAvatarsRepository.save(obj)).id;
   }
 
+  async updateAvatar(userId: number, data: string): Promise<void> {
+    const obj: UserAvatars = {
+      id: null,
+      userId: userId,
+      data: data,
+    };
+    const target = await this.userAvatarsRepository.findOne({
+      where: { userId: userId },
+    });
+    if (target == null) {
+      await this.userAvatarsRepository.save(obj);
+      return;
+    }
+    target.data = data;
+    await this.userAvatarsRepository.save(target);
+    return;
+  }
+
   async getAvatarById(userId: number): Promise<string> {
     const res = await this.userAvatarsRepository.findOne({
       where: { userId: userId },

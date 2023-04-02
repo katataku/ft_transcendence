@@ -39,6 +39,11 @@ export class UserUpdateReqDto {
   password: string;
 }
 
+export class UserAvatarUpdateReqDto {
+  @IsString()
+  avatar: string;
+}
+
 export class UserSignInDto {
   @IsString()
   name: string;
