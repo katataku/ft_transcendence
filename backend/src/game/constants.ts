@@ -68,6 +68,7 @@ const initSettings = {
   winWid: 1000,
   winHght: 500,
   ballPx: 20,
+  paddleSpeed: 10,
   winScore: { desc: PowerUP.Score, value: EndScoreOpts.Easy.value },
   paddleSize: { desc: PowerUP.Paddle, value: PaddleOpts.Easy.value },
   ballSpeed: { desc: PowerUP.Speed, value: SpeedOpts.Easy.value },
