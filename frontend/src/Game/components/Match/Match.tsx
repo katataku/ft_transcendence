@@ -67,10 +67,7 @@ export function Match(props: { match: IMatch }): ReactElement {
   return (
     <>
       <Row>
-        <PowerUps
-          match={props.match}
-          status={status}
-        />
+        <PowerUps match={props.match} status={status} />
       </Row>
       <Row className="d-flex justify-content-center">
         <div id="match">
@@ -80,7 +77,7 @@ export function Match(props: { match: IMatch }): ReactElement {
             right={props.match.rightPlayer.score}
           />
           <div id="countDown">{status === EStatus.ready && <CountDown />}</div>
-          {status === EStatus.play && <Ball match={props.match}/>}
+          {status === EStatus.play && <Ball match={props.match} />}
           {status === EStatus.set && <Result match={props.match} />}
           {status !== EStatus.none && (
             <Paddles match={props.match} status={status} />

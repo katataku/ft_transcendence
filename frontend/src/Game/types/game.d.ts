@@ -9,12 +9,12 @@ interface IPlayer {
 }
 
 interface IMatchSettings {
-  winWid: number;
-  winHght: number;
-  ballPx: number;
-  winScore: { desc: string; value: number };
-  paddleSize: { desc: string; value: Vector2 };
-  ballSpeed: { desc: string; value: number };
+  winWid: number
+  winHght: number
+  ballPx: number
+  winScore: { desc: string; value: number }
+  paddleSize: { desc: string; value: Vector2 }
+  ballSpeed: { desc: string; value: number }
 }
 
 interface IMatch {

@@ -12,20 +12,20 @@ import { GlobalContext } from '../../../App'
 export const SpeedOpts = {
   Easy: { desc: 'Speed-Slow', value: 300 },
   Medium: { desc: 'Speed-Medium', value: 500 },
-  Hard: { desc: 'Speed-Fast', value: 700 },
-};
+  Hard: { desc: 'Speed-Fast', value: 700 }
+}
 
 export const PaddleOpts = {
   Easy: { desc: 'Paddle-Large', value: { x: 8, y: 120 } },
   Medium: { desc: 'Paddle-Medium', value: { x: 8, y: 80 } },
-  Hard: { desc: 'Paddle-Small', value: { x: 8, y: 40 } },
-};
+  Hard: { desc: 'Paddle-Small', value: { x: 8, y: 40 } }
+}
 
 export const EndScoreOpts = {
   Easy: { desc: 'End Score-3', value: 3 },
   Medium: { desc: 'End Score-7', value: 7 },
-  Hard: { desc: 'End Score-10', value: 10 },
-};
+  Hard: { desc: 'End Score-10', value: 10 }
+}
 function PowerUpDropDown(props: {
   status: EStatus
   leftName: string
@@ -65,7 +65,9 @@ function PowerUpDropDown(props: {
       onSelect={modifySpeed}
     >
       <Dropdown.Item eventKey={opts.Easy.desc}>{opts.Easy.desc}</Dropdown.Item>
-      <Dropdown.Item eventKey={opts.Medium.desc}>{opts.Medium.desc}</Dropdown.Item>
+      <Dropdown.Item eventKey={opts.Medium.desc}>
+        {opts.Medium.desc}
+      </Dropdown.Item>
       <Dropdown.Item eventKey={opts.Hard.desc}>{opts.Hard.desc}</Dropdown.Item>
     </DropdownButton>
   )
@@ -73,26 +75,29 @@ function PowerUpDropDown(props: {
 export const PowerUP = {
   Speed: 'Speed',
   Paddle: 'Paddle',
-  Score: 'Score',
-};
+  Score: 'Score'
+}
 export function PowerUps(props: {
   match: IMatch
   status: EStatus
 }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
-  const [speed, setSpeed] = useState<string>(props.match.settings.ballSpeed.desc)
-  const [paddle, setPaddle] = useState<string>(props.match.settings.ballSpeed.desc)
-  const [endScore, setEndScore] = useState<string>(props.match.settings.ballSpeed.desc)
+  const [speed, setSpeed] = useState<string>(
+    props.match.settings.ballSpeed.desc
+  )
+  const [paddle, setPaddle] = useState<string>(
+    props.match.settings.ballSpeed.desc
+  )
+  const [endScore, setEndScore] = useState<string>(
+    props.match.settings.ballSpeed.desc
+  )
 
   useEffect(() => {
-    gameSocket.on(
-      'updatePowerUp',
-      (data: { match: IMatch }) => {
-        setSpeed(data.match.settings.ballSpeed.desc)
-        setPaddle(data.match.settings.paddleSize.desc)
-        setEndScore(data.match.settings.winScore.desc)
-      }
-    )
+    gameSocket.on('updatePowerUp', (data: { match: IMatch }) => {
+      setSpeed(data.match.settings.ballSpeed.desc)
+      setPaddle(data.match.settings.paddleSize.desc)
+      setEndScore(data.match.settings.winScore.desc)
+    })
   }, [])
 
   useEffect(() => {

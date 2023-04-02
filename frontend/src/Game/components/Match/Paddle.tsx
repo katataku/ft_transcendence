@@ -23,7 +23,10 @@ function updatePaddle(
       if (paddle.pos.y >= paddleSpeed) paddle.pos.y += -paddleSpeed
       break
     case 'ArrowDown':
-      if (paddle.pos.y <= settings.winHght - settings.paddleSize.value.y - paddleSpeed) {
+      if (
+        paddle.pos.y <=
+        settings.winHght - settings.paddleSize.value.y - paddleSpeed
+      ) {
         paddle.pos.y += paddleSpeed
       }
       break
@@ -78,10 +81,7 @@ export function Paddles(props: {
     window.addEventListener('keyup', handleOnKeyUp)
     gameSocket.on(
       'updatePaddle',
-      (data: {
-        leftPaddle: IPaddle
-        rightPaddle: IPaddle
-      }) => {
+      (data: { leftPaddle: IPaddle; rightPaddle: IPaddle }) => {
         setLeftPaddle(data.leftPaddle)
         setRightPaddle(data.rightPaddle)
       }
@@ -106,8 +106,14 @@ export function Paddles(props: {
 
   return (
     <>
-      <DrawPaddle paddle={leftPaddle} paddleSize={props.match.settings.paddleSize.value} />
-      <DrawPaddle paddle={rightPaddle} paddleSize={props.match.settings.paddleSize.value} />
+      <DrawPaddle
+        paddle={leftPaddle}
+        paddleSize={props.match.settings.paddleSize.value}
+      />
+      <DrawPaddle
+        paddle={rightPaddle}
+        paddleSize={props.match.settings.paddleSize.value}
+      />
     </>
   )
 }
