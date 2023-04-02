@@ -8,24 +8,8 @@ import React, {
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Dropdown, DropdownButton, ButtonGroup } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
+import * as constants from '../../utils/constants'
 
-export const SpeedOpts = {
-  Easy: { desc: 'Speed-Slow', value: 300 },
-  Medium: { desc: 'Speed-Medium', value: 500 },
-  Hard: { desc: 'Speed-Fast', value: 700 }
-}
-
-export const PaddleOpts = {
-  Easy: { desc: 'Paddle-Large', value: { x: 8, y: 120 } },
-  Medium: { desc: 'Paddle-Medium', value: { x: 8, y: 80 } },
-  Hard: { desc: 'Paddle-Small', value: { x: 8, y: 40 } }
-}
-
-export const EndScoreOpts = {
-  Easy: { desc: 'End Score-3', value: 3 },
-  Medium: { desc: 'End Score-7', value: 7 },
-  Hard: { desc: 'End Score-10', value: 10 }
-}
 function PowerUpDropDown(props: {
   status: EStatus
   leftName: string
@@ -34,11 +18,11 @@ function PowerUpDropDown(props: {
 }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
   const [opts, _setOpts] = useState(
-    props.title === PowerUP.Speed
-      ? SpeedOpts
-      : props.title === PowerUP.Paddle
-      ? PaddleOpts
-      : EndScoreOpts
+    props.title === constants.PowerUP.Speed
+      ? constants.SpeedOpts
+      : props.title === constants.PowerUP.Paddle
+      ? constants.PaddleOpts
+      : constants.EndScoreOpts
   )
 
   const modifySpeed = (op: string | null): void => {
@@ -72,11 +56,7 @@ function PowerUpDropDown(props: {
     </DropdownButton>
   )
 }
-export const PowerUP = {
-  Speed: 'Speed',
-  Paddle: 'Paddle',
-  Score: 'Score'
-}
+
 export function PowerUps(props: {
   match: IMatch
   status: EStatus
@@ -103,7 +83,7 @@ export function PowerUps(props: {
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
       matchID: props.match.id,
-      type: PowerUP.Speed,
+      type: constants.PowerUP.Speed,
       difficulty: speed
     })
   }, [speed])
@@ -111,7 +91,7 @@ export function PowerUps(props: {
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
       matchID: props.match.id,
-      type: PowerUP.Paddle,
+      type: constants.PowerUP.Paddle,
       difficulty: paddle
     })
   }, [paddle])
@@ -119,7 +99,7 @@ export function PowerUps(props: {
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
       matchID: props.match.id,
-      type: PowerUP.Score,
+      type: constants.PowerUP.Score,
       difficulty: endScore
     })
   }, [endScore])
