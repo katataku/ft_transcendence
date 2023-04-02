@@ -86,10 +86,10 @@ export function PowerUps(props: {
     props.match.settings.ballSpeed.desc
   )
   const [paddle, setPaddle] = useState<string>(
-    props.match.settings.ballSpeed.desc
+    props.match.settings.paddleSize.desc
   )
   const [endScore, setEndScore] = useState<string>(
-    props.match.settings.ballSpeed.desc
+    props.match.settings.winScore.desc
   )
 
   useEffect(() => {

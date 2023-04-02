@@ -123,6 +123,7 @@ export class GameGateway {
         this.server.to(matchId).emit('updatePaddle', {
           leftPaddle: match.leftPlayer.paddle,
           rightPaddle: match.rightPlayer.paddle,
+          settings: match.settings,
         });
         this.logger.log(match);
         if (isMatchSet(match)) {
@@ -383,31 +384,38 @@ export class GameGateway {
 
     switch (data.type) {
       case PowerUP.Speed:
-        if (data.difficulty !== PowerUP.Speed) {
+        if (
+          data.difficulty !== PowerUP.Speed &&
+          match.settings.ballSpeed !== undefined
+        ) {
           match.settings.ballSpeed = Object.values(SpeedOpts).find(
             (item) => item.desc === data.difficulty,
           );
         }
         break;
       case PowerUP.Paddle:
-        if (data.difficulty !== PowerUP.Paddle) {
+        if (
+          data.difficulty !== PowerUP.Paddle &&
+          match.settings.paddleSize !== undefined
+        ) {
           match.settings.paddleSize = Object.values(PaddleOpts).find(
             (item) => item.desc === data.difficulty,
           );
-          this.logger.log(match.settings.paddleSize);
           match.leftPlayer.paddle = initPaddle(match.settings, 'left');
           match.rightPlayer.paddle = initPaddle(match.settings, 'right');
         }
         break;
       case PowerUP.Score:
-        if (data.difficulty !== PowerUP.Score) {
+        if (
+          data.difficulty !== PowerUP.Score &&
+          match.settings.winScore !== undefined
+        ) {
           match.settings.winScore = Object.values(EndScoreOpts).find(
             (item) => item.desc === data.difficulty,
           );
         }
         break;
     }
-
     this.server.to(match.id.toString()).emit('updatePowerUp', { match: match });
   }
 }
