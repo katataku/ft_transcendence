@@ -13,6 +13,8 @@ export class UserSignUpReqDto {
   password: string;
   @IsString()
   avatar: string;
+  @IsBoolean()
+  is42User: boolean;
 }
 
 export class UserSignUpResDto {
@@ -30,6 +32,8 @@ export class UserGetDto {
   @IsOptional()
   @IsString()
   otpSecret?: string;
+  @IsBoolean()
+  is42User: boolean;
 }
 
 export class UserUpdateReqDto {
