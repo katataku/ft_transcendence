@@ -3,7 +3,7 @@ import { OnlineStatusService } from './onlineStatus.service';
 
 @Module({
   providers: [OnlineStatusService],
-  exports: [OnlineStatusService]
+  exports: [OnlineStatusService],
 })
 export class OnlineStatusModule {
   static forRoot() {
@@ -11,6 +11,6 @@ export class OnlineStatusModule {
       module: OnlineStatusModule,
       providers: [OnlineStatusService],
       exports: [OnlineStatusService],
-    }
+    };
   }
 }

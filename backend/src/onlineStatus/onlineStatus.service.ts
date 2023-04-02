@@ -40,7 +40,7 @@ export class OnlineStatusService {
     });
     if (index !== -1) {
       const diff =
-      (new Date().getTime() - this.list[index].date.getTime()) / 1000;
+        (new Date().getTime() - this.list[index].date.getTime()) / 1000;
       return diff <= diffSeconds;
     }
     return false;
