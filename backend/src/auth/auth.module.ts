@@ -8,7 +8,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { OnlineStatusModule } from 'src/onlineStatus';
-import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
 
 @Module({
   imports: [

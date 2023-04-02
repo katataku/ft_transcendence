@@ -10,7 +10,6 @@ import {
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { OnlineStatusModule } from 'src/onlineStatus';
-import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
 
 @Module({
   imports: [
