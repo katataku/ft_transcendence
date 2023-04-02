@@ -8,13 +8,24 @@ import React, {
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { Dropdown, DropdownButton, ButtonGroup } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
-import {
-  SpeedOpts,
-  PaddleOpts,
-  EndScoreOpts,
-  PowerUP
-} from '../../utils/constants'
 
+export const SpeedOpts = {
+  Easy: { desc: 'Speed-Slow', value: 300 },
+  Medium: { desc: 'Speed-Medium', value: 500 },
+  Hard: { desc: 'Speed-Fast', value: 700 },
+};
+
+export const PaddleOpts = {
+  Easy: { desc: 'Paddle-Large', value: { x: 8, y: 120 } },
+  Medium: { desc: 'Paddle-Medium', value: { x: 8, y: 80 } },
+  Hard: { desc: 'Paddle-Small', value: { x: 8, y: 40 } },
+};
+
+export const EndScoreOpts = {
+  Easy: { desc: 'End Score-3', value: 3 },
+  Medium: { desc: 'End Score-7', value: 7 },
+  Hard: { desc: 'End Score-10', value: 10 },
+};
 function PowerUpDropDown(props: {
   status: EStatus
   leftName: string
@@ -34,14 +45,14 @@ function PowerUpDropDown(props: {
     if (props.status !== EStatus.none || loginUser.name !== props.leftName)
       return
     switch (op) {
-      case opts.Easy:
-        props.setTitle(opts.Easy)
+      case opts.Easy.desc:
+        props.setTitle(opts.Easy.desc)
         break
-      case opts.Medium:
-        props.setTitle(opts.Medium)
+      case opts.Medium.desc:
+        props.setTitle(opts.Medium.desc)
         break
-      case opts.Hard:
-        props.setTitle(opts.Hard)
+      case opts.Hard.desc:
+        props.setTitle(opts.Hard.desc)
         break
     }
   }
@@ -53,45 +64,40 @@ function PowerUpDropDown(props: {
       title={props.title}
       onSelect={modifySpeed}
     >
-      <Dropdown.Item eventKey={opts.Easy}>{opts.Easy}</Dropdown.Item>
-      <Dropdown.Item eventKey={opts.Medium}>{opts.Medium}</Dropdown.Item>
-      <Dropdown.Item eventKey={opts.Hard}>{opts.Hard}</Dropdown.Item>
+      <Dropdown.Item eventKey={opts.Easy.desc}>{opts.Easy.desc}</Dropdown.Item>
+      <Dropdown.Item eventKey={opts.Medium.desc}>{opts.Medium.desc}</Dropdown.Item>
+      <Dropdown.Item eventKey={opts.Hard.desc}>{opts.Hard.desc}</Dropdown.Item>
     </DropdownButton>
   )
 }
-
+export const PowerUP = {
+  Speed: 'Speed',
+  Paddle: 'Paddle',
+  Score: 'Score',
+};
 export function PowerUps(props: {
-  matchId: number
-  leftName: string
+  match: IMatch
   status: EStatus
 }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
-  const [speed, setSpeed] = useState<string>(PowerUP.Speed)
-  const [paddle, setPaddle] = useState<string>(PowerUP.Paddle)
-  const [endScore, setEndScore] = useState<string>(PowerUP.Score)
+  const [speed, setSpeed] = useState<string>(props.match.settings.ballSpeed.desc)
+  const [paddle, setPaddle] = useState<string>(props.match.settings.ballSpeed.desc)
+  const [endScore, setEndScore] = useState<string>(props.match.settings.ballSpeed.desc)
 
   useEffect(() => {
     gameSocket.on(
       'updatePowerUp',
-      (data: { type: string; difficulty: string }) => {
-        switch (data.type) {
-          case PowerUP.Speed:
-            setSpeed(data.difficulty)
-            break
-          case PowerUP.Paddle:
-            setPaddle(data.difficulty)
-            break
-          case PowerUP.Score:
-            setEndScore(data.difficulty)
-            break
-        }
+      (data: { match: IMatch }) => {
+        setSpeed(data.match.settings.ballSpeed.desc)
+        setPaddle(data.match.settings.paddleSize.desc)
+        setEndScore(data.match.settings.winScore.desc)
       }
     )
   }, [])
 
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
-      matchID: props.matchId,
+      matchID: props.match.id,
       type: PowerUP.Speed,
       difficulty: speed
     })
@@ -99,7 +105,7 @@ export function PowerUps(props: {
 
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
-      matchID: props.matchId,
+      matchID: props.match.id,
       type: PowerUP.Paddle,
       difficulty: paddle
     })
@@ -107,7 +113,7 @@ export function PowerUps(props: {
 
   useEffect(() => {
     gameSocket.emit('updatePowerUp', {
-      matchID: props.matchId,
+      matchID: props.match.id,
       type: PowerUP.Score,
       difficulty: endScore
     })
@@ -118,19 +124,19 @@ export function PowerUps(props: {
       <h5 id="alignV">Game Settings: </h5>
       <PowerUpDropDown
         status={props.status}
-        leftName={props.leftName}
+        leftName={props.match.leftPlayer.name}
         title={speed}
         setTitle={setSpeed}
       />
       <PowerUpDropDown
         status={props.status}
-        leftName={props.leftName}
+        leftName={props.match.leftPlayer.name}
         title={paddle}
         setTitle={setPaddle}
       />
       <PowerUpDropDown
         status={props.status}
-        leftName={props.leftName}
+        leftName={props.match.leftPlayer.name}
         title={endScore}
         setTitle={setEndScore}
       />

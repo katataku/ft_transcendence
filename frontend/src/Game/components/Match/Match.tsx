@@ -68,8 +68,7 @@ export function Match(props: { match: IMatch }): ReactElement {
     <>
       <Row>
         <PowerUps
-          matchId={props.match.id}
-          leftName={props.match.leftPlayer.name}
+          match={props.match}
           status={status}
         />
       </Row>
@@ -81,7 +80,7 @@ export function Match(props: { match: IMatch }): ReactElement {
             right={props.match.rightPlayer.score}
           />
           <div id="countDown">{status === EStatus.ready && <CountDown />}</div>
-          {status === EStatus.play && <Ball ball={props.match.ball} />}
+          {status === EStatus.play && <Ball match={props.match}/>}
           {status === EStatus.set && <Result match={props.match} />}
           {status !== EStatus.none && (
             <Paddles match={props.match} status={status} />

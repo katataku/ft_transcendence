@@ -119,11 +119,12 @@ export class GameGateway {
         }
 
         this.server.to(matchId).emit('updateBall', match.ball);
+
         this.server.to(matchId).emit('updatePaddle', {
           leftPaddle: match.leftPlayer.paddle,
           rightPaddle: match.rightPlayer.paddle,
-          paddleSize: match.settings.paddleSize,
         });
+        this.logger.log(match);
         if (isMatchSet(match)) {
           match.status = EStatus.set;
           this.server.to(matchId).emit('updateConnections', match);
@@ -361,7 +362,6 @@ export class GameGateway {
         break;
       }
     }
-
     if (currentMatch === undefined)
       this.server.to(client.id).emit('updateConnections');
     else this.server.to(client.id).emit('updateConnections', currentMatch);
@@ -383,25 +383,31 @@ export class GameGateway {
 
     switch (data.type) {
       case PowerUP.Speed:
-        match.speed = Object.values(SpeedOpts).find(
-          (item) => item.Desc === data.difficulty,
-        ).Value;
+        if (data.difficulty !== PowerUP.Speed) {
+          match.settings.ballSpeed = Object.values(SpeedOpts).find(
+            (item) => item.desc === data.difficulty,
+          );
+        }
         break;
       case PowerUP.Paddle:
-        match.settings.paddleSize = Object.values(PaddleOpts).find(
-          (item) => item.Desc === data.difficulty,
-        ).Value;
-        match.leftPlayer.paddle = initPaddle(match.settings, 'left');
-        match.rightPlayer.paddle = initPaddle(match.settings, 'right');
+        if (data.difficulty !== PowerUP.Paddle) {
+          match.settings.paddleSize = Object.values(PaddleOpts).find(
+            (item) => item.desc === data.difficulty,
+          );
+          this.logger.log(match.settings.paddleSize);
+          match.leftPlayer.paddle = initPaddle(match.settings, 'left');
+          match.rightPlayer.paddle = initPaddle(match.settings, 'right');
+        }
         break;
       case PowerUP.Score:
-        match.settings.winScore = Object.values(EndScoreOpts).find(
-          (item) => item.Desc === data.difficulty,
-        ).Value;
+        if (data.difficulty !== PowerUP.Score) {
+          match.settings.winScore = Object.values(EndScoreOpts).find(
+            (item) => item.desc === data.difficulty,
+          );
+        }
         break;
     }
-    this.server
-      .to(match.id.toString())
-      .emit('updatePowerUp', { type: data.type, difficulty: data.difficulty });
+
+    this.server.to(match.id.toString()).emit('updatePowerUp', { match: match });
   }
 }

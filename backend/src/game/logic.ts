@@ -33,8 +33,8 @@ function handlePaddleCollision(match: IMatch, paddle: IPaddle): void {
     // ボールがパドルの何%で衝突したのか)
     (match.ball.pos.y +
       match.settings.ballPx / 2 -
-      (paddle.pos.y + match.settings.paddleSize.y / 2)) /
-      (match.settings.paddleSize.y / 2),
+      (paddle.pos.y + match.settings.paddleSize.value.y / 2)) /
+      (match.settings.paddleSize.value.y / 2),
   );
   match.ball.vel.x =
     match.ball.vel.x < 0
@@ -45,9 +45,9 @@ function handlePaddleCollision(match: IMatch, paddle: IPaddle): void {
 function isHitPaddle(match: IMatch, paddle: IPaddle): boolean {
   return (
     paddle.pos.x <= match.ball.pos.x + match.settings.ballPx &&
-    match.ball.pos.x <= paddle.pos.x + match.settings.paddleSize.x &&
+    match.ball.pos.x <= paddle.pos.x + match.settings.paddleSize.value.x &&
     paddle.pos.y <= match.ball.pos.y + match.settings.ballPx &&
-    match.ball.pos.y <= paddle.pos.y + match.settings.paddleSize.y
+    match.ball.pos.y <= paddle.pos.y + match.settings.paddleSize.value.y
   );
 }
 
@@ -71,8 +71,10 @@ export function updateMatch(
   deltaTime: number,
   goalCallback: (id: string, score: IScore, status: EStatus) => void,
 ): void {
-  match.ball.pos.x += match.ball.vel.x * deltaTime * match.speed;
-  match.ball.pos.y += match.ball.vel.y * deltaTime * match.speed;
+  match.ball.pos.x +=
+    match.ball.vel.x * deltaTime * match.settings.ballSpeed.value;
+  match.ball.pos.y +=
+    match.ball.vel.y * deltaTime * match.settings.ballSpeed.value;
 
   if (isHitWall(match)) {
     match.ball.vel.y *= -1;
@@ -104,7 +106,7 @@ export function updateMatch(
 
 export function isMatchSet(match: IMatch): boolean {
   return (
-    match.leftPlayer.score >= match.settings.winScore ||
-    match.rightPlayer.score >= match.settings.winScore
+    match.leftPlayer.score >= match.settings.winScore.value ||
+    match.rightPlayer.score >= match.settings.winScore.value
   );
 }

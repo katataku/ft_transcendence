@@ -9,13 +9,12 @@ import React, {
 import { GameSocketContext } from '../../utils/gameSocketContext'
 import { useAnimationFrame } from '../../../hooks/useAnimationFrame'
 import { GlobalContext } from '../../../App'
-import { MatchSettings } from '../../utils/constants'
 type Ref = React.MutableRefObject<any>
 
 function updatePaddle(
   paddle: IPaddle,
   keydown: Ref,
-  paddleSize: Vector2
+  settings: IMatchSettings
 ): IPaddle {
   const paddleSpeed: number = 10
 
@@ -24,7 +23,7 @@ function updatePaddle(
       if (paddle.pos.y >= paddleSpeed) paddle.pos.y += -paddleSpeed
       break
     case 'ArrowDown':
-      if (paddle.pos.y <= MatchSettings.winHght - paddleSize.y - paddleSpeed) {
+      if (paddle.pos.y <= settings.winHght - settings.paddleSize.value.y - paddleSpeed) {
         paddle.pos.y += paddleSpeed
       }
       break
@@ -60,7 +59,6 @@ export function Paddles(props: {
   const gameSocket = useContext(GameSocketContext)
   const { loginUser } = useContext(GlobalContext)
   const keydown = useRef<string>('')
-  const paddleSize = useRef<Vector2>(MatchSettings.paddleSize)
   const [leftPaddle, setLeftPaddle] = useState<IPaddle>(
     props.match.leftPlayer.paddle
   )
@@ -83,11 +81,9 @@ export function Paddles(props: {
       (data: {
         leftPaddle: IPaddle
         rightPaddle: IPaddle
-        paddleSize: Vector2
       }) => {
         setLeftPaddle(data.leftPaddle)
         setRightPaddle(data.rightPaddle)
-        paddleSize.current = data.paddleSize
       }
     )
   }, [])
@@ -96,20 +92,22 @@ export function Paddles(props: {
     if (props.match.leftPlayer.name === loginUser.name) {
       gameSocket.emit('updatePaddle', {
         matchID: props.match.id,
-        newPaddle: updatePaddle(leftPaddle, keydown, paddleSize.current)
+        // newPaddle: updatePaddle(leftPaddle, keydown, paddleSize.current)
+        newPaddle: updatePaddle(leftPaddle, keydown, props.match.settings)
       })
     } else if (props.match.rightPlayer.name === loginUser.name) {
       gameSocket.emit('updatePaddle', {
         matchID: props.match.id,
-        newPaddle: updatePaddle(rightPaddle, keydown, paddleSize.current)
+        // newPaddle: updatePaddle(rightPaddle, keydown, paddleSize.current)
+        newPaddle: updatePaddle(rightPaddle, keydown, props.match.settings)
       })
     }
   }, props.status === EStatus.set)
 
   return (
     <>
-      <DrawPaddle paddle={leftPaddle} paddleSize={paddleSize.current} />
-      <DrawPaddle paddle={rightPaddle} paddleSize={paddleSize.current} />
+      <DrawPaddle paddle={leftPaddle} paddleSize={props.match.settings.paddleSize.value} />
+      <DrawPaddle paddle={rightPaddle} paddleSize={props.match.settings.paddleSize.value} />
     </>
   )
 }

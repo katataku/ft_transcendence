@@ -5,11 +5,10 @@ import React, {
   useState
 } from 'react'
 import { GameSocketContext } from '../../utils/gameSocketContext'
-import { MatchSettings } from '../../utils/constants'
 
-export function Ball(props: { ball: IBall }): ReactElement {
+export function Ball(props: { match: IMatch }): ReactElement {
   const gameSocket = useContext(GameSocketContext)
-  const [ball, setBall] = useState<IBall>(props.ball)
+  const [ball, setBall] = useState<IBall>(props.match.ball)
 
   useEffect(() => {
     gameSocket.on('updateBall', (serverBall: IBall) => {
@@ -20,8 +19,8 @@ export function Ball(props: { ball: IBall }): ReactElement {
   return (
     <div
       style={{
-        width: `${MatchSettings.ballPx}px`,
-        height: `${MatchSettings.ballPx}px`,
+        width: `${props.match.settings.ballPx}px`,
+        height: `${props.match.settings.ballPx}px`,
         top: `${ball.pos.y}px`,
         left: `${ball.pos.x}px`,
         position: 'absolute',

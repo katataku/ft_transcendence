@@ -15,33 +15,21 @@ export const PowerUP = {
 };
 
 export const SpeedOpts = {
-  Easy: { Desc: 'Speed-Slow', Value: 300 },
-  Medium: { Desc: 'Speed-Medium', Value: 500 },
-  Hard: { Desc: 'Speed-Fast', Value: 700 },
-};
-export const PaddleOpts = {
-  Easy: { Desc: 'Paddle-Large', Value: { x: 8, y: 120 } },
-  Medium: { Desc: 'Paddle-Medium', Value: { x: 8, y: 80 } },
-  Hard: { Desc: 'Paddle-Small', Value: { x: 8, y: 40 } },
-};
-export const EndScoreOpts = {
-  Easy: { Desc: 'End Score-3', Value: 3 },
-  Medium: { Desc: 'End Score-7', Value: 7 },
-  Hard: { Desc: 'End Score-10', Value: 10 },
+  Easy: { desc: 'Speed-Slow', value: 300 },
+  Medium: { desc: 'Speed-Medium', value: 500 },
+  Hard: { desc: 'Speed-Fast', value: 700 },
 };
 
-const settings = {
-  winWid: 1000,
-  winHght: 500,
-  ballPx: 20,
-  winScore: 3,
-  paddleSize: {
-    x: 8,
-    y: 100,
-  },
-  puSpeed: SpeedOpts.Easy.Value,
-  puPaddle: PaddleOpts.Easy.Value,
-  puEndScore: EndScoreOpts.Easy.Value,
+export const PaddleOpts = {
+  Easy: { desc: 'Paddle-Large', value: { x: 8, y: 120 } },
+  Medium: { desc: 'Paddle-Medium', value: { x: 8, y: 80 } },
+  Hard: { desc: 'Paddle-Small', value: { x: 8, y: 40 } },
+};
+
+export const EndScoreOpts = {
+  Easy: { desc: 'End Score-3', value: 3 },
+  Medium: { desc: 'End Score-7', value: 7 },
+  Hard: { desc: 'End Score-10', value: 10 },
 };
 
 function getRandomNumberInRange(): number {
@@ -64,15 +52,26 @@ export function initPaddle(settings: IMatchSettings, player: UPlayer): IPaddle {
       player === 'left'
         ? {
             x: settings.winWid / 20,
-            y: settings.winHght / 2 - settings.paddleSize.y / 2,
+            y: settings.winHght / 2 - settings.paddleSize.value.y / 2,
           }
         : {
-            x: settings.winWid - (settings.winWid / 20 + settings.paddleSize.x),
-            y: settings.winHght / 2 - settings.paddleSize.y / 2,
+            x:
+              settings.winWid -
+              (settings.winWid / 20 + settings.paddleSize.value.x),
+            y: settings.winHght / 2 - settings.paddleSize.value.y / 2,
           },
     id: player,
   };
 }
+
+const initSettings = {
+  winWid: 1000,
+  winHght: 500,
+  ballPx: 20,
+  winScore: { desc: PowerUP.Score, value: EndScoreOpts.Easy.value },
+  paddleSize: { desc: PowerUP.Paddle, value: PaddleOpts.Easy.value },
+  ballSpeed: { desc: PowerUP.Speed, value: SpeedOpts.Easy.value },
+};
 
 export const initLeftProfile: IPlayer = {
   id: 1,
@@ -80,7 +79,7 @@ export const initLeftProfile: IPlayer = {
   name: 'Player1',
   matchHistory: { wins: 0, losses: 0 },
   ready: false,
-  paddle: initPaddle(settings, 'left'),
+  paddle: initPaddle(initSettings, 'left'),
   score: 0,
 };
 
@@ -90,7 +89,7 @@ export const initRightProfile: IPlayer = {
   name: 'Player2',
   matchHistory: { wins: 0, losses: 0 },
   ready: false,
-  paddle: initPaddle(settings, 'right'),
+  paddle: initPaddle(initSettings, 'right'),
   score: 0,
 };
 
@@ -98,10 +97,9 @@ export const initServerMatch: IMatch = {
   id: 0,
   leftPlayer: undefined,
   rightPlayer: undefined,
-  ball: initBall(settings),
-  speed: 300,
+  ball: initBall(initSettings),
   status: EStatus.none,
   lastFrameTime: Date.now(),
   elapsedTime: 0,
-  settings: settings,
+  settings: initSettings,
 };
