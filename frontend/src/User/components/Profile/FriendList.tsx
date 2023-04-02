@@ -26,7 +26,6 @@ export function FriendList(props: { activeTab: string }): ReactElement {
           <div key={index}>
             <p>
               <Link to={'/profile/' + String(user.id)}>{user.name}</Link>
-              <p>{user.isOnline === true ? 'Online' : 'Offline'}</p>
             </p>
           </div>
         )
