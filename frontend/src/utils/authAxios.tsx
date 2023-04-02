@@ -58,7 +58,7 @@ export function request42AuthToken(
   callback: (res: SigninRes) => void
 ): void {
   axios
-    .get(`/auth/42/${authCode}`)
+    .post(`/auth/42/${authCode}`)
     .then((res) => {
       callback(res.data)
     })
