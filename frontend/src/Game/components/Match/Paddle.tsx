@@ -14,7 +14,7 @@ type Ref = React.MutableRefObject<any>
 function updatePaddle(
   paddle: IPaddle,
   keydown: Ref,
-  settings: IMatchSettings,
+  settings: IMatchSettings
 ): IPaddle {
   const paddleSpeed: number = 10
 
@@ -82,7 +82,11 @@ export function Paddles(props: {
     window.addEventListener('keyup', handleOnKeyUp)
     gameSocket.on(
       'updatePaddle',
-      (data: { leftPaddle: IPaddle; rightPaddle: IPaddle; settings: IMatchSettings }) => {
+      (data: {
+        leftPaddle: IPaddle
+        rightPaddle: IPaddle
+        settings: IMatchSettings
+      }) => {
         setLeftPaddle(data.leftPaddle)
         setRightPaddle(data.rightPaddle)
         settings.current = data.settings
@@ -106,14 +110,8 @@ export function Paddles(props: {
 
   return (
     <>
-      <DrawPaddle
-        paddle={leftPaddle}
-        settings={settings.current}
-      />
-      <DrawPaddle
-        paddle={rightPaddle}
-        settings={settings.current}
-      />
+      <DrawPaddle paddle={leftPaddle} settings={settings.current} />
+      <DrawPaddle paddle={rightPaddle} settings={settings.current} />
     </>
   )
 }
