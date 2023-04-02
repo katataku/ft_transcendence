@@ -4,11 +4,75 @@ import { GlobalContext } from '../../../App'
 import { FriendList } from './FriendList'
 import { FriendPendingList } from './FriendPendingList'
 import { BaseURL } from '../../../constants'
-import { getMatchHistoryById, updateAvatar } from '../../../utils/userAxios'
+import {
+  getMatchHistoryById,
+  updateAvatar,
+  updateUserProfile
+} from '../../../utils/userAxios'
 import { MatchHistory } from '../../../components/MatchHistory'
 import { TwoFactorRegModal } from '../../../Auth/components/TwoFactorRegModal'
 import { resizeAndEncode } from '../../functions/user.functions'
 import { defaultAvatar } from '../SignIn'
+
+function UserProfileModal(props: {
+  show: boolean
+  handleClose: () => void
+}): ReactElement {
+  const { loginUser } = useContext(GlobalContext)
+
+  const [userName, setUserName] = useState<string>('')
+  const [password, setPassword] = useState<string>('')
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+
+  return (
+    <>
+      <Modal show={props.show} onHide={props.handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>プロフィールの変更</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            placeholder={'UserName'}
+            onChange={(e) => {
+              setUserName(e.target.value)
+            }}
+          />
+          <Form.Control
+            placeholder="Password"
+            type={showPassword ? 'text' : 'password'}
+            onChange={(e) => {
+              setPassword(e.target.value)
+            }}
+          />
+          <Form.Check
+            type="switch"
+            label="show"
+            style={{ width: '100px' }}
+            onChange={() => {
+              setShowPassword(!showPassword)
+            }}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={props.handleClose}>
+            閉じる
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => {
+              updateUserProfile(loginUser.id, userName, password, (_res) => {
+                alert('プロフィールを変更しました。')
+              })
+              props.handleClose()
+            }}
+          >
+            保存
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  )
+}
 
 function AvatarUpdateModal(props: {
   show: boolean
@@ -79,6 +143,7 @@ function Settings(): ReactElement {
   const { loginUser } = useContext(GlobalContext)
   const [matchHist, setMatchHist] = useState({ wins: 0, losses: 0 })
   const [avatarModalShow, setAvatarModalShow] = useState(false)
+  const [userprofileModalShow, setUserprofileModalShow] = useState(false)
 
   useEffect(() => {
     getMatchHistoryById(loginUser.id, setMatchHist)
@@ -90,6 +155,12 @@ function Settings(): ReactElement {
         show={avatarModalShow}
         handleClose={() => {
           setAvatarModalShow(false)
+        }}
+      />
+      <UserProfileModal
+        show={userprofileModalShow}
+        handleClose={() => {
+          setUserprofileModalShow(false)
         }}
       />
       ↓イメージをクリックするとプロフィール画像を変更できます。
@@ -107,7 +178,13 @@ function Settings(): ReactElement {
         <MatchHistory matchHistory={matchHist} />
       </p>
       <p>
-        <Button>自分のプロフィールを編集できるボタンになる予定</Button>
+        <Button
+          onClick={() => {
+            setUserprofileModalShow(true)
+          }}
+        >
+          Username/Passwordを変更
+        </Button>
       </p>
       <TwoFactorRegModal />
     </>
