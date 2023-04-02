@@ -40,14 +40,14 @@ export class OnlineStatusService {
     });
     if (index !== -1) {
       const diff =
-        (new Date().getTime() - this.list[index].date.getTime()) / 1000;
+      (new Date().getTime() - this.list[index].date.getTime()) / 1000;
       return diff <= diffSeconds;
     }
     return false;
   }
 
   @Cron('*/5 * * * * *')
-  async monitor() {
+  monitor() {
     this.list.map((user, index) => {
       if (!this.isOnline(user.userId)) {
         this.list.splice(index, 1);
