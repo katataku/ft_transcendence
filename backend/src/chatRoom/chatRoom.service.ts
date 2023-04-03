@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SHA256 } from 'crypto-js';
 import { ChatRoom } from 'src/entities/chatRoom.entity';
@@ -42,7 +46,7 @@ export class ChatRoomService {
         id: param.created_by_user_id,
       },
     });
-
+    if (!created_by) throw new NotFoundException();
     const data = new ChatRoom();
     data.name = param.name;
     data.created_by = created_by;
@@ -73,7 +77,7 @@ export class ChatRoomService {
         id: id,
       },
     });
-
+    if (!created_by || !targetRoom) throw new NotFoundException();
     targetRoom.name = param.name;
     targetRoom.created_by = created_by;
     targetRoom.created_by_user_id = param.created_by_user_id;
@@ -97,6 +101,7 @@ export class ChatRoomService {
         id: id,
       },
     });
+    if (!targetRoom) throw new NotFoundException();
     if (signedInUserId !== targetRoom.created_by_user_id)
       throw new ForbiddenException();
     this.chatRoomRepository.remove(targetRoom);
@@ -115,6 +120,7 @@ export class ChatRoomService {
         id: 'ASC',
       },
     });
+    if (!row) throw new NotFoundException();
     if (row.password) {
       const passHash = SHA256(data.password).toString();
       if (row.password === passHash) {

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
   FriendRequestDto,
@@ -290,6 +295,7 @@ export class UsersService {
 
   async updateUserMatchHistory(userId: number, type: string): Promise<void> {
     const data: UserMatchHistory = await this.getUserMatchHistoryRow(userId);
+    if (!data) throw new NotFoundException();
     data[type] = data[type] + 1;
     await this.userMatchHistoryRepository.save(data);
   }
