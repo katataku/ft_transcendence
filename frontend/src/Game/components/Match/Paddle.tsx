@@ -79,13 +79,11 @@ export function Paddles(props: {
   useEffect(() => {
     window.addEventListener('keydown', handleOnKeyDown)
     window.addEventListener('keyup', handleOnKeyUp)
-    gameSocket.on(
-      'updatePaddle', (match: IMatch) => {
-        setLeftPaddle(match.leftPlayer.paddle)
-        setRightPaddle(match.rightPlayer.paddle)
-        settings.current = match.settings
-      }
-    )
+    gameSocket.on('updatePaddle', (match: IMatch) => {
+      setLeftPaddle(match.leftPlayer.paddle)
+      setRightPaddle(match.rightPlayer.paddle)
+      settings.current = match.settings
+    })
   }, [])
 
   useAnimationFrame((): void => {
