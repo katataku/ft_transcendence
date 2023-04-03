@@ -201,9 +201,7 @@ export function OtherUserProfile(): ReactElement {
           height={300}
         />
       </p>
-      <p>
-        <MatchHistory matchHistory={matchHist} />
-      </p>
+      <MatchHistory matchHistory={matchHist} />
       {targetUser.isOnline === true ? (
         <p style={{ color: 'green' }}>ONLINE</p>
       ) : (
