@@ -136,9 +136,20 @@ export function SignIn(): ReactElement {
               checkUsernameAvailability(
                 userName,
                 () => {
-                  signUp({ name: userName, password, avatar: image }, () => {
-                    signIn({ name: userName, password }, handleSuccessfulSignIn)
-                  })
+                  signUp(
+                    {
+                      name: userName,
+                      password,
+                      avatar: image,
+                      is42User: false
+                    },
+                    () => {
+                      signIn(
+                        { name: userName, password },
+                        handleSuccessfulSignIn
+                      )
+                    }
+                  )
                 },
                 () => {
                   alert('Username already exists, so try another username.')
