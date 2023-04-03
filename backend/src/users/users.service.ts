@@ -116,7 +116,7 @@ export class UsersService {
 
   async getUserByName(name: User['name']): Promise<UserGetDto> {
     const data = await this.usersRepository.findOne({ where: { name: name } });
-    // execptionはcontrollerで処理したい
+    // exceptionはcontrollerで処理したい
     if (data === null) return null;
     const res: UserGetDto = {
       id: data.id,

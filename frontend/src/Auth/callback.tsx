@@ -2,14 +2,14 @@ import { useEffect, type ReactElement } from 'react'
 import { request42AuthToken } from '../utils/authAxios'
 import { useNavigate } from 'react-router-dom'
 
-let didinit = false
+let didInit = false
 
 export function Auth42callback(): ReactElement {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (didinit) return
-    didinit = true
+    if (didInit) return
+    didInit = true
     const code = new URLSearchParams(window.location.search).get('code')
     // apiはTopPageで呼び出しているので、ここでは呼び出さない
     if (code !== null) {
