@@ -78,6 +78,15 @@ revert:wait-until-backend-ready
 cypress-run:wait-until-frontend-ready
 	cd ./cypress && npm install && npm run cypress:run
 
+.PHONY:cypress-run-chrome
+cypress-run-chrome:wait-until-frontend-ready
+	cd ./cypress && npm install && npm run cypress:run-chrome
+
+.PHONY:cypress-run-firefox
+cypress-run-firefox:wait-until-frontend-ready
+	cd ./cypress && npm install && npm run cypress:run-firefox
+
+
 BACKEND_HEALTH_CHECK_URL=localhost:3001/health
 .PHONY:wait-until-backend-ready
 wait-until-backend-ready:

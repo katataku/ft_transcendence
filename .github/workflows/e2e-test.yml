@@ -2,7 +2,7 @@ name: End-to-End Tests
 run-name:  End-to-End Tests by ${{ github.actor }}
 on: [push]
 jobs:
-  e2e-tests:
+  e2e-tests-chrome:
     runs-on: ubuntu-latest
     services:
       # Docker Composeを実行するために必要なDockerイメージを指定します。
@@ -34,4 +34,43 @@ jobs:
         run: make migrate
 
       - name: Run end-to-end tests
-        run: make cypress-run
+        run: make cypress-run-chrome
+
+
+  e2e-tests-firefox:
+    runs-on: ubuntu-latest
+    services:
+      # Docker Composeを実行するために必要なDockerイメージを指定します。
+      # ここでは、docker/compose:1.29.2を使用しています。
+      docker:
+        image: docker/compose:1.29.2
+        # Docker Composeを実行するために、Dockerデーモンを有効化します。
+        # デフォルトでDocker Composeは、Dockerデーモンが起動している環境でのみ動作します。
+        # このオプションを指定することで、DockerデーモンをGitHub Actions上で有効化することができます。
+        options: --privileged
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Setup firefox
+        id: setup-firefox
+        uses: browser-actions/setup-firefox@v1
+
+      - name: setup
+        run: make init
+
+      - name: Build Docker images
+        run: make build
+
+      - name: Start services
+        run: make up-d
+
+      - name: Wait for server to start
+        run: make wait-until-frontend-ready
+
+      - name: migration
+        run: make migrate
+
+      - name: Run end-to-end tests
+        run: make cypress-run-firefox
