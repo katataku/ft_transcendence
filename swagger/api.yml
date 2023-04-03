@@ -730,6 +730,7 @@ paths:
       tags:
           - auth
       summary: Verify two-factor authentication
+      security: []
       requestBody:
         required: true
         content:
