@@ -1,23 +1,21 @@
-import { type ReactElement, useContext, useEffect } from 'react'
+import { type ReactElement, useEffect } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
-import { GlobalContext } from '../../App'
 import { checkUsernameAvailability, signUp } from '../../utils/userAxios'
-import { BaseURL, initUser, localStorageKey } from '../../constants'
+import { BaseURL, initUser } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
-import { signIn, validateJwtToken } from '../../utils/authAxios'
-import { GameSocketContext } from '../../Game/utils/gameSocketContext'
+import { signIn } from '../../utils/authAxios'
 import { useLocation, useNavigate } from 'react-router-dom'
+import useJwtAuthRegister from '../../hooks/useJwtAuthRegister'
 
 export const defaultAvatar = `${BaseURL}/user/user_avatar/0`
 
 let didInit = false
 
 export function SignIn(): ReactElement {
-  const { setLoginUser } = useContext(GlobalContext)
-  const gameSocket = useContext(GameSocketContext)
+  const jwtAuthRegister = useJwtAuthRegister()
   const location: SigninRes | null = useLocation().state
   const navigate = useNavigate()
   const [signUpMode, setSignUpMode] = useState<boolean>(false)
@@ -59,18 +57,7 @@ export function SignIn(): ReactElement {
       handleTwoFAModalShow()
     } else {
       if (signinRes.access_token === undefined) return
-      localStorage.setItem(localStorageKey, signinRes.access_token)
-      validateJwtToken(
-        (res: jwtPayload) => {
-          const loggedInUser: User = {
-            id: res.userId,
-            name: res.userName
-          }
-          gameSocket.emit('loggedIn', loggedInUser)
-          setLoginUser(loggedInUser)
-        },
-        () => {}
-      )
+      jwtAuthRegister(signinRes.access_token)
     }
   }
 
@@ -190,7 +177,6 @@ export function SignIn(): ReactElement {
         show={twoFactorVerifyModalshow}
         handleClose={handleTwoFAModalClose}
         userTryingToLogin={userTryingToLogin}
-        setLoginUser={setLoginUser}
       ></TwoFactorVerifyModal>
     </div>
   )
