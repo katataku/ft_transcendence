@@ -18,22 +18,27 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
   ) {}
-  async signIn(user: UserSignInDto): Promise<SigninResDto> {
-    const loggedInUser = await this.usersService.signInUser(user);
+
+  async getSignInRes(userId: number, userName: string): Promise<SigninResDto> {
     const isTwoFactorEnabled = await this.usersService.isTwoFactorEnabled(
-      loggedInUser.id,
+      userId,
     );
     const payload: JwtPayloadDto = {
-      userId: loggedInUser.id,
-      userName: loggedInUser.name,
+      userId: userId,
+      userName: userName,
     };
 
     return {
-      userId: loggedInUser.id,
-      userName: loggedInUser.name,
+      userId: userId,
+      userName: userName,
       access_token: isTwoFactorEnabled ? null : this.jwtService.sign(payload),
       isTwoFactorEnabled: isTwoFactorEnabled,
     };
+  }
+
+  async signIn(user: UserSignInDto): Promise<SigninResDto> {
+    const loggedInUser = await this.usersService.signInUser(user);
+    return await this.getSignInRes(loggedInUser.id, loggedInUser.name);
   }
 
   async request42AuthToken(code: string): Promise<string> {

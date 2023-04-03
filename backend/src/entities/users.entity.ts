@@ -24,6 +24,9 @@ export class User {
 
   @Column({ name: 'is_two_factor_enabled', default: false })
   isTwoFactorEnabled!: boolean;
+
+  @Column({ name: 'is_42_user', default: false })
+  is42User!: boolean;
 }
 
 @Entity({ name: 'friendship' })

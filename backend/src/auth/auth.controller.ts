@@ -2,14 +2,16 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Logger,
   Param,
   Post,
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { Auth42Param, login42Param } from 'src/common/params/user.params';
-import { UserGetDto, UserSignInDto } from 'src/common/dto/users.dto';
+import { Auth42Param } from 'src/common/params/user.params';
+import { UserSignInDto } from 'src/common/dto/users.dto';
 import { UsersService } from 'src/users/users.service';
 import { SigninResDto } from 'src/common/dto/auth.dto';
 import { Public } from './public.decorator';
@@ -46,8 +48,8 @@ export class AuthController {
   }
 
   @Public()
-  @Get('42/:code')
-  async auth42(@Param() param: Auth42Param): Promise<string> {
+  @Post('42/:code')
+  async auth42(@Param() param: Auth42Param): Promise<SigninResDto> {
     let token: string;
     try {
       token = await this.service.request42AuthToken(param.code);
@@ -56,29 +58,36 @@ export class AuthController {
         Logger.log(`42login => ${user42.login}`);
         Logger.log(`Token => ${token}`);
 
-        await this.usersService.createUser({
-          name: user42.login,
-          password: user42.login,
-          avatar: await this.service.getAvatar42(user42.image.link),
-        });
+        let signedInUserId: number;
+        const user = await this.usersService.getUserByName(user42.login);
+        if (user !== null) {
+          // すでにユーザーが存在する場合
+          if (user.is42User === false)
+            throw new HttpException(
+              '42userではないユーザーが同じ名前を使っています',
+              HttpStatus.BAD_REQUEST,
+            );
+          signedInUserId = user.id;
+        } else {
+          // ユーザーを作成して情報を返す
+          signedInUserId = (
+            await this.usersService.createUser({
+              name: user42.login,
+              password: '',
+              avatar: await this.service.getAvatar42(user42.image.link),
+              is42User: true,
+            })
+          ).id;
+        }
+        const SigninRes = this.service.getSignInRes(
+          signedInUserId,
+          user42.login,
+        );
+        Logger.log(SigninRes);
+        return SigninRes;
       }
     } catch (err) {
       Logger.debug(err);
-    }
-    return token;
-  }
-
-  @Public()
-  @Get('42/login/:token')
-  async login42(@Param() param: login42Param): Promise<UserGetDto> {
-    try {
-      const user42 = await this.service.request42Info(param.token);
-      return await this.usersService.signInUser({
-        name: user42.login,
-        password: user42.login,
-      });
-    } catch (err) {
-      Logger.error(err);
     }
   }
 }

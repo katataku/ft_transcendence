@@ -39,15 +39,13 @@ export class UsersService {
   }
 
   async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
-    if (await this.usersRepository.findOne({ where: { name: data.name } })) {
-      throw new Error('Name already in use.'); //42authの初期認証を判定
-    }
     const obj: User = {
       id: null,
       name: data.name,
       password: SHA256(data.password).toString(),
       createdAt: new Date(),
       isTwoFactorEnabled: false,
+      is42User: data.is42User,
     };
     const user = await this.usersRepository.save(obj);
     await this.saveAvatar(user.id, data.avatar);
@@ -67,6 +65,13 @@ export class UsersService {
       throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
     }
 
+    if (target.is42User) {
+      throw new HttpException(
+        'User is 42 user. Please use 42 login.',
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+
     if (SHA256(data.password).toString() !== target.password) {
       throw new HttpException(
         'Password is incorrect.',
@@ -78,6 +83,7 @@ export class UsersService {
         name: target.name,
         isTwoFactorEnabled: target.isTwoFactorEnabled,
         otpSecret: target.otpSecret,
+        is42User: target.is42User,
       };
     }
   }
@@ -102,6 +108,7 @@ export class UsersService {
       name: data.name,
       isTwoFactorEnabled: data.isTwoFactorEnabled,
       otpSecret: data.otpSecret,
+      is42User: data.is42User,
       isOnline: this.onlineStatusService.capture(data.id),
     };
     return res;
@@ -109,14 +116,15 @@ export class UsersService {
 
   async getUserByName(name: User['name']): Promise<UserGetDto> {
     const data = await this.usersRepository.findOne({ where: { name: name } });
-    if (data == null) {
-      throw new Error('User Not Found.');
-    }
+    // exceptionはcontrollerで処理したい
+    if (data === null) return null;
     const res: UserGetDto = {
       id: data.id,
       name: data.name,
       isTwoFactorEnabled: data.isTwoFactorEnabled,
       otpSecret: data.otpSecret,
+      is42User: data.is42User,
+      isOnline: this.onlineStatusService.capture(data.id),
     };
     return res;
   }

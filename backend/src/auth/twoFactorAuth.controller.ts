@@ -1,11 +1,13 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Logger,
   Param,
   Post,
   Query,
+  Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
@@ -13,6 +15,7 @@ import {
   EnableTwoFactorAuthDto,
   VerifyTwoFactorAuthDto,
 } from 'src/common/dto/auth.dto';
+import { Public } from './public.decorator';
 
 @Controller('auth/2fa')
 export class TwoFactorAuthController {
@@ -31,12 +34,17 @@ export class TwoFactorAuthController {
   }
 
   @Post('enable')
-  async enable(@Body() data: EnableTwoFactorAuthDto): Promise<boolean> {
+  async enable(
+    @Body() data: EnableTwoFactorAuthDto,
+    @Request() req,
+  ): Promise<boolean> {
+    if (req.user.userId !== data.userId) throw new ForbiddenException();
     return await this.authService.enable(data);
   }
 
   @Post('disable')
-  async disable(@Body() data: { userId: number }) {
+  async disable(@Body() data: { userId: number }, @Request() req) {
+    if (req.user.userId !== data.userId) throw new ForbiddenException();
     this.usersService.disableTwoFactor(data.userId);
   }
 
@@ -45,6 +53,7 @@ export class TwoFactorAuthController {
     return await this.usersService.isTwoFactorEnabled(userId);
   }
 
+  @Public()
   @Post('verify')
   async verifyOtp(@Body() data: VerifyTwoFactorAuthDto): Promise<string> {
     return await this.authService.verifyOtp(data);
