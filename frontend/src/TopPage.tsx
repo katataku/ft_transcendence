@@ -49,7 +49,7 @@ export function TopPage(): ReactElement {
             </Link>
           </p>
           {allUserList.map((user) => {
-            if (user.id === loginUser.id) return <></>
+            if (user.id === loginUser.id) return null
             return (
               <p key={user.id}>
                 <Link to={'profile/' + String(user.id)}>
