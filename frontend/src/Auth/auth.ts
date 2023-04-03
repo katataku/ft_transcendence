@@ -5,6 +5,5 @@ const authURL = `https://api.intra.42.fr/oauth/authorize?client_id=${
 }&redirect_uri=${redirectURI}&response_type=code`
 
 export function authenticateWith42(): void {
-  console.log(clientId)
   window.location.href = authURL
 }
