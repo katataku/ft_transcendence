@@ -174,9 +174,7 @@ function Settings(): ReactElement {
           }}
         />
       </p>
-      <p>
-        <MatchHistory matchHistory={matchHist} />
-      </p>
+      <MatchHistory matchHistory={matchHist} />
       <p>
         <Button
           onClick={() => {
