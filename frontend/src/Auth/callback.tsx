@@ -11,7 +11,6 @@ export function Auth42callback(): ReactElement {
     if (didInit) return
     didInit = true
     const code = new URLSearchParams(window.location.search).get('code')
-    // apiはTopPageで呼び出しているので、ここでは呼び出さない
     if (code !== null) {
       request42AuthToken(code, (res: SigninRes) => {
         navigate('/', {
