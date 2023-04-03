@@ -120,11 +120,7 @@ export class GameGateway {
 
         this.server.to(matchId).emit('updateBall', match.ball);
 
-        this.server.to(matchId).emit('updatePaddle', {
-          leftPaddle: match.leftPlayer.paddle,
-          rightPaddle: match.rightPlayer.paddle,
-          settings: match.settings,
-        });
+        this.server.to(matchId).emit('updatePaddle', match);
         if (isMatchSet(match)) {
           match.status = EStatus.set;
           this.server.to(matchId).emit('updateConnections', match);
@@ -400,7 +396,7 @@ export class GameGateway {
         break;
       case PowerUP.Score:
         if (data.difficulty !== PowerUP.Score) {
-          match.settings.winScore = Object.values(EndScoreOpts).find(
+          match.settings.endScore = Object.values(EndScoreOpts).find(
             (item) => item.desc === data.difficulty,
           );
         }

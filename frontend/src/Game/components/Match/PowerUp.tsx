@@ -63,14 +63,14 @@ export function PowerUps(props: {
     props.match.settings.paddleSize.desc
   )
   const [endScore, setEndScore] = useState<string>(
-    props.match.settings.winScore.desc
+    props.match.settings.endScore.desc
   )
 
   useEffect(() => {
     gameSocket.on('updatePowerUp', (data: { settings: IMatchSettings }) => {
       setSpeed(data.settings.ballSpeed.desc)
       setPaddle(data.settings.paddleSize.desc)
-      setEndScore(data.settings.winScore.desc)
+      setEndScore(data.settings.endScore.desc)
     })
   }, [])
 

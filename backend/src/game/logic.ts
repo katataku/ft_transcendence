@@ -106,7 +106,7 @@ export function updateMatch(
 
 export function isMatchSet(match: IMatch): boolean {
   return (
-    match.leftPlayer.score >= match.settings.winScore.value ||
-    match.rightPlayer.score >= match.settings.winScore.value
+    match.leftPlayer.score >= match.settings.endScore.value ||
+    match.rightPlayer.score >= match.settings.endScore.value
   );
 }

@@ -13,7 +13,7 @@ interface IMatchSettings {
   winHght: number
   ballPx: number
   paddleSpeed: number
-  winScore: { desc: string; value: number }
+  endScore: { desc: string; value: number }
   paddleSize: { desc: string; value: Vector2 }
   ballSpeed: { desc: string; value: number }
 }

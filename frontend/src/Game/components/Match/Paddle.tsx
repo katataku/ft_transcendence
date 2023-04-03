@@ -80,15 +80,10 @@ export function Paddles(props: {
     window.addEventListener('keydown', handleOnKeyDown)
     window.addEventListener('keyup', handleOnKeyUp)
     gameSocket.on(
-      'updatePaddle',
-      (data: {
-        leftPaddle: IPaddle
-        rightPaddle: IPaddle
-        settings: IMatchSettings
-      }) => {
-        setLeftPaddle(data.leftPaddle)
-        setRightPaddle(data.rightPaddle)
-        settings.current = data.settings
+      'updatePaddle', (match: IMatch) => {
+        setLeftPaddle(match.leftPlayer.paddle)
+        setRightPaddle(match.rightPlayer.paddle)
+        settings.current = match.settings
       }
     )
   }, [])
