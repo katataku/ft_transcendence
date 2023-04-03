@@ -9,5 +9,5 @@ interface token42Response {
 
 interface ftInfo {
   login: string;
-  imageLink: string
+  imageLink: string;
 }

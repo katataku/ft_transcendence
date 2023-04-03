@@ -65,7 +65,7 @@ export class AuthService {
       const res = (await axios.get(url, { headers })).data;
       const info: ftInfo = {
         login: res.login,
-        imageLink: res.image.link
+        imageLink: res.image.link,
       };
       return info;
     } catch (err) {
