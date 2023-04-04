@@ -53,7 +53,7 @@ export class AuthController {
     let token: string;
     try {
       token = await this.service.request42AuthToken(param.code);
-      const user42 = await this.service.request42Info(token);
+      const user42: ftInfo = await this.service.request42Info(token);
       if (user42) {
         Logger.log(`42login => ${user42.login}`);
         Logger.log(`Token => ${token}`);
@@ -74,7 +74,7 @@ export class AuthController {
             await this.usersService.createUser({
               name: user42.login,
               password: '',
-              avatar: await this.service.getAvatar42(user42.image.link),
+              avatar: await this.service.getAvatar42(user42.imageLink),
               is42User: true,
             })
           ).id;
