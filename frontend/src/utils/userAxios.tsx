@@ -47,17 +47,6 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
       alert(err)
     })
 }
-
-export function signIn42(token: string, callback: (res: any) => void): void {
-  axios
-    .get(`auth/42/login/${token}`)
-    .then((res) => {
-      callback(res.data)
-    })
-    .catch((err) => {
-      alert(err)
-    })
-}
 export function updateUserProfile(
   userId: number,
   name: string,

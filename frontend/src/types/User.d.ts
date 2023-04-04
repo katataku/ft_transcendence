@@ -8,6 +8,7 @@ interface signUp {
   name: string
   password: string
   avatar: string
+  is42User: boolean
 }
 
 interface signIn {

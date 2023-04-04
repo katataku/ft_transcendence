@@ -1,16 +1,14 @@
-import React, { type ReactElement, useState, useContext } from 'react'
+import React, { type ReactElement, useState } from 'react'
 import { Form, Button, Modal } from 'react-bootstrap'
-import { localStorageKey } from '../../constants'
-import { GameSocketContext } from '../../Game/utils/gameSocketContext'
-import { validateJwtToken, verifyOTP } from '../../utils/authAxios'
+import useJwtAuthRegister from '../../hooks/useJwtAuthRegister'
+import { verifyOTP } from '../../utils/authAxios'
 
 export function TwoFactorVerifyModal(props: {
   show: boolean
   handleClose: () => void
   userTryingToLogin: User
-  setLoginUser: (user: User) => void
 }): ReactElement {
-  const gameSocket = useContext(GameSocketContext)
+  const jwtAuthRegister = useJwtAuthRegister()
   const [token, setToken] = useState('')
   const [isInvalid, setIsInvalid] = useState(false)
 
@@ -27,18 +25,7 @@ export function TwoFactorVerifyModal(props: {
     }
 
     verifyOTP(obj, (accessToken: string) => {
-      localStorage.setItem(localStorageKey, accessToken)
-      validateJwtToken(
-        (res: jwtPayload) => {
-          const loggedInUser: User = {
-            id: res.userId,
-            name: res.userName
-          }
-          gameSocket.emit('loggedIn', loggedInUser)
-          props.setLoginUser(props.userTryingToLogin)
-        },
-        () => {}
-      )
+      jwtAuthRegister(accessToken)
     })
     event.preventDefault()
   }

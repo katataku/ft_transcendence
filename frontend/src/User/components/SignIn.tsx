@@ -1,29 +1,23 @@
-import { type ReactElement, useContext, useEffect } from 'react'
+import { type ReactElement, useEffect } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
-import { GlobalContext } from '../../App'
-import {
-  checkUsernameAvailability,
-  signIn42,
-  signUp
-} from '../../utils/userAxios'
-import {
-  BaseURL,
-  LSKey42Token,
-  initUser,
-  localStorageKey
-} from '../../constants'
+import { checkUsernameAvailability, signUp } from '../../utils/userAxios'
+import { BaseURL, initUser } from '../../constants'
 import { authenticateWith42 } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
-import { signIn, validateJwtToken } from '../../utils/authAxios'
-import { GameSocketContext } from '../../Game/utils/gameSocketContext'
+import { signIn } from '../../utils/authAxios'
+import { useLocation, useNavigate } from 'react-router-dom'
+import useJwtAuthRegister from '../../hooks/useJwtAuthRegister'
 
 export const defaultAvatar = `${BaseURL}/user/user_avatar/0`
 
+let didInit = false
+
 export function SignIn(): ReactElement {
-  const { setLoginUser } = useContext(GlobalContext)
-  const gameSocket = useContext(GameSocketContext)
+  const jwtAuthRegister = useJwtAuthRegister()
+  const location: SigninRes | null = useLocation().state
+  const navigate = useNavigate()
   const [signUpMode, setSignUpMode] = useState<boolean>(false)
   const [userName, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -48,36 +42,22 @@ export function SignIn(): ReactElement {
   }
 
   useEffect(() => {
-    const token42 = localStorage.getItem(LSKey42Token)
-    if (token42 != null) {
-      signIn42(token42, (res) => {
-        setLoginUser({
-          id: res.id,
-          name: res.name
-        })
-      })
+    if (didInit) return
+    didInit = true
+    if (location !== null) {
+      handleSuccessfulSignIn(location)
+      navigate('/', { state: null, replace: true })
     }
   }, [])
 
-  function handleSuccessfulSignIn(res: SigninRes): void {
+  function handleSuccessfulSignIn(signinRes: SigninRes): void {
     // 2faが有効なら、2faの確認モーダルを表示します。
-    if (res.isTwoFactorEnabled) {
-      setUserTryingToLogin({ id: res.userId, name: res.userName })
+    if (signinRes.isTwoFactorEnabled) {
+      setUserTryingToLogin({ id: signinRes.userId, name: signinRes.userName })
       handleTwoFAModalShow()
     } else {
-      if (res.access_token === undefined) return
-      localStorage.setItem(localStorageKey, res.access_token)
-      validateJwtToken(
-        (res: jwtPayload) => {
-          const loggedInUser: User = {
-            id: res.userId,
-            name: res.userName
-          }
-          gameSocket.emit('loggedIn', loggedInUser)
-          setLoginUser(loggedInUser)
-        },
-        () => {}
-      )
+      if (signinRes.access_token === undefined) return
+      jwtAuthRegister(signinRes.access_token)
     }
   }
 
@@ -156,9 +136,20 @@ export function SignIn(): ReactElement {
               checkUsernameAvailability(
                 userName,
                 () => {
-                  signUp({ name: userName, password, avatar: image }, () => {
-                    signIn({ name: userName, password }, handleSuccessfulSignIn)
-                  })
+                  signUp(
+                    {
+                      name: userName,
+                      password,
+                      avatar: image,
+                      is42User: false
+                    },
+                    () => {
+                      signIn(
+                        { name: userName, password },
+                        handleSuccessfulSignIn
+                      )
+                    }
+                  )
                 },
                 () => {
                   alert('Username already exists, so try another username.')
@@ -197,7 +188,6 @@ export function SignIn(): ReactElement {
         show={twoFactorVerifyModalshow}
         handleClose={handleTwoFAModalClose}
         userTryingToLogin={userTryingToLogin}
-        setLoginUser={setLoginUser}
       ></TwoFactorVerifyModal>
     </div>
   )

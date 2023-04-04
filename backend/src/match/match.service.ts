@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MatchDto, MatchResultDto } from '../common/dto/match.dto';
 import { Match } from '../entities/match.entity';
@@ -27,6 +27,7 @@ export class MatchService {
 
   async postMatchResult(result: MatchResultDto): Promise<void> {
     const match: MatchDto = await this.getMatchById(result.id);
+    if (!match) throw new NotFoundException();
     match.winner = result.winner;
     await this.matchRepository.save(match);
   }
