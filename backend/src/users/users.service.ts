@@ -210,6 +210,7 @@ export class UsersService {
       },
     });
 
+    if (!pendingItem) return;
     this.pendingRepository.remove(pendingItem);
   }
 

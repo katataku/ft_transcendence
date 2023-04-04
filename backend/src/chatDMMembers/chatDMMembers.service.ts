@@ -78,6 +78,7 @@ export class ChatDMMembersService {
           user2Id: user2,
         },
       });
+    if (!targetDMMember) return;
     this.chatDMMembersRepository.remove(targetDMMember);
   }
 }
