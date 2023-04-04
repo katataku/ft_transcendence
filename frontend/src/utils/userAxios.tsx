@@ -51,7 +51,7 @@ export function updateUserProfile(
   userId: number,
   name: string,
   password: string,
-  callback: (res: any) => void
+  callback: (accessToken: string) => void
 ): void {
   const requestBody = {
     name,
