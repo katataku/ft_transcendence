@@ -1,8 +1,10 @@
 import {
   HttpException,
   HttpStatus,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
@@ -24,6 +26,8 @@ import {
 import { Repository } from 'typeorm';
 import { SHA256 } from 'crypto-js';
 import { OnlineStatusService } from 'src/onlineStatus/onlineStatus.service';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtPayloadDto } from 'src/common/dto/auth.dto';
 
 @Injectable()
 export class UsersService {
@@ -39,6 +43,7 @@ export class UsersService {
     @InjectRepository(UserMatchHistory)
     private userMatchHistoryRepository: Repository<UserMatchHistory>,
     private onlineStatusService: OnlineStatusService,
+    private authService: AuthService,
   ) {
     this.saveAvatar(0, 'DEFAULT_AVATAR');
   }
@@ -134,7 +139,7 @@ export class UsersService {
     return res;
   }
 
-  async updateUser(id: number, data: UserUpdateReqDto): Promise<UserGetDto> {
+  async updateUser(id: number, data: UserUpdateReqDto): Promise<string> {
     const target = await this.usersRepository.findOne({ where: { id: id } });
     if (target == null) {
       throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
@@ -142,7 +147,8 @@ export class UsersService {
     target.name = data.name;
     target.password = SHA256(data.password).toString();
     await this.usersRepository.save(target);
-    return this.getUserById(id);
+    const payload: JwtPayloadDto = { userId: target.id, userName: target.name };
+    return this.authService.createJwtToken(payload);
   }
 
   async deleteUser(id: number): Promise<string> {
