@@ -1,4 +1,11 @@
-import { Injectable, Logger, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  HttpException,
+  HttpStatus,
+  Inject,
+  forwardRef,
+} from '@nestjs/common';
 import axios, { type AxiosResponse } from 'axios';
 import { toDataURL } from 'qrcode';
 import { authenticator } from 'otplib';
@@ -16,8 +23,13 @@ import {
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
+    @Inject(forwardRef(() => UsersService))
     private readonly usersService: UsersService,
   ) {}
+
+  createJwtToken(payload: JwtPayloadDto): string {
+    return this.jwtService.sign(payload);
+  }
 
   async getSignInRes(userId: number, userName: string): Promise<SigninResDto> {
     const isTwoFactorEnabled = await this.usersService.isTwoFactorEnabled(
@@ -31,7 +43,7 @@ export class AuthService {
     return {
       userId: userId,
       userName: userName,
-      access_token: isTwoFactorEnabled ? null : this.jwtService.sign(payload),
+      access_token: isTwoFactorEnabled ? null : this.createJwtToken(payload),
       isTwoFactorEnabled: isTwoFactorEnabled,
     };
   }
