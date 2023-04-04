@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { UsersModule } from 'src/users';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -11,7 +11,8 @@ import { OnlineStatusModule } from 'src/onlineStatus';
 
 @Module({
   imports: [
-    UsersModule,
+    // forwardRefは循環参照を解決する。
+    forwardRef(() => UsersModule),
     OnlineStatusModule.forRoot(),
     JwtModule.registerAsync({
       /*
@@ -33,5 +34,6 @@ import { OnlineStatusModule } from 'src/onlineStatus';
       useClass: JwtAuthGuard,
     },
   ],
+  exports: [AuthService],
 })
 export class AuthModule {}
