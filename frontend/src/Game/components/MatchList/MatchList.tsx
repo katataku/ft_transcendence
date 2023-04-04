@@ -21,7 +21,7 @@ function listMatches(matches: MatchDto[], users: User[]): ReactElement[] {
     return (
       <ListGroup.Item
         key={String(match.p1) + String(match.p2)}
-        id="centerCol"
+        className="text-center"
         action
         onClick={() => {
           // マッチリスト->ゲーム をナビゲートされる人のユーザー情報は必要ないです
@@ -47,7 +47,7 @@ export function MatchList(): ReactElement {
 
   return (
     <>
-      <h1 id="centerCol">Ongoing Matches</h1>
+      <h1 className="text-center">Ongoing Matches</h1>
       <ListGroup>{listMatches(matches, users)}</ListGroup>
     </>
   )
