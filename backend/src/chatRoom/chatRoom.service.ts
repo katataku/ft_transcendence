@@ -102,7 +102,7 @@ export class ChatRoomService {
       },
     });
     if (!targetRoom) throw new NotFoundException();
-    if (signedInUserId !== targetRoom.created_by_user_id)
+    if (signedInUserId != targetRoom.created_by_user_id)
       throw new ForbiddenException();
     this.chatRoomRepository.remove(targetRoom);
   }

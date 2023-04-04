@@ -28,13 +28,13 @@ export class ChatDMMembersController {
     @Body() data: ChatDMMembersPKDto,
     @Request() req,
   ): Promise<ChatDMMembersDto> {
-    if (req.user.userId !== data.user1Id) throw new ForbiddenException();
+    if (req.user.userId != data.user1Id) throw new ForbiddenException();
     return this.service.createDMMember(data);
   }
 
   @Delete()
   delete(@Body() data: ChatDMMembersPKDto, @Request() req): Promise<void> {
-    if (req.user.userId !== data.user1Id) throw new ForbiddenException();
+    if (req.user.userId != data.user1Id) throw new ForbiddenException();
     return this.service.deleteDMMember(data);
   }
 }

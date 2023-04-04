@@ -79,7 +79,7 @@ export class UsersController {
 
   @Post('friends')
   requestFriend(@Body() body: FriendRequestDto, @Request() req) {
-    if (req.user.userId !== body.from) throw new ForbiddenException();
+    if (req.user.userId != body.from) throw new ForbiddenException();
     console.table(body);
     return this.service.requestFriendship(body);
   }
@@ -101,7 +101,9 @@ export class UsersController {
     @Param('to') to: number,
     @Request() req,
   ) {
-    if (req.user.userId !== from) throw new ForbiddenException();
+    // フレンド申請を拒否する時と自らキャンセルする時にaccessされるのでfromとtoを検証している
+    if (req.user.userId != from && req.user.userId != to)
+      throw new ForbiddenException();
     return this.service.deletePending(from, to);
   }
 
