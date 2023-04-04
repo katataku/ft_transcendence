@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   Friendship,
@@ -10,6 +10,7 @@ import {
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { OnlineStatusModule } from 'src/onlineStatus';
+import { AuthModule } from 'src/auth';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { OnlineStatusModule } from 'src/onlineStatus';
       UserMatchHistory,
     ]),
     OnlineStatusModule.forRoot(),
+    AuthModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],
