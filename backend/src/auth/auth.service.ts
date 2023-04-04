@@ -6,7 +6,7 @@ import {
   Inject,
   forwardRef,
 } from '@nestjs/common';
-import axios, { type AxiosResponse } from 'axios';
+import axios from 'axios';
 import { toDataURL } from 'qrcode';
 import { authenticator } from 'otplib';
 import { JwtService } from '@nestjs/jwt';
@@ -68,20 +68,23 @@ export class AuthService {
     };
 
     try {
-      const res = await axios.post(url, data);
-      return res.data.access_token;
+      const res: token42Response = (await axios.post(url, data)).data;
+      return res.access_token;
     } catch (err) {
       Logger.error(err);
     }
   }
 
-  async request42Info(token: string) {
+  async request42Info(token: string): Promise<ftInfo> {
     const url = 'https://api.intra.42.fr/v2/me';
     const headers = { Authorization: `Bearer ${token}` };
-    let res: AxiosResponse;
     try {
-      res = await axios.get(url, { headers });
-      return res.data;
+      const res = (await axios.get(url, { headers })).data;
+      const info: ftInfo = {
+        login: res.login,
+        imageLink: res.image.link,
+      };
+      return info;
     } catch (err) {
       Logger.error(err);
     }
