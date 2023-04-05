@@ -33,13 +33,13 @@ export class ChatBlockUserController {
     @Body() data: ChatBlockUserDto,
     @Request() req,
   ): Promise<ChatBlockUserDto> {
-    if (req.user.userId !== data.blockUserId) throw new ForbiddenException();
+    if (req.user.userId != data.blockUserId) throw new ForbiddenException();
     return this.service.updateBlock(data);
   }
 
   @Delete()
   delete(@Body() data: ChatBlockUserPKDto, @Request() req): Promise<void> {
-    if (req.user.userId !== data.blockUserId) throw new ForbiddenException();
+    if (req.user.userId != data.blockUserId) throw new ForbiddenException();
     return this.service.delete(data);
   }
 }

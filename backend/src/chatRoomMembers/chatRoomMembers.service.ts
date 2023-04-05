@@ -44,6 +44,7 @@ export class ChatRoomMembersService {
           userId: param.userId,
         },
       });
+    if (!targetRoomMember) return;
     this.chatRoomMembersRepository.remove(targetRoomMember);
   }
 

@@ -44,6 +44,7 @@ export class ChatBlockUserService {
         blockedUserId: param.blockedUserId,
       },
     });
+    if (!targetRecord) return;
     this.chatBlockRepository.remove(targetRecord);
   }
 }

@@ -36,7 +36,7 @@ export class ChatRoomController {
     @Body() data: ChatRoomReqDto,
     @Request() req,
   ): Promise<ChatRoomResDto> {
-    if (req.user.userId !== data.created_by_user_id)
+    if (req.user.userId != data.created_by_user_id)
       throw new ForbiddenException();
     const result = await this.service.createRoom(data);
     if (result) {
@@ -58,7 +58,7 @@ export class ChatRoomController {
     @Body() data: ChatRoomReqDto,
     @Request() req,
   ): Promise<ChatRoomResDto> {
-    if (req.user.userId !== data.created_by_user_id)
+    if (req.user.userId != data.created_by_user_id)
       throw new ForbiddenException();
     const result = await this.service.updateRoom(id, data);
     if (result) {

@@ -38,13 +38,13 @@ export class TwoFactorAuthController {
     @Body() data: EnableTwoFactorAuthDto,
     @Request() req,
   ): Promise<boolean> {
-    if (req.user.userId !== data.userId) throw new ForbiddenException();
+    if (req.user.userId != data.userId) throw new ForbiddenException();
     return await this.authService.enable(data);
   }
 
   @Post('disable')
   async disable(@Body() data: { userId: number }, @Request() req) {
-    if (req.user.userId !== data.userId) throw new ForbiddenException();
+    if (req.user.userId != data.userId) throw new ForbiddenException();
     this.usersService.disableTwoFactor(data.userId);
   }
 
