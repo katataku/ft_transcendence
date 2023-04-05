@@ -27,6 +27,9 @@ export class User {
 
   @Column({ name: 'is_42_user', default: false })
   is42User!: boolean;
+
+  @Column({ name: 'ft_login_name', nullable: true })
+  ftLoginName?: string;
 }
 
 @Entity({ name: 'friendship' })
