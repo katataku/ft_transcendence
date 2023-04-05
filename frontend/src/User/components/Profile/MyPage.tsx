@@ -5,6 +5,7 @@ import { FriendList } from './FriendList'
 import { FriendPendingList } from './FriendPendingList'
 import { BaseURL } from '../../../constants'
 import {
+  checkUsernameAvailability,
   getMatchHistoryById,
   updateAvatar,
   updateUserProfile
@@ -13,12 +14,14 @@ import { MatchHistory } from '../../../components/MatchHistory'
 import { TwoFactorRegModal } from '../../../Auth/components/TwoFactorRegModal'
 import { resizeAndEncode } from '../../functions/user.functions'
 import { defaultAvatar } from '../SignIn'
+import useJwtAuthRegister from '../../../hooks/useJwtAuthRegister'
 
 function UserProfileModal(props: {
   show: boolean
   handleClose: () => void
 }): ReactElement {
   const { loginUser } = useContext(GlobalContext)
+  const jwtAuthRegister = useJwtAuthRegister()
 
   const [userName, setUserName] = useState<string>('')
   const [password, setPassword] = useState<string>('')
@@ -60,9 +63,23 @@ function UserProfileModal(props: {
           <Button
             variant="primary"
             onClick={() => {
-              updateUserProfile(loginUser.id, userName, password, (_res) => {
-                alert('プロフィールを変更しました。')
-              })
+              checkUsernameAvailability(
+                userName,
+                () => {
+                  updateUserProfile(
+                    loginUser.id,
+                    userName,
+                    password,
+                    (accessToken: string) => {
+                      jwtAuthRegister(accessToken)
+                      alert('プロフィールを変更しました。')
+                    }
+                  )
+                },
+                () => {
+                  alert('Username already exists, so try another username.')
+                }
+              )
               props.handleClose()
             }}
           >

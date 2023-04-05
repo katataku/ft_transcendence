@@ -56,7 +56,7 @@ export class UsersController {
     @Param() param: UserIdParam,
     @Body() body: UserUpdateReqDto,
     @Request() req,
-  ): Promise<UserGetDto> {
+  ): Promise<string> {
     if (req.user.userId != param.id) throw new ForbiddenException();
     return this.service.updateUser(param.id, body);
   }
