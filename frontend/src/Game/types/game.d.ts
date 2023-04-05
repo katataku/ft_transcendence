@@ -8,11 +8,21 @@ interface IPlayer {
   paddle: IPaddle
 }
 
+interface IMatchSettings {
+  winWid: number
+  winHght: number
+  ballPx: number
+  paddleSpeed: number
+  endScore: { desc: string; value: number }
+  paddleSize: { desc: string; value: Vector2 }
+  ballSpeed: { desc: string; value: number }
+}
+
 interface IMatch {
   id: number
   leftPlayer: IPlayer
   rightPlayer: IPlayer
   ball: IBall
-  speed: number
   status: EStatus
+  settings: IMatchSettings
 }

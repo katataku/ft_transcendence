@@ -1,33 +1,23 @@
-export const SpeedOpts = {
-  Easy: 'Speed-Slow',
-  Medium: 'Speed-Medium',
-  Hard: 'Speed-Fast'
+export const PowerUP = {
+  Speed: 'Ball Speed',
+  Paddle: 'Paddle Size',
+  Score: 'End Score'
 }
+
+export const SpeedOpts = {
+  Easy: { desc: 'Ball Speed: Slow', value: 300 },
+  Medium: { desc: 'Ball Speed: Medium', value: 500 },
+  Hard: { desc: 'Ball Speed: Fast', value: 700 }
+}
+
 export const PaddleOpts = {
-  Easy: 'Paddle-Large',
-  Medium: 'Paddle-Medium',
-  Hard: 'Paddle-Small'
+  Easy: { desc: 'Paddle Size: Large', value: { x: 8, y: 120 } },
+  Medium: { desc: 'Paddle Size: Medium', value: { x: 8, y: 80 } },
+  Hard: { desc: 'PaddleSize: Small', value: { x: 8, y: 40 } }
 }
 
 export const EndScoreOpts = {
-  Easy: 'End Score-3',
-  Medium: 'End Score-7',
-  Hard: 'End Score-10'
-}
-
-export const PowerUP = {
-  Speed: 'Speed',
-  Paddle: 'Paddle',
-  Score: 'Score'
-}
-
-export const MatchSettings = {
-  winWid: 1000,
-  winHght: 500,
-  ballPx: 20,
-  winScore: 3,
-  paddleSize: {
-    x: 8,
-    y: 100
-  }
+  Easy: { desc: 'End Score: 11', value: 11 },
+  Medium: { desc: 'End Score: 7', value: 7 },
+  Hard: { desc: 'End Score: 3', value: 3 }
 }

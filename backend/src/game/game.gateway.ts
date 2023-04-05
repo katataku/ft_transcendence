@@ -16,17 +16,18 @@ import {
   IClient,
 } from './types/game.model';
 import * as GameSetting from './constants';
-import {
-  decideEndScore,
-  decidePaddleSize,
-  decideSpeed,
-  deepCopy,
-} from './utility';
+import { deepCopy } from './utility';
 import { updateMatch, isMatchSet } from './logic';
 import { MatchService } from 'src/match/match.service';
 import { UsersService } from '../users/users.service';
 import { UserMatchHistoryDto } from '../common/dto/users.dto';
-import { initPaddle, PowerUP } from './constants';
+import {
+  EndScoreOpts,
+  initPaddle,
+  PaddleOpts,
+  PowerUP,
+  SpeedOpts,
+} from './constants';
 
 @WebSocketGateway(3002, { namespace: 'game', cors: { origin: '*' } })
 export class GameGateway {
@@ -118,11 +119,8 @@ export class GameGateway {
         }
 
         this.server.to(matchId).emit('updateBall', match.ball);
-        this.server.to(matchId).emit('updatePaddle', {
-          leftPaddle: match.leftPlayer.paddle,
-          rightPaddle: match.rightPlayer.paddle,
-          paddleSize: match.settings.paddleSize,
-        });
+
+        this.server.to(matchId).emit('updatePaddle', match);
         if (isMatchSet(match)) {
           match.status = EStatus.set;
           this.server.to(matchId).emit('updateConnections', match);
@@ -360,7 +358,6 @@ export class GameGateway {
         break;
       }
     }
-
     if (currentMatch === undefined)
       this.server.to(client.id).emit('updateConnections');
     else this.server.to(client.id).emit('updateConnections', currentMatch);
@@ -382,19 +379,31 @@ export class GameGateway {
 
     switch (data.type) {
       case PowerUP.Speed:
-        match.speed = decideSpeed(data.difficulty);
+        if (data.difficulty !== PowerUP.Speed) {
+          match.settings.ballSpeed = Object.values(SpeedOpts).find(
+            (item) => item.desc === data.difficulty,
+          );
+        }
         break;
       case PowerUP.Paddle:
-        match.settings.paddleSize = decidePaddleSize(data.difficulty);
-        match.leftPlayer.paddle = initPaddle(match.settings, 'left');
-        match.rightPlayer.paddle = initPaddle(match.settings, 'right');
+        if (data.difficulty !== PowerUP.Paddle) {
+          match.settings.paddleSize = Object.values(PaddleOpts).find(
+            (item) => item.desc === data.difficulty,
+          );
+          match.leftPlayer.paddle = initPaddle(match.settings, 'left');
+          match.rightPlayer.paddle = initPaddle(match.settings, 'right');
+        }
         break;
       case PowerUP.Score:
-        match.settings.winScore = decideEndScore(data.difficulty);
+        if (data.difficulty !== PowerUP.Score) {
+          match.settings.endScore = Object.values(EndScoreOpts).find(
+            (item) => item.desc === data.difficulty,
+          );
+        }
         break;
     }
     this.server
       .to(match.id.toString())
-      .emit('updatePowerUp', { type: data.type, difficulty: data.difficulty });
+      .emit('updatePowerUp', { settings: match.settings });
   }
 }

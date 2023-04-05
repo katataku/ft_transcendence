@@ -45,8 +45,10 @@ export interface IMatchSettings {
   winWid: number;
   winHght: number;
   ballPx: number;
-  winScore: number;
-  paddleSize: Vector2;
+  paddleSpeed: number;
+  endScore: { desc: string; value: number };
+  paddleSize: { desc: string; value: Vector2 };
+  ballSpeed: { desc: string; value: number };
 }
 
 export interface IMatch {
@@ -54,7 +56,6 @@ export interface IMatch {
   leftPlayer: IPlayer;
   rightPlayer: IPlayer;
   ball: IBall;
-  speed: number;
   status: EStatus;
   lastFrameTime: number;
   elapsedTime: number;
