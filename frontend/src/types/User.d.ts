@@ -12,8 +12,8 @@ interface signUp {
 }
 
 interface ftSignUp {
-  token: string;
-  userName: string;
+  token: string
+  userName: string
 }
 
 interface signIn {
