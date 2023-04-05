@@ -16,6 +16,10 @@ function UserNameFormModal(props: {
   }
 
   function handleSubmit(): void {
+    if (userName === '') {
+      alert('Username cannot be empty.')
+      return
+    }
     checkUsernameAvailability(
       userName,
       () => {
