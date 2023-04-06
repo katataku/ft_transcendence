@@ -1,3 +1,11 @@
+import {
+  IsIn,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
+
 export interface ChatRoomResDto {
   id: number;
   name: string;
@@ -5,16 +13,30 @@ export interface ChatRoomResDto {
   public_id: publicIdType;
 }
 
-export interface ChatRoomReqDto {
+export class ChatRoomReqDto {
+  @IsOptional()
+  @IsNumber()
   id?: number;
+  @IsNotEmpty()
+  @IsString()
   name: string;
+  @IsNotEmpty()
+  @IsNumber()
   created_by_user_id: number;
+  @IsNotEmpty()
+  @IsIn(['public', 'private', 'protected', 'DM'])
   public_id: publicIdType;
+  @IsOptional()
+  @IsString()
   password?: string;
 }
 
-export interface ChatRoomAuthReqDto {
+export class ChatRoomAuthReqDto {
+  @IsNotEmpty()
+  @IsNumber()
   id: number;
+  @IsNotEmpty()
+  @IsString()
   password: string;
 }
 

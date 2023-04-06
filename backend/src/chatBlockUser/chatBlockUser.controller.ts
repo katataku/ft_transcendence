@@ -13,6 +13,7 @@ import {
   ChatBlockUserDto,
   ChatBlockUserPKDto,
 } from 'src/common/dto/chatBlockUser.dto';
+import { UserIdParam } from 'src/common/params/user.params';
 
 @Controller('chat-block-user')
 export class ChatBlockUserController {
@@ -24,8 +25,10 @@ export class ChatBlockUserController {
   }
 
   @Get(':blockUser')
-  getOne(@Param('blockUser') blockUser: number): Promise<ChatBlockUserDto[]> {
-    return this.service.getListOne(blockUser);
+  getOne(
+    @Param('blockUser') blockUser: UserIdParam,
+  ): Promise<ChatBlockUserDto[]> {
+    return this.service.getListOne(blockUser.id);
   }
 
   @Post()
