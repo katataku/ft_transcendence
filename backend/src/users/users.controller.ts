@@ -97,14 +97,14 @@ export class UsersController {
 
   @Delete('friends/pending/:from/:to')
   deleteFriendPending(
-    @Param('from') from: number,
-    @Param('to') to: number,
+    @Param('from') from: UserIdParam,
+    @Param('to') to: UserIdParam,
     @Request() req,
   ) {
     // フレンド申請を拒否する時と自らキャンセルする時にaccessされるのでfromとtoを検証している
     if (req.user.userId != from && req.user.userId != to)
       throw new ForbiddenException();
-    return this.service.deletePending(from, to);
+    return this.service.deletePending(from.id, to.id);
   }
 
   @Public()

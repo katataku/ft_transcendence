@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { MatchDto } from '../common/dto/match.dto';
 import { MatchService } from './match.service';
+import { UserIdParam } from 'src/common/params/user.params';
 
 @Controller('match')
 export class MatchController {
@@ -12,7 +13,7 @@ export class MatchController {
   }
 
   @Get(':id')
-  getMatchById(@Param('id') id: number): Promise<MatchDto> {
-    return this.service.getMatchById(id);
+  getMatchById(@Param('id') param: UserIdParam): Promise<MatchDto> {
+    return this.service.getMatchById(param.id);
   }
 }
