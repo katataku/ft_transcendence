@@ -47,6 +47,21 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
       alert(err)
     })
 }
+
+export function ftSignUp(
+  obj: ftSignUp,
+  callback: (accessToken: string) => void
+): void {
+  axios
+    .post<string>('/user/42', obj)
+    .then((res) => {
+      callback(res.data)
+    })
+    .catch((err) => {
+      alert(err)
+    })
+}
+
 export function updateUserProfile(
   userId: number,
   name: string,
