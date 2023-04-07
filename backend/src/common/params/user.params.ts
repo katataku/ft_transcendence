@@ -9,7 +9,7 @@ export class UserIdParam {
 export class UserNameParam {
   @IsNotEmpty()
   @IsString()
-  name!: string;
+  userName!: string;
 }
 
 export class Auth42Param {

@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Request,
 } from '@nestjs/common';
@@ -18,7 +19,6 @@ import {
 } from '../common/dto/chatRoom.dto';
 import { ChatRoomMembersDto } from 'src/common/dto/chatRoomMembers.dto';
 import { ChatRoomMembersService } from 'src/chatRoomMembers/chatRoomMembers.service';
-import { UserIdParam } from 'src/common/params/user.params';
 
 @Controller('chatRoom')
 export class ChatRoomController {
@@ -55,13 +55,13 @@ export class ChatRoomController {
 
   @Post(':id')
   async update(
-    @Param('id') param: UserIdParam,
+    @Param('id', ParseIntPipe) id: number,
     @Body() data: ChatRoomReqDto,
     @Request() req,
   ): Promise<ChatRoomResDto> {
     if (req.user.userId != data.created_by_user_id)
       throw new ForbiddenException();
-    const result = await this.service.updateRoom(param.id, data);
+    const result = await this.service.updateRoom(id, data);
     if (result) {
       const chatRoomMembers = new ChatRoomMembersDto();
       chatRoomMembers.chatRoomId = result.id;
@@ -75,18 +75,18 @@ export class ChatRoomController {
   }
 
   @Delete(':id')
-  delete(@Param('id') param: UserIdParam, @Request() req): Promise<void> {
-    return this.service.deleteRoom(param.id, req.user.userId);
+  delete(@Param('id', ParseIntPipe) id: number, @Request() req): Promise<void> {
+    return this.service.deleteRoom(id, req.user.userId);
   }
 
   @Post(':id/auth')
   async authChatRoom(
-    @Param('id') param: UserIdParam,
+    @Param('id', ParseIntPipe) id: number,
     @Body() data: ChatRoomAuthReqDto,
   ): Promise<void> {
     console.log('authChatRoom');
     console.table(data);
-    const result = await this.service.authChatRoom(param.id, data);
+    const result = await this.service.authChatRoom(id, data);
     if (!result)
       throw new HttpException('Unauthorized', HttpStatus.UNAUTHORIZED);
     return;

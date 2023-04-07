@@ -25,9 +25,9 @@ export class TwoFactorAuthController {
 
   @Get('setup/:userName')
   async getOTPData(
-    @Param('userName') param: UserNameParam,
+    @Param() param: UserNameParam,
   ): Promise<{ secret: string; qrCode: string }> {
-    return await this.authService.getOTPData(param.name);
+    return await this.authService.getOTPData(param.userName);
   }
 
   @Post('enable')

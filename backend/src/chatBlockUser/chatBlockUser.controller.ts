@@ -5,6 +5,7 @@ import {
   ForbiddenException,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Request,
 } from '@nestjs/common';
@@ -13,7 +14,6 @@ import {
   ChatBlockUserDto,
   ChatBlockUserPKDto,
 } from 'src/common/dto/chatBlockUser.dto';
-import { UserIdParam } from 'src/common/params/user.params';
 
 @Controller('chat-block-user')
 export class ChatBlockUserController {
@@ -26,9 +26,9 @@ export class ChatBlockUserController {
 
   @Get(':blockUser')
   getOne(
-    @Param('blockUser') blockUser: UserIdParam,
+    @Param('blockUser', ParseIntPipe) blockUser: number,
   ): Promise<ChatBlockUserDto[]> {
-    return this.service.getListOne(blockUser.id);
+    return this.service.getListOne(blockUser);
   }
 
   @Post()
