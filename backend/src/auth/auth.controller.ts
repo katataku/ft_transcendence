@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
+  HttpStatus,
   Logger,
   Param,
   Post,
@@ -47,7 +49,7 @@ export class AuthController {
 
   @Public()
   @Post('42/:code')
-  async auth42(@Param() param: Auth42Param): Promise<SigninResDto | string> {
+  async auth42(@Param() param: Auth42Param): Promise<SigninResDto> {
     let token: string;
     try {
       token = await this.service.request42AuthToken(param.code);
@@ -56,13 +58,33 @@ export class AuthController {
         Logger.log(`42login => ${user42.login}`);
         Logger.log(`Token => ${token}`);
 
-        const user = await this.usersService.getUserBy42LoginName(user42.login);
+        let signedInUserId: number;
+        const user = await this.usersService.getUserByName(user42.login);
         if (user !== null) {
-          return await this.service.getSignInRes(user.id, user.name);
+          // すでにユーザーが存在する場合
+          if (user.is42User === false)
+            throw new HttpException(
+              '42userではないユーザーが同じ名前を使っています',
+              HttpStatus.BAD_REQUEST,
+            );
+          signedInUserId = user.id;
         } else {
-          // 42ユーザーが登録されていない場合は別のエンドポイントで新規登録
-          return token;
+          // ユーザーを作成して情報を返す
+          signedInUserId = (
+            await this.usersService.createUser({
+              name: user42.login,
+              password: '',
+              avatar: await this.service.getAvatar42(user42.imageLink),
+              is42User: true,
+            })
+          ).id;
         }
+        const SigninRes = this.service.getSignInRes(
+          signedInUserId,
+          user42.login,
+        );
+        Logger.log(SigninRes);
+        return SigninRes;
       }
     } catch (err) {
       Logger.debug(err);

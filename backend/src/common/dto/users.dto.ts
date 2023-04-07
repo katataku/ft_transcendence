@@ -28,15 +28,6 @@ export class UserSignUpResDto {
   id: number;
 }
 
-export class User42SignUpReqDto {
-  @IsNotEmpty()
-  @IsString()
-  token: string;
-  @IsNotEmpty()
-  @IsString()
-  userName: string;
-}
-
 export class UserGetDto {
   @IsNotEmpty()
   @IsNumberString()

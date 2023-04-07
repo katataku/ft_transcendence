@@ -7,8 +7,3 @@ const authURL = `https://api.intra.42.fr/oauth/authorize?client_id=${
 export function authenticateWith42(): void {
   window.location.href = authURL
 }
-
-// 型ガード関数
-export function isString(value: any): boolean {
-  return typeof value === 'string'
-}

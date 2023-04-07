@@ -31,7 +31,6 @@ import { Response } from 'express';
 import * as fs from 'fs';
 import { promisify } from 'util';
 import { Public } from 'src/auth/public.decorator';
-import { User42SignUpReqDto } from 'src/common/dto/users.dto';
 
 @Controller('user')
 export class UsersController {
@@ -41,12 +40,6 @@ export class UsersController {
   @Post()
   signUp(@Body() body: UserSignUpReqDto): Promise<UserSignUpResDto> {
     return this.service.createUser(body);
-  }
-
-  @Public()
-  @Post('42')
-  ftSignUp(@Body() body: User42SignUpReqDto): Promise<string> {
-    return this.service.create42User(body);
   }
 
   @Get('users')

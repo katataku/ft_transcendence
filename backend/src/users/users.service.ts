@@ -13,7 +13,6 @@ import {
   UserSignUpResDto,
   UserSignInDto,
   UserMatchHistoryDto,
-  User42SignUpReqDto,
 } from 'src/common/dto/users.dto';
 import {
   Friendship,
@@ -63,28 +62,6 @@ export class UsersService {
       id: user.id,
     };
     return res;
-  }
-
-  async create42User(data: User42SignUpReqDto): Promise<string> {
-    const user42: ftInfo = await this.authService.request42Info(data.token);
-    if (!user42) throw new NotFoundException();
-    const obj: User = {
-      id: null,
-      name: data.userName,
-      password: SHA256('').toString(),
-      createdAt: new Date(),
-      isTwoFactorEnabled: false,
-      is42User: true,
-      ftLoginName: user42.login,
-    };
-    const user = await this.usersRepository.save(obj);
-    await this.saveAvatar(
-      user.id,
-      await this.authService.getAvatar42(user42.imageLink),
-    );
-    await this.saveUserMatchHistory(user.id);
-    const payload: JwtPayloadDto = { userId: user.id, userName: user.name };
-    return this.authService.createJwtToken(payload);
   }
 
   async signInUser(data: UserSignInDto): Promise<UserGetDto> {
@@ -145,10 +122,8 @@ export class UsersService {
     return res;
   }
 
-  async getUserBy42LoginName(ftLoginName: string): Promise<UserGetDto> {
-    const data = await this.usersRepository.findOne({
-      where: { ftLoginName: ftLoginName },
-    });
+  async getUserByName(name: User['name']): Promise<UserGetDto> {
+    const data = await this.usersRepository.findOne({ where: { name: name } });
     // exceptionはcontrollerで処理したい
     if (data === null) return null;
     const res: UserGetDto = {
