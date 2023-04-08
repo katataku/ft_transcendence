@@ -127,7 +127,13 @@ export const ChatListDisplay = (props: {
             <OwnerIcon isOwner={isOwnerBool}></OwnerIcon>
             <AdminIcon isAdmin={isAdminBool}></AdminIcon>
             <BannedIcon isBanned={isBannedBool}></BannedIcon>
-            {room.owner_id === -1 && <BecomeOwnerButton room={room} userId={loginUser.id} updateChatRoomList={props.updateChatRoomList}/>}
+            {room.owner_id === -1 && (
+              <BecomeOwnerButton
+                room={room}
+                userId={loginUser.id}
+                updateChatRoomList={props.updateChatRoomList}
+              />
+            )}
             <EnterButton
               room={room}
               isRoomMember={isRoomMemberBool}

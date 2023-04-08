@@ -3,12 +3,11 @@ import { Button } from 'react-bootstrap'
 import { updateChatRoomOwnerRequest } from '../../../utils/chatRoomAxios'
 import { updateChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 
-export const BecomeOwnerButton = ( props: {
+export const BecomeOwnerButton = (props: {
   room: ChatRoom
   userId: number
   updateChatRoomList: () => void
 }): ReactElement => {
-
   const joinRoom = (): void => {
     const requestData: ChatRoomMember = {
       chatRoomId: props.room.id,
