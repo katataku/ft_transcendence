@@ -41,7 +41,7 @@ export function Player(props: {
   return (
     <Col>
       <div className="display-4">
-        {props.player.name.slice(0, 7)}&emsp;
+        {props.player.name.slice(0, 13)}&emsp;
         <Ready matchID={props.matchID} player={props.player} />
       </div>
       <div className="border">
