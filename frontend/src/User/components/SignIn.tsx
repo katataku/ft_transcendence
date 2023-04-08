@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
 import { checkUsernameAvailability, signUp } from '../../utils/userAxios'
 import { BaseURL, initUser } from '../../constants'
-import { authenticateWith42 } from '../../Auth/auth'
+import { authenticateWith42, isString } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
 import { signIn } from '../../utils/authAxios'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useJwtAuthRegister from '../../hooks/useJwtAuthRegister'
+import UserNameFormModal from './UserNameFormModal'
 
 export const defaultAvatar = `${BaseURL}/user/user_avatar/0`
 
@@ -16,7 +17,7 @@ let didInit = false
 
 export function SignIn(): ReactElement {
   const jwtAuthRegister = useJwtAuthRegister()
-  const location: SigninRes | null = useLocation().state
+  const location: SigninRes | string | null = useLocation().state
   const navigate = useNavigate()
   const [signUpMode, setSignUpMode] = useState<boolean>(false)
   const [userName, setUserName] = useState<string>('')
@@ -26,11 +27,23 @@ export function SignIn(): ReactElement {
   const [twoFactorVerifyModalshow, setTwoFactorVerifyModalshow] =
     useState(false)
   const [userTryingToLogin, setUserTryingToLogin] = useState<User>(initUser)
+  const [userNameFormModalshow, setUserNameFormModalshow] = useState(false)
+
   function handleTwoFAModalClose(): void {
     setTwoFactorVerifyModalshow(false)
   }
+
   function handleTwoFAModalShow(): void {
     setTwoFactorVerifyModalshow(true)
+  }
+
+  function handleNameFormModalClose(): void {
+    setUserNameFormModalshow(false)
+    navigate('/', { state: null, replace: true })
+  }
+
+  function handleNameFormModalShow(): void {
+    setUserNameFormModalshow(true)
   }
 
   function toggleMode(): void {
@@ -44,8 +57,11 @@ export function SignIn(): ReactElement {
   useEffect(() => {
     if (didInit) return
     didInit = true
-    if (location !== null) {
-      handleSuccessfulSignIn(location)
+    if (location === null) return
+
+    if (isString(location)) handleNameFormModalShow()
+    else {
+      handleSuccessfulSignIn(location as SigninRes)
       navigate('/', { state: null, replace: true })
     }
   }, [])
@@ -189,6 +205,11 @@ export function SignIn(): ReactElement {
         handleClose={handleTwoFAModalClose}
         userTryingToLogin={userTryingToLogin}
       ></TwoFactorVerifyModal>
+      <UserNameFormModal
+        show={userNameFormModalshow}
+        handleClose={handleNameFormModalClose}
+        ftToken={location as string}
+      ></UserNameFormModal>
     </div>
   )
 }

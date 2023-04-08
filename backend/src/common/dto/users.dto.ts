@@ -22,6 +22,13 @@ export class UserSignUpResDto {
   id: number;
 }
 
+export class User42SignUpReqDto {
+  @IsString()
+  token: string;
+  @IsString()
+  userName: string;
+}
+
 export class UserGetDto {
   @IsNumberString()
   id: number;
