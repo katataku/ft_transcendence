@@ -19,7 +19,7 @@ export const DeleteMemberButton = (props: {
         }
         deleteChatRoomMembersRequest(requestData, props.onClickCallback)
         if (isOwner(props.member, props.room)) {
-          updateChatRoomOwnerRequest(props.room, { id: -1 })
+          updateChatRoomOwnerRequest(props.room, { id: -1 }, () => {})
         }
       }}
     >

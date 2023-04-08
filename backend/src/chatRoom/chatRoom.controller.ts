@@ -75,8 +75,8 @@ export class ChatRoomController {
   async updateOwner(
     @Param('id') id: number,
     @Body() newOwner: { id: number },
-  ): Promise<void> {
-    await this.service.updateRoomOwner(id, newOwner);
+  ): Promise<boolean> {
+    return await this.service.updateRoomOwner(id, newOwner);
   }
 
   @Delete(':id')

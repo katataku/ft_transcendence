@@ -95,11 +95,16 @@ export function chatRoomAuthRequest(
 
 export function updateChatRoomOwnerRequest(
   room: ChatRoom,
-  newOwner: { id: number }
+  newOwner: { id: number },
+  callback: () => void
 ): void {
   jwtAxios
     .post('/chatRoom/' + String(room.id) + '/updateOwner', newOwner)
-    .then((_response) => {})
+    .then((response) => {
+      if (response.data === true) {
+        callback()
+      }
+    })
     .catch((reason) => {
       alert('エラーです!')
       console.log(reason)

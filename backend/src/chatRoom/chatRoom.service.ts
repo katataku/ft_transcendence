@@ -131,13 +131,22 @@ export class ChatRoomService {
     return true;
   }
 
-  async updateRoomOwner(id: number, newOwner: { id: number }): Promise<void> {
+  async updateRoomOwner(
+    id: number,
+    newOwner: { id: number },
+  ): Promise<boolean> {
     const targetRoom: ChatRoom = await this.chatRoomRepository.findOne({
       where: {
         id: id,
       },
     });
+
+    //　実ユーザーにオーナーにすることを要求しているが、
+    // その部屋にはすでに新しいオーナーが割り当てられている場合
+    if (newOwner.id !== -1 && targetRoom.owner_id !== -1) return false;
+
     targetRoom.owner_id = newOwner.id;
     this.chatRoomRepository.save(targetRoom);
+    return true;
   }
 }
