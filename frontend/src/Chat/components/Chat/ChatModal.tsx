@@ -33,13 +33,14 @@ export const ChatModal = (props: {
     })
   }, [props.showModal])
 
-  const kickButton = (isAdmin && !targetIsOwner) ? (
-    <Button variant="primary" onClick={props.handleKickButtonClick}>
-      Kick
-    </Button>
-  ) : (
-    <></>
-  )
+  const kickButton =
+    isAdmin && !targetIsOwner ? (
+      <Button variant="primary" onClick={props.handleKickButtonClick}>
+        Kick
+      </Button>
+    ) : (
+      <></>
+    )
   const navigate = useNavigate()
 
   const handleNavigateToProfile = (): void => {
