@@ -23,7 +23,7 @@ export class ChatRoom {
   // DBからIDをselectするためのワークアラウンド
   //https://typeorm.io/relations-faq#how-to-use-relation-id-without-joining-relation
   @Column()
-  created_by_user_id: number;
+  owner_id: number;
 
   // チャットルームの種別
   // Postgresではstringとして保存される。

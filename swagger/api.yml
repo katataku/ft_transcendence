@@ -879,7 +879,7 @@ components:
         name:
           type: string
           example: Tom Brady
-        created_by_user_id:
+        owner_id:
           type: number
           example: 1
         public_id:
@@ -891,7 +891,7 @@ components:
         name:
           type: string
           example: Tom Brady
-        created_by_user_id:
+        owner_id:
           type: number
           example: 1
         public_id:

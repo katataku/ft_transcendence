@@ -36,13 +36,12 @@ export class ChatRoomController {
     @Body() data: ChatRoomReqDto,
     @Request() req,
   ): Promise<ChatRoomResDto> {
-    if (req.user.userId != data.created_by_user_id)
-      throw new ForbiddenException();
+    if (req.user.userId != data.owner_id) throw new ForbiddenException();
     const result = await this.service.createRoom(data);
     if (result) {
       const chatRoomMembers = new ChatRoomMembersDto();
       chatRoomMembers.chatRoomId = result.id;
-      chatRoomMembers.userId = data.created_by_user_id;
+      chatRoomMembers.userId = data.owner_id;
       chatRoomMembers.ban_until = undefined;
       chatRoomMembers.mute_until = undefined;
       chatRoomMembers.isAdministrator = true;
@@ -58,13 +57,12 @@ export class ChatRoomController {
     @Body() data: ChatRoomReqDto,
     @Request() req,
   ): Promise<ChatRoomResDto> {
-    if (req.user.userId != data.created_by_user_id)
-      throw new ForbiddenException();
+    if (req.user.userId != data.owner_id) throw new ForbiddenException();
     const result = await this.service.updateRoom(id, data);
     if (result) {
       const chatRoomMembers = new ChatRoomMembersDto();
       chatRoomMembers.chatRoomId = result.id;
-      chatRoomMembers.userId = data.created_by_user_id;
+      chatRoomMembers.userId = data.owner_id;
       chatRoomMembers.ban_until = undefined;
       chatRoomMembers.mute_until = undefined;
       chatRoomMembers.isAdministrator = true;
