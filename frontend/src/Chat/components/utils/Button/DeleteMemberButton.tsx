@@ -1,6 +1,7 @@
 import { Button } from 'react-bootstrap'
 import { deleteChatRoomMembersRequest } from '../../../../utils/chatRoomMemberAxios'
 import { isOwner } from '../userStatusUtils'
+import {updateChatRoomOwnerRequest} from "../../../../utils/chatRoomAxios";
 
 export const DeleteMemberButton = (props: {
   room: ChatRoom
@@ -8,9 +9,6 @@ export const DeleteMemberButton = (props: {
   onClickCallback: () => void
   msg: string
 }): JSX.Element => {
-  // オーナーはメンバーから削除できない
-  if (isOwner(props.member, props.room)) return <></>
-
   return (
     <Button
       variant="outline-danger"
@@ -20,6 +18,9 @@ export const DeleteMemberButton = (props: {
           userId: props.member.id
         }
         deleteChatRoomMembersRequest(requestData, props.onClickCallback)
+        if (isOwner(props.member, props.room)) {
+          updateChatRoomOwnerRequest(props.room, { id: -1 })
+        }
       }}
     >
       {props.msg}

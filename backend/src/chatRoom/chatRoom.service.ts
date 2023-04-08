@@ -130,4 +130,14 @@ export class ChatRoomService {
     }
     return true;
   }
+
+  async updateRoomOwner(id: number, newOwner: { id: number }): Promise<void> {
+    const targetRoom: ChatRoom = await this.chatRoomRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    targetRoom.owner_id = newOwner.id;
+    this.chatRoomRepository.save(targetRoom);
+  }
 }
