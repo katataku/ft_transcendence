@@ -3,6 +3,7 @@ import { Button, Modal } from 'react-bootstrap'
 import { GlobalContext } from '../../../App'
 import { getChatRoomMembersRequest } from '../../../utils/chatRoomMemberAxios'
 import { useNavigate } from 'react-router-dom'
+import { isOwner } from '../utils/userStatusUtils'
 
 export const ChatModal = (props: {
   room: ChatRoom
@@ -14,6 +15,7 @@ export const ChatModal = (props: {
 }): ReactElement => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
   const { loginUser } = useContext(GlobalContext)
+  const targetIsOwner = isOwner(props.targetUser, props.room)
 
   useEffect(() => {
     getChatRoomMembersRequest((members: ChatRoomMember[]) => {
@@ -31,7 +33,7 @@ export const ChatModal = (props: {
     })
   }, [props.showModal])
 
-  const kickButton = isAdmin ? (
+  const kickButton = (isAdmin && !targetIsOwner) ? (
     <Button variant="primary" onClick={props.handleKickButtonClick}>
       Kick
     </Button>
