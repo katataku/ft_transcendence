@@ -19,6 +19,7 @@ import {
 import { ProtectedIcon } from '../utils/Icon/protectedIcon'
 import { EnterButton } from './EnterButton'
 import { GlobalContext } from '../../../App'
+import {BecomeOwnerButton} from "./BecomeOwnerButton";
 
 // チャットルームに参加するためのボタンを表示する。
 const JoinButton = (props: {
@@ -126,6 +127,7 @@ export const ChatListDisplay = (props: {
             <OwnerIcon isOwner={isOwnerBool}></OwnerIcon>
             <AdminIcon isAdmin={isAdminBool}></AdminIcon>
             <BannedIcon isBanned={isBannedBool}></BannedIcon>
+            <BecomeOwnerButton />
             <EnterButton
               room={room}
               isRoomMember={isRoomMemberBool}
