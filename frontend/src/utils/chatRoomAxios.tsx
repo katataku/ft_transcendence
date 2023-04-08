@@ -93,7 +93,10 @@ export function chatRoomAuthRequest(
     })
 }
 
-export function updateChatRoomOwnerRequest(room: ChatRoom, newOwner: { id: number }): void {
+export function updateChatRoomOwnerRequest(
+  room: ChatRoom,
+  newOwner: { id: number }
+): void {
   jwtAxios
     .post('/chatRoom/' + String(room.id) + '/updateOwner', newOwner)
     .then((_response) => {})
