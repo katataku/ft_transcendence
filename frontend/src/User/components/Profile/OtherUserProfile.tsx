@@ -16,6 +16,7 @@ import {
   deleteFriendRequest,
   getFriendPendingRequest,
   getFriendsRequest,
+  getIsFriend,
   getMatchHistoryById,
   getUserRequest,
   updateFriendPendingRequest
@@ -181,11 +182,16 @@ export function OtherUserProfile(): ReactElement {
 
   const [targetUser, setTargetUser] = useState<User>()
   const [matchHist, setMatchHist] = useState({ wins: 0, losses: 0 })
+  const [isFriend, setIsFriend] = useState<boolean>(false)
 
   useEffect(() => {
     getUserRequest(Number(id), (user) => {
       setTargetUser(user)
       getMatchHistoryById(user.id, setMatchHist)
+    })
+
+    getIsFriend(Number(id), (isFriendRes) => {
+      setIsFriend(isFriendRes)
     })
   }, [])
   if (targetUser == null) return <></>
@@ -202,12 +208,12 @@ export function OtherUserProfile(): ReactElement {
         />
       </p>
       <MatchHistory matchHistory={matchHist} />
-      {targetUser.isOnline === true ? (
-        <p style={{ color: 'green' }}>ONLINE</p>
-      ) : (
-        <p style={{ color: 'red' }}>OFFLINE</p>
-      )}
-
+      {isFriend &&
+        (targetUser.isOnline === true ? (
+          <p style={{ color: 'green' }}>ONLINE</p>
+        ) : (
+          <p style={{ color: 'red' }}>OFFLINE</p>
+        ))}
       <p>
         <FriendInvitationButton
           targetUser={targetUser}
