@@ -3,6 +3,5 @@
 .idea/*
 
 /db-data
-.env_secret
 
 config/.env
