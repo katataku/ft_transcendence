@@ -87,9 +87,9 @@ export function enable2FA(
     })
 }
 
-export function disable2FA(userId: number, callback: (res: any) => void): void {
+export function disable2FA(callback: (res: any) => void): void {
   jwtAxios
-    .post('/auth/2fa/disable', { userId })
+    .post('/auth/2fa/disable')
     .then((res): void => {
       callback(res.data)
     })
@@ -98,16 +98,9 @@ export function disable2FA(userId: number, callback: (res: any) => void): void {
     })
 }
 
-export function getIsTwoFactorEnabled(
-  userId: number,
-  callback: (res: boolean) => void
-): void {
+export function getIsTwoFactorEnabled(callback: (res: boolean) => void): void {
   jwtAxios
-    .get<boolean>('/auth/2fa/status', {
-      params: {
-        userId
-      }
-    })
+    .get<boolean>('/auth/2fa/status')
     .then((res): void => {
       callback(res.data)
     })

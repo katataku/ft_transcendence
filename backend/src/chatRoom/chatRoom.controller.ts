@@ -7,6 +7,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Request,
 } from '@nestjs/common';
@@ -54,7 +55,7 @@ export class ChatRoomController {
 
   @Post(':id')
   async update(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() data: ChatRoomReqDto,
     @Request() req,
   ): Promise<ChatRoomResDto> {
@@ -74,13 +75,13 @@ export class ChatRoomController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number, @Request() req): Promise<void> {
+  delete(@Param('id', ParseIntPipe) id: number, @Request() req): Promise<void> {
     return this.service.deleteRoom(id, req.user.userId);
   }
 
   @Post(':id/auth')
   async authChatRoom(
-    @Param('id') id: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() data: ChatRoomAuthReqDto,
   ): Promise<void> {
     console.log('authChatRoom');

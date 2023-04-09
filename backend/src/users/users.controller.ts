@@ -11,6 +11,7 @@ import {
   HttpStatus,
   Request,
   ForbiddenException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -104,8 +105,8 @@ export class UsersController {
 
   @Delete('friends/pending/:from/:to')
   deleteFriendPending(
-    @Param('from') from: number,
-    @Param('to') to: number,
+    @Param('from', ParseIntPipe) from: number,
+    @Param('to', ParseIntPipe) to: number,
     @Request() req,
   ) {
     // フレンド申請を拒否する時と自らキャンセルする時にaccessされるのでfromとtoを検証している

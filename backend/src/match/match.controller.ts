@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe } from '@nestjs/common';
 import { MatchDto } from '../common/dto/match.dto';
 import { MatchService } from './match.service';
 
@@ -12,7 +12,7 @@ export class MatchController {
   }
 
   @Get(':id')
-  getMatchById(@Param('id') id: number): Promise<MatchDto> {
+  getMatchById(@Param('id', ParseIntPipe) id: number): Promise<MatchDto> {
     return this.service.getMatchById(id);
   }
 }
