@@ -13,7 +13,7 @@ services:
         source: ./frontend
         target: /app
     env_file:
-      -  ./config/.env_frontend
+      -  ./config/.env
 
   backend:
     container_name: back
@@ -27,6 +27,8 @@ services:
       - type: bind
         source: ./backend
         target: /app
+    env_file:
+      -  ./config/.env
     networks:
       - trans
     depends_on:
@@ -46,7 +48,7 @@ services:
     networks:
       - trans
     env_file:
-      -  ./backend/.env
+      -  ./config/.env
 
   swagger:
     image: swaggerapi/swagger-ui:latest
