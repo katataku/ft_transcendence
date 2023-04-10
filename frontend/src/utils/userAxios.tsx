@@ -207,6 +207,21 @@ export function getFriendsRequest(
     })
 }
 
+export function getIsFriend(
+  userId: number,
+  callback: (isFriend: boolean) => void
+): void {
+  jwtAxios
+    .get<boolean>('/user/friends/isFriend/' + String(userId))
+    .then((res) => {
+      callback(res.data)
+    })
+    .catch((reason) => {
+      alert('エラーです！')
+      console.log(reason)
+    })
+}
+
 export function getMatchHistoryById(
   id: number,
   callback: (matchHistory: UserMatchHistoryDto) => void

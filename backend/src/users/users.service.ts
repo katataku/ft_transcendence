@@ -267,6 +267,18 @@ export class UsersService {
     return res;
   }
 
+  async isFriend(id: number, friendId: number): Promise<boolean> {
+    let friendship = await this.friendshipRepository.findOne({
+      where: { user1: id, user2: friendId },
+    });
+    if (friendship === null) {
+      friendship = await this.friendshipRepository.findOne({
+        where: { user1: friendId, user2: id },
+      });
+    }
+    return friendship !== null;
+  }
+
   async saveAvatar(userId: number, data: string): Promise<number> {
     const obj: UserAvatars = {
       id: null,

@@ -115,6 +115,14 @@ export class UsersController {
     return this.service.deletePending(from, to);
   }
 
+  @Get('friends/isFriend/:id')
+  async isFriend(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ): Promise<boolean> {
+    return await this.service.isFriend(req.user.userId, id);
+  }
+
   @Public()
   @Get('user_avatar/:id')
   async getAvatar(
