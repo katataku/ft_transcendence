@@ -268,9 +268,14 @@ export class UsersService {
   }
 
   async isFriend(id: number, friendId: number): Promise<boolean> {
-    const friendship = await this.friendshipRepository.findOne({
+    let friendship = await this.friendshipRepository.findOne({
       where: { user1: id, user2: friendId },
     });
+    if (friendship === null) {
+      friendship = await this.friendshipRepository.findOne({
+        where: { user1: friendId, user2: id },
+      });
+    }
     return friendship !== null;
   }
 
