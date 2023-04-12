@@ -159,21 +159,4 @@ export class UsersController {
   ): Promise<UserMatchHistoryDto> {
     return await this.service.getUserMatchHistory(param.id);
   }
-
-  @Public()
-  @Post('check/username-availability')
-  async checkUsername(
-    @Body() body: UsernameCheckRequestDto,
-  ): Promise<UsernameCheckResponseDto> {
-    const isDuplicate = await this.service.isUsernameDuplicate(body.username);
-
-    if (isDuplicate) {
-      throw new HttpException(
-        'Username already exists',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-
-    return { message: 'Username is available' };
-  }
 }

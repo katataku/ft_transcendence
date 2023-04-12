@@ -270,24 +270,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/user_avatar_update_req'
-  /user/check/username-availability:
-    post:
-      tags:
-        - user
-      summary: check username duplicate
-      security: []
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/user_check_req'
-      responses:
-        201:
-          description: 成功
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/user_check_res'
 
   /chatroom:
     get:
@@ -826,20 +808,6 @@ components:
         avatar:
           type: string
           example: 'DEFAULT_AVATAR'
-
-    user_check_req:
-      type: object
-      properties:
-        username:
-          type: string
-          example: guest1
-
-    user_check_res:
-      type: object
-      properties:
-        message:
-          type: string
-          example: Username already exists
 
     friends_get_res:
       type: array
