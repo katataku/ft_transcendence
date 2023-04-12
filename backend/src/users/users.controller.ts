@@ -7,8 +7,6 @@ import {
   Delete,
   Res,
   Put,
-  HttpException,
-  HttpStatus,
   Request,
   ForbiddenException,
   ParseIntPipe,
@@ -22,8 +20,6 @@ import {
   UserSignUpResDto,
   UserFriendDeleteRequestDto,
   UserMatchHistoryDto,
-  UsernameCheckResponseDto,
-  UsernameCheckRequestDto,
   UserAvatarUpdateReqDto,
 } from 'src/common/dto/users.dto';
 import { UserIdParam } from 'src/common/params/user.params';

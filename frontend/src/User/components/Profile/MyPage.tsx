@@ -5,7 +5,6 @@ import { FriendList } from './FriendList'
 import { FriendPendingList } from './FriendPendingList'
 import { BaseURL } from '../../../constants'
 import {
-  checkUsernameAvailability,
   getMatchHistoryById,
   updateAvatar,
   updateUserProfile
@@ -63,21 +62,13 @@ function UserProfileModal(props: {
           <Button
             variant="primary"
             onClick={() => {
-              checkUsernameAvailability(
+              updateUserProfile(
+                loginUser.id,
                 userName,
-                () => {
-                  updateUserProfile(
-                    loginUser.id,
-                    userName,
-                    password,
-                    (accessToken: string) => {
-                      jwtAuthRegister(accessToken)
-                      alert('プロフィールを変更しました。')
-                    }
-                  )
-                },
-                () => {
-                  alert('Username already exists, so try another username.')
+                password,
+                (accessToken: string) => {
+                  jwtAuthRegister(accessToken)
+                  alert('プロフィールを変更しました。')
                 }
               )
               props.handleClose()
