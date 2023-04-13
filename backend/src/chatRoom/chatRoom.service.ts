@@ -41,15 +41,15 @@ export class ChatRoomService {
   }
 
   async createRoom(param: ChatRoomReqDto): Promise<ChatRoomResDto> {
-    const created_by: User = await this.usersRepository.findOne({
+    const owner: User = await this.usersRepository.findOne({
       where: {
         id: param.owner_id,
       },
     });
-    if (!created_by) throw new NotFoundException();
+    if (!owner) throw new NotFoundException();
     const data = new ChatRoom();
     data.name = param.name;
-    data.created_by = created_by;
+    data.owner = owner;
     data.owner_id = param.owner_id;
     data.public_id = param.public_id;
     if (param.password) {
@@ -66,7 +66,7 @@ export class ChatRoomService {
   }
 
   async updateRoom(id: number, param: ChatRoomReqDto): Promise<ChatRoomResDto> {
-    const created_by: User = await this.usersRepository.findOne({
+    const owner: User = await this.usersRepository.findOne({
       where: {
         id: param.owner_id,
       },
@@ -77,9 +77,9 @@ export class ChatRoomService {
         id: id,
       },
     });
-    if (!created_by || !targetRoom) throw new NotFoundException();
+    if (!owner || !targetRoom) throw new NotFoundException();
     targetRoom.name = param.name;
-    targetRoom.created_by = created_by;
+    targetRoom.owner = owner;
     targetRoom.owner_id = param.owner_id;
     targetRoom.public_id = param.public_id;
     if (param.password) {
@@ -145,6 +145,13 @@ export class ChatRoomService {
     // その部屋にはすでに新しいオーナーが割り当てられている場合
     if (newOwner.id !== -1 && targetRoom.owner_id !== -1) return false;
 
+    const newOwnerUser: User = await this.usersRepository.findOne({
+      where: {
+        id: newOwner.id,
+      },
+    });
+
+    targetRoom.owner = newOwnerUser;
     targetRoom.owner_id = newOwner.id;
     this.chatRoomRepository.save(targetRoom);
     return true;

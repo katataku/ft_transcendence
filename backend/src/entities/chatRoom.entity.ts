@@ -17,8 +17,8 @@ export class ChatRoom {
   name: string;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'created_by' })
-  created_by: User;
+  @JoinColumn({ name: 'owner' })
+  owner: User;
 
   // DBからIDをselectするためのワークアラウンド
   //https://typeorm.io/relations-faq#how-to-use-relation-id-without-joining-relation
