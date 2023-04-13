@@ -58,7 +58,7 @@ export function isTargetMuted(
 }
 
 export function isOwner(user: User, room: ChatRoom): boolean {
-  return room.created_by_user_id === user.id
+  return room.owner_id === user.id
 }
 
 export function isLoginUserOwner(room: ChatRoom): boolean {

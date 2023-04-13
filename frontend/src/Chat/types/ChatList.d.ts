@@ -1,7 +1,7 @@
 interface ChatRoom {
   id: number
   name: string
-  created_by_user_id: number
+  owner_id: number
   public_id: publicIdType
   password?: string
 }
@@ -9,7 +9,7 @@ interface ChatRoom {
 interface ChatRoomReqDto {
   name: string
   created_by: number
-  created_by_user_id: number
+  owner_id: number
   public_id: publicIdType
   password?: string
 }

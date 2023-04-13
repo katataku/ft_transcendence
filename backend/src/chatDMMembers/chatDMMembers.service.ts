@@ -54,7 +54,7 @@ export class ChatDMMembersService {
     const newDMChatRoom = new ChatRoom();
     newDMChatRoom.public_id = 'DM';
     newDMChatRoom.name = 'DM' + '-' + String(user1) + '-' + String(user2);
-    newDMChatRoom.created_by_user_id = user1;
+    newDMChatRoom.owner_id = user1;
     const newDMresult: ChatRoomResDto = await this.chatRoomRepository.save(
       newDMChatRoom,
     );

@@ -56,7 +56,7 @@ export const ChatRoomSetupModal = (props: {
     const requestData: ChatRoomReqDto = {
       name: newRoomName,
       created_by: loginUser.id,
-      created_by_user_id: loginUser.id,
+      owner_id: loginUser.id,
       public_id: publicId,
       password: publicId === 'protected' ? password : undefined
     }

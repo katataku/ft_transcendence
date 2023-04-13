@@ -29,7 +29,7 @@ export class ChatRoomService {
       select: {
         id: true,
         name: true,
-        created_by_user_id: true,
+        owner_id: true,
         public_id: true,
       },
       order: {
@@ -41,16 +41,16 @@ export class ChatRoomService {
   }
 
   async createRoom(param: ChatRoomReqDto): Promise<ChatRoomResDto> {
-    const created_by: User = await this.usersRepository.findOne({
+    const owner: User = await this.usersRepository.findOne({
       where: {
-        id: param.created_by_user_id,
+        id: param.owner_id,
       },
     });
-    if (!created_by) throw new NotFoundException();
+    if (!owner) throw new NotFoundException();
     const data = new ChatRoom();
     data.name = param.name;
-    data.created_by = created_by;
-    data.created_by_user_id = param.created_by_user_id;
+    data.owner = owner;
+    data.owner_id = param.owner_id;
     data.public_id = param.public_id;
     if (param.password) {
       const passHash = SHA256(param.password).toString();
@@ -60,15 +60,15 @@ export class ChatRoomService {
     return {
       id: ret.id,
       name: ret.name,
-      created_by_user_id: ret.created_by_user_id,
+      owner_id: ret.owner_id,
       public_id: ret.public_id,
     };
   }
 
   async updateRoom(id: number, param: ChatRoomReqDto): Promise<ChatRoomResDto> {
-    const created_by: User = await this.usersRepository.findOne({
+    const owner: User = await this.usersRepository.findOne({
       where: {
-        id: param.created_by_user_id,
+        id: param.owner_id,
       },
     });
 
@@ -77,10 +77,10 @@ export class ChatRoomService {
         id: id,
       },
     });
-    if (!created_by || !targetRoom) throw new NotFoundException();
+    if (!owner || !targetRoom) throw new NotFoundException();
     targetRoom.name = param.name;
-    targetRoom.created_by = created_by;
-    targetRoom.created_by_user_id = param.created_by_user_id;
+    targetRoom.owner = owner;
+    targetRoom.owner_id = param.owner_id;
     targetRoom.public_id = param.public_id;
     if (param.password) {
       const passHash = SHA256(param.password).toString();
@@ -90,7 +90,7 @@ export class ChatRoomService {
     return {
       id: ret.id,
       name: ret.name,
-      created_by_user_id: ret.created_by_user_id,
+      owner_id: ret.owner_id,
       public_id: ret.public_id,
     };
   }
@@ -102,8 +102,7 @@ export class ChatRoomService {
       },
     });
     if (!targetRoom) throw new NotFoundException();
-    if (signedInUserId != targetRoom.created_by_user_id)
-      throw new ForbiddenException();
+    if (signedInUserId != targetRoom.owner_id) throw new ForbiddenException();
     this.chatRoomRepository.remove(targetRoom);
   }
 
@@ -129,6 +128,32 @@ export class ChatRoomService {
         return false;
       }
     }
+    return true;
+  }
+
+  async updateRoomOwner(
+    id: number,
+    newOwner: { id: number },
+  ): Promise<boolean> {
+    const targetRoom: ChatRoom = await this.chatRoomRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+
+    //　実ユーザーにオーナーにすることを要求しているが、
+    // その部屋にはすでに新しいオーナーが割り当てられている場合
+    if (newOwner.id !== -1 && targetRoom.owner_id !== -1) return false;
+
+    const newOwnerUser: User = await this.usersRepository.findOne({
+      where: {
+        id: newOwner.id,
+      },
+    });
+
+    targetRoom.owner = newOwnerUser;
+    targetRoom.owner_id = newOwner.id;
+    this.chatRoomRepository.save(targetRoom);
     return true;
   }
 }
