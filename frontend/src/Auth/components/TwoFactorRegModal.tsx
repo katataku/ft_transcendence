@@ -28,7 +28,7 @@ export function TwoFactorRegModal(): ReactElement {
         setSecret(res.secret)
         setQrCodeDataURL(res.qrCode)
       })
-      getIsTwoFactorEnabled(loginUser.id, (res: boolean) => {
+      getIsTwoFactorEnabled((res: boolean) => {
         if (res) setIsTwoFactorEnabled(true)
       })
     }
@@ -55,7 +55,7 @@ export function TwoFactorRegModal(): ReactElement {
     closeModal()
   }
   const handleDisable2FA = (): void => {
-    disable2FA(loginUser.id, () => {
+    disable2FA(() => {
       setIsTwoFactorEnabled(false)
       toast('2FA disabled', { type: 'success' })
     })

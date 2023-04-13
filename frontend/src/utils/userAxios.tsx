@@ -47,6 +47,21 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
       alert(err)
     })
 }
+
+export function ftSignUp(
+  obj: ftSignUp,
+  callback: (accessToken: string) => void
+): void {
+  axios
+    .post<string>('/user/42', obj)
+    .then((res) => {
+      callback(res.data)
+    })
+    .catch((err) => {
+      alert(err)
+    })
+}
+
 export function updateUserProfile(
   userId: number,
   name: string,
@@ -185,6 +200,21 @@ export function getFriendsRequest(
     .get<User[]>('/user/friends/' + String(userId))
     .then((response) => {
       callback(response.data)
+    })
+    .catch((reason) => {
+      alert('エラーです！')
+      console.log(reason)
+    })
+}
+
+export function getIsFriend(
+  userId: number,
+  callback: (isFriend: boolean) => void
+): void {
+  jwtAxios
+    .get<boolean>('/user/friends/isFriend/' + String(userId))
+    .then((res) => {
+      callback(res.data)
     })
     .catch((reason) => {
       alert('エラーです！')

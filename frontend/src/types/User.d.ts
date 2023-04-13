@@ -11,6 +11,11 @@ interface signUp {
   is42User: boolean
 }
 
+interface ftSignUp {
+  token: string
+  userName: string
+}
+
 interface signIn {
   name: string
   password: string

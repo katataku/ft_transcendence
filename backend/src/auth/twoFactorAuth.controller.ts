@@ -3,10 +3,8 @@ import {
   Controller,
   ForbiddenException,
   Get,
-  Logger,
   Param,
   Post,
-  Query,
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -16,6 +14,7 @@ import {
   VerifyTwoFactorAuthDto,
 } from 'src/common/dto/auth.dto';
 import { Public } from './public.decorator';
+import { UserNameParam } from 'src/common/params/user.params';
 
 @Controller('auth/2fa')
 export class TwoFactorAuthController {
@@ -24,13 +23,11 @@ export class TwoFactorAuthController {
     private usersService: UsersService,
   ) {}
 
-  private logger: Logger = new Logger('TwoFactorAuthController');
-
   @Get('setup/:userName')
   async getOTPData(
-    @Param('userName') userName: string,
+    @Param() param: UserNameParam,
   ): Promise<{ secret: string; qrCode: string }> {
-    return await this.authService.getOTPData(userName);
+    return await this.authService.getOTPData(param.userName);
   }
 
   @Post('enable')
@@ -43,14 +40,13 @@ export class TwoFactorAuthController {
   }
 
   @Post('disable')
-  async disable(@Body() data: { userId: number }, @Request() req) {
-    if (req.user.userId != data.userId) throw new ForbiddenException();
-    this.usersService.disableTwoFactor(data.userId);
+  async disable(@Request() req) {
+    this.usersService.disableTwoFactor(req.user.userId);
   }
 
   @Get('status')
-  async isTwoFactorEnabled(@Query('userId') userId: number): Promise<boolean> {
-    return await this.usersService.isTwoFactorEnabled(userId);
+  async isTwoFactorEnabled(@Request() req): Promise<boolean> {
+    return await this.usersService.isTwoFactorEnabled(req.user.userId);
   }
 
   @Public()

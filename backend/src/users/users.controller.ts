@@ -11,6 +11,7 @@ import {
   HttpStatus,
   Request,
   ForbiddenException,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import {
@@ -30,6 +31,7 @@ import { Response } from 'express';
 import * as fs from 'fs';
 import { promisify } from 'util';
 import { Public } from 'src/auth/public.decorator';
+import { User42SignUpReqDto } from 'src/common/dto/users.dto';
 
 @Controller('user')
 export class UsersController {
@@ -39,6 +41,12 @@ export class UsersController {
   @Post()
   signUp(@Body() body: UserSignUpReqDto): Promise<UserSignUpResDto> {
     return this.service.createUser(body);
+  }
+
+  @Public()
+  @Post('42')
+  ftSignUp(@Body() body: User42SignUpReqDto): Promise<string> {
+    return this.service.create42User(body);
   }
 
   @Get('users')
@@ -97,14 +105,22 @@ export class UsersController {
 
   @Delete('friends/pending/:from/:to')
   deleteFriendPending(
-    @Param('from') from: number,
-    @Param('to') to: number,
+    @Param('from', ParseIntPipe) from: number,
+    @Param('to', ParseIntPipe) to: number,
     @Request() req,
   ) {
     // フレンド申請を拒否する時と自らキャンセルする時にaccessされるのでfromとtoを検証している
     if (req.user.userId != from && req.user.userId != to)
       throw new ForbiddenException();
     return this.service.deletePending(from, to);
+  }
+
+  @Get('friends/isFriend/:id')
+  async isFriend(
+    @Param('id', ParseIntPipe) id: number,
+    @Request() req,
+  ): Promise<boolean> {
+    return await this.service.isFriend(req.user.userId, id);
   }
 
   @Public()

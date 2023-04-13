@@ -106,9 +106,13 @@ export class AuthService {
 
   private async generateQrCode(
     secret: string,
-    userId: string,
+    userName: string,
   ): Promise<string> {
-    const otpAuthUrl = authenticator.keyuri(userId, 'ft_transcendence', secret);
+    const otpAuthUrl = authenticator.keyuri(
+      userName,
+      'ft_transcendence',
+      secret,
+    );
     return toDataURL(otpAuthUrl);
   }
 
