@@ -5,6 +5,7 @@ import {
   IsBoolean,
   IsOptional,
   IsNotEmpty,
+  Matches,
 } from 'class-validator';
 
 export class UserSignUpReqDto {
@@ -13,6 +14,14 @@ export class UserSignUpReqDto {
   name: string;
   @IsNotEmpty()
   @IsString()
+  @Matches(
+    // 小文字、大文字、数字、記号を含む8文字以上
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
+    {
+      message:
+        'Password must be at least 8 characters long and contain uppercase letters, lowercase letters, numbers, and symbols.',
+    },
+  )
   password: string;
   @IsNotEmpty()
   @IsString()
@@ -62,6 +71,14 @@ export class UserUpdateReqDto {
   name: string;
   @IsNotEmpty()
   @IsString()
+  @Matches(
+    // 小文字、大文字、数字、記号を含む8文字以上
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,}$/,
+    {
+      message:
+        'Password must be at least 8 characters long and contain uppercase letters, lowercase letters, numbers, and symbols.',
+    },
+  )
   password: string;
 }
 
