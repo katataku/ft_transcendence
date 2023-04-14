@@ -10,4 +10,4 @@ EXPOSE 3000
 
 COPY ./ ./
 
-CMD [ "npm", "start" ]
+CMD [ "./scripts/wait-for-it/wait-for-it.sh", "--timeout=300", "backend:3001", "--", "npm", "start" ]
