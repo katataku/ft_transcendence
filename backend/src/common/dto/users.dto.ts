@@ -38,8 +38,10 @@ export class UserSignUpResDto {
 }
 
 export class User42SignUpReqDto {
+  @IsNotEmpty()
   @IsString()
   token: string;
+  @IsNotEmpty()
   @IsString()
   userName: string;
 }
