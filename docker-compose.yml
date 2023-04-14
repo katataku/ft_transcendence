@@ -36,9 +36,9 @@ services:
     image: postgres:14
     container_name: postgres
 # ログレベルFATAL以下のメッセージを出力しない設定。
-# リリース時には下記のコメントアウトを外す。
-#    command: postgres -c log_min_messages=FATAL
-    command: postgres -c log_min_messages=INFO -c log_destination=stderr -c log_statement=all -c log_connections=on
+    command: postgres -c log_min_messages=FATAL
+# Debug用にログレベルをINFOに設定。
+#    command: postgres -c log_min_messages=INFO -c log_destination=stderr -c log_statement=all -c log_connections=on
     ports:
       - "5432:5432"
     volumes:
