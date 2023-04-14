@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosError } from 'axios'
 import { defaultAvatar } from '../User/components/SignIn'
 import jwtAxios from './axiosConfig'
 
@@ -43,8 +43,12 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
     .then((res) => {
       callback(res.data.id)
     })
-    .catch((err) => {
-      alert(err)
+    .catch((err: AxiosError) => {
+      if (err.response?.status === 400) {
+        alert((err.response?.data as any).message)
+      } else {
+        alert(err)
+      }
     })
 }
 
@@ -77,8 +81,12 @@ export function updateUserProfile(
     .then((res) => {
       callback(res.data)
     })
-    .catch((err) => {
-      alert(err)
+    .catch((err: AxiosError) => {
+      if (err.response?.status === 400) {
+        alert((err.response?.data as any).message)
+      } else {
+        alert(err)
+      }
     })
 }
 
