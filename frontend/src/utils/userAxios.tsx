@@ -44,11 +44,9 @@ export function signUp(obj: signUp, callback: (id: number) => void): void {
       callback(res.data.id)
     })
     .catch((err: AxiosError) => {
-      if (err.response?.status === 409) {
+      if (err.response?.status === 409 || err.response?.status === 400)
         alert((err.response?.data as any).message)
-      } else {
-        alert(err)
-      }
+      else alert(err)
     })
 }
 
@@ -86,11 +84,9 @@ export function updateUserProfile(
       callback(res.data)
     })
     .catch((err: AxiosError) => {
-      if (err.response?.status === 409) {
+      if (err.response?.status === 409 || err.response?.status === 400)
         alert((err.response?.data as any).message)
-      } else {
-        alert(err)
-      }
+      else alert(err)
     })
 }
 

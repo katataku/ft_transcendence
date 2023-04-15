@@ -180,7 +180,10 @@ export function SignIn(): ReactElement {
                 data-cy={`login-as-${name}`}
                 variant="warning"
                 onClick={() => {
-                  signIn({ name, password: 'password' }, handleSuccessfulSignIn)
+                  signIn(
+                    { name, password: 'Password1!' },
+                    handleSuccessfulSignIn
+                  )
                 }}
               >
                 Sign in as {name}
