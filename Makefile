@@ -1,6 +1,6 @@
 DC_CMD=docker compose
 #提出前に以下の行はコメントアウトすることでswaggerが起動しなくなる。
-DC_PROFILE=--profile debug
+#DC_PROFILE=--profile debug
 DC_OPTIONS=-f ./docker-compose.yml ${DC_PROFILE}
 
 include ${ENV_FILE}
@@ -40,6 +40,14 @@ up-d:make-db-dir
 .PHONY:down
 down:
 	${DC_CMD} ${DC_OPTIONS} down
+
+.PHONY:debug-up-d
+debug-up-d:make-db-dir
+	${DC_CMD} ${DC_OPTIONS} --profile debug up -d
+
+.PHONY:debug-down
+debug-down:
+	${DC_CMD} ${DC_OPTIONS} --profile debug down
 
 .PHONY:re
 re:down build up

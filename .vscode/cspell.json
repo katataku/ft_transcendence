@@ -25,5 +25,9 @@
         "keyuri",
         "Modalshow",
         "Ilocal"
+    ],
+    "ignorePaths": [
+        "frontend/scripts/wait-for-it/**",
+        "backend/scripts/wait-for-it/**"
     ]
 }
