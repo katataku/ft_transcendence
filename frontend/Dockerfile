@@ -2,12 +2,10 @@ FROM node:latest
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ./ ./
 
 RUN npm install
 
 EXPOSE 3000
-
-COPY ./ ./
 
 CMD [ "./scripts/wait-for-it/wait-for-it.sh", "--timeout=300", "backend:3001", "--", "npm", "start" ]

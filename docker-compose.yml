@@ -8,10 +8,10 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    volumes:
-      - type: bind
-        source: ./frontend
-        target: /app
+    # volumes:
+    #   - type: bind
+    #     source: ./frontend
+    #     target: /app
     env_file:
       -  ./config/.env
     networks:
@@ -25,10 +25,10 @@ services:
     ports:
       - "3001:3001"
       - "3002:3002"
-    volumes:
-      - type: bind
-        source: ./backend
-        target: /app
+    # volumes:
+    #   - type: bind
+    #     source: ./backend
+    #     target: /app
     env_file:
       -  ./config/.env
     networks:
