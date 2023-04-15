@@ -1,6 +1,6 @@
 import React, { type ReactElement, useState } from 'react'
 import { Button, Modal, Form } from 'react-bootstrap'
-import { checkUsernameAvailability, ftSignUp } from '../../utils/userAxios'
+import { ftSignUp } from '../../utils/userAxios'
 import useJwtAuthRegister from '../../hooks/useJwtAuthRegister'
 
 function UserNameFormModal(props: {
@@ -20,18 +20,10 @@ function UserNameFormModal(props: {
       alert('Username cannot be empty.')
       return
     }
-    checkUsernameAvailability(
-      userName,
-      () => {
-        ftSignUp({ userName, token: props.ftToken }, (accessToken: string) => {
-          jwtAuthRegister(accessToken)
-          props.handleClose()
-        })
-      },
-      () => {
-        alert('Username already exists, so try another username.')
-      }
-    )
+    ftSignUp({ userName, token: props.ftToken }, (accessToken: string) => {
+      jwtAuthRegister(accessToken)
+      props.handleClose()
+    })
   }
 
   return (

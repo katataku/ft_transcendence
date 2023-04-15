@@ -2,7 +2,7 @@ import { type ReactElement, useEffect } from 'react'
 import { Form, Button, Image as Img } from 'react-bootstrap'
 import { useState } from 'react'
 import { resizeAndEncode } from '../functions/user.functions'
-import { checkUsernameAvailability, signUp } from '../../utils/userAxios'
+import { signUp } from '../../utils/userAxios'
 import { BaseURL, initUser } from '../../constants'
 import { authenticateWith42, isString } from '../../Auth/auth'
 import { TwoFactorVerifyModal } from '../../Auth/components/TwoFactorVerifyModal'
@@ -149,26 +149,15 @@ export function SignIn(): ReactElement {
         <Button
           onClick={() => {
             if (signUpMode) {
-              checkUsernameAvailability(
-                userName,
-                () => {
-                  signUp(
-                    {
-                      name: userName,
-                      password,
-                      avatar: image,
-                      is42User: false
-                    },
-                    () => {
-                      signIn(
-                        { name: userName, password },
-                        handleSuccessfulSignIn
-                      )
-                    }
-                  )
+              signUp(
+                {
+                  name: userName,
+                  password,
+                  avatar: image,
+                  is42User: false
                 },
                 () => {
-                  alert('Username already exists, so try another username.')
+                  signIn({ name: userName, password }, handleSuccessfulSignIn)
                 }
               )
             } else {
