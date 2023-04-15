@@ -103,15 +103,3 @@ export class UserFriendDeleteRequestDto {
   @IsNumber()
   friendUserId: number;
 }
-
-export class UsernameCheckRequestDto {
-  @IsNotEmpty()
-  @IsString()
-  username: string;
-}
-
-export class UsernameCheckResponseDto {
-  @IsNotEmpty()
-  @IsString()
-  message: string;
-}
