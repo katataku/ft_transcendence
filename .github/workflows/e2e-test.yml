@@ -18,6 +18,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: setup .env file
+        run: cp ./config/.env.sample ./config/.env
+
       - name: setup
         run: make init
 
@@ -52,6 +55,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
+
+      - name: setup .env file
+        run: cp ./config/.env.sample ./config/.env
 
       - name: Setup firefox
         id: setup-firefox

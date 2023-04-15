@@ -48,6 +48,12 @@ export class UsersService {
   }
 
   async createUser(data: UserSignUpReqDto): Promise<UserSignUpResDto> {
+    if (await this.isUsernameDuplicate(data.name)) {
+      throw new HttpException(
+        'Username already exists, so try another username.',
+        HttpStatus.CONFLICT,
+      );
+    }
     const obj: User = {
       id: null,
       name: data.name,
@@ -66,6 +72,12 @@ export class UsersService {
   }
 
   async create42User(data: User42SignUpReqDto): Promise<string> {
+    if (await this.isUsernameDuplicate(data.userName)) {
+      throw new HttpException(
+        'Username already exists, so try another username.',
+        HttpStatus.CONFLICT,
+      );
+    }
     const user42: ftInfo = await this.authService.request42Info(data.token);
     if (!user42) throw new NotFoundException();
     const obj: User = {
@@ -163,6 +175,12 @@ export class UsersService {
   }
 
   async updateUser(id: number, data: UserUpdateReqDto): Promise<string> {
+    if (await this.isUsernameDuplicate(data.name)) {
+      throw new HttpException(
+        'Username already exists, so try another username.',
+        HttpStatus.CONFLICT,
+      );
+    }
     const target = await this.usersRepository.findOne({ where: { id: id } });
     if (target == null) {
       throw new HttpException('User Not Found.', HttpStatus.NOT_FOUND);
