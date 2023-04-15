@@ -22,7 +22,7 @@ export class migrations1676466055353 implements MigrationInterface {
     `)`;
 
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const passHash = SHA256('password').toString();
+    const passHash = SHA256('Password1!').toString();
     await queryRunner.query(this.makeInsertUserSQL('guest1', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest2', passHash));
     await queryRunner.query(this.makeInsertUserSQL('guest3', passHash));
