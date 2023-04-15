@@ -25,5 +25,6 @@
         "keyuri",
         "Modalshow",
         "Ilocal"
-    ]
+    ],
+    "ignorePaths": ["wait-for-it/**"]
 }
