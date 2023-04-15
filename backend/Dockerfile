@@ -2,12 +2,13 @@ FROM node:latest
 
 WORKDIR /app
 
-COPY package*.json ./
+COPY ./ ./
 
 RUN npm install
 
 EXPOSE 3001
 
-COPY ./ ./
+RUN npm run build
 
-CMD [ "npm", "run", "start:dev" ]
+CMD [ "node", "dist/src/main.js" ]
+# CMD [ "npm", "run", "start:dev" ]
