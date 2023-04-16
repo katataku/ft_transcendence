@@ -33,9 +33,6 @@ export class ChatRoomReqDto {
 
 export class ChatRoomAuthReqDto {
   @IsNotEmpty()
-  @IsNumber()
-  id: number;
-  @IsNotEmpty()
   @IsString()
   password: string;
 }
