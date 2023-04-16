@@ -1,6 +1,6 @@
 import {
   IsBoolean,
-  IsDate,
+  IsDateString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -16,11 +16,11 @@ export class ChatRoomMembersDto {
   userId: number;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   ban_until?: Date;
 
   @IsOptional()
-  @IsDate()
+  @IsDateString()
   mute_until?: Date;
 
   @IsNotEmpty()

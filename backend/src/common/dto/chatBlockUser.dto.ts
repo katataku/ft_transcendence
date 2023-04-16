@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsNumber } from 'class-validator';
+import { IsDateString, IsNotEmpty, IsNumber } from 'class-validator';
 
 export class ChatBlockUserDto {
   @IsNotEmpty()
@@ -10,7 +10,7 @@ export class ChatBlockUserDto {
   blockedUserId: number;
 
   @IsNotEmpty()
-  @IsDate()
+  @IsDateString()
   block_until: Date;
 }
 
